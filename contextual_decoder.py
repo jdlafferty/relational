@@ -6,71 +6,27 @@ from seq2seq_transformer import CausalSelfAttention, FeedForward
 
 class ContextualCrossAttention(BaseAttention):
     """
-    Layer for implementing different cross-attention scheme.
+    A more general cross-attention layer with queries, keys, and values specified in call.
 
-    Implements cross-attention with different configurations of
-    queries, keys, and values. e.g.: standard encoder-decoder cross-attention,
-    'symbolic' cross-attention, or 'relational' cross-attention.
     """
-    def __init__(self, cross_attention_type='std_encoder_decoder', **kwargs):
+    def __init__(self, **kwargs):
         """
         create ContextualCrossAttention layer
-
-        Parameters
-        ----------
-        cross_attention_type : str, optional
-            cross-attention scheme to use, by default 'standard'
         """
 
         super(ContextualCrossAttention, self).__init__(**kwargs)
 
-        if cross_attention_type in ('std_encoder_decoder', 'symbolic', 'relational'):
-            self.cross_attention_type = cross_attention_type
-        else:
-            raise ValueError(f'`cross_attention_type` {cross_attention_type} is invalid')
+    def call(self, input_seq, query_seq, key_seq, value_seq):
 
-    def call(self, input_seq, context_seq):
+        attn_output, attn_scores = self.mha(
+            query=query_seq,
+            key=key_seq,
+            value=value_seq,
+            return_attention_scores=True)
 
-        if self.cross_attention_type == 'std_encoder_decoder':
-            # standard encoder-decoder cross-attention of transformers
-            attn_output, attn_scores = self.mha(
-                query=input_seq,
-                key=context_seq,
-                value=context_seq,
-                return_attention_scores=True)
+        x = self.add([input_seq, attn_output])
 
-            x = self.add([input_seq, attn_output])
-
-            x = self.layernorm(x)
-
-        elif self.cross_attention_type == 'symbolic':
-            # 'symbolic' cross-attention.
-            #  input_seq is learned input-independent symbols
-            attn_output, attn_scores = self.mha(
-                query=input_seq,
-                key=context_seq,
-                value=input_seq,
-                return_attention_scores=True)
-
-            x = self.add([input_seq, attn_output]) # TODO: think about this. should we keep this skip connection?
-
-            x = self.layernorm(x)
-
-        elif self.cross_attention_type == 'relational':
-            # 'relational' cross-attention.
-            # queries and keys both come from the context sequence, thus their inner product computes relations
-            attn_output, attn_scores = self.mha(
-                query=context_seq,
-                key=context_seq,
-                value=input_seq,
-                return_attention_scores=True)
-
-            x = self.add([input_seq, attn_output]) # TODO: think about this. should we keep this skip connection?
-
-            x = self.layernorm(x)
-
-        else:
-            raise ValueError('unexpected `cross_attention_type`')
+        x = self.layernorm(x)
 
         # Cache the attention scores for plotting later.
         self.last_attn_scores = attn_scores
@@ -88,13 +44,10 @@ class ContextDecoderLayer(tf.keras.layers.Layer):
         d_model,
         num_heads,
         dff,
-        cross_attention_type="std_encoder_decoder",
         dropout_rate=0.1,
     ):
 
         super(ContextDecoderLayer, self).__init__()
-
-        self.cross_attention_type = cross_attention_type
 
         self.causal_self_attention = CausalSelfAttention(
             num_heads=num_heads, key_dim=d_model, dropout=dropout_rate
@@ -104,14 +57,13 @@ class ContextDecoderLayer(tf.keras.layers.Layer):
             num_heads=num_heads,
             key_dim=d_model,
             dropout=dropout_rate,
-            cross_attention_type=self.cross_attention_type,
         )
 
         self.ffn = FeedForward(d_model, dff)
 
-    def call(self, input_seq, context_seq):
+    def call(self, input_seq, query_seq, key_seq, value_seq):
         x = self.causal_self_attention(x=input_seq)
-        x = self.cross_attention(input_seq=x, context_seq=context_seq)
+        x = self.cross_attention(input_seq=x, query_seq=query_seq, key_seq=key_seq, value_seq=value_seq)
 
         # Cache the last attention scores for plotting later
         self.last_attn_scores = self.cross_attention.last_attn_scores
@@ -119,7 +71,6 @@ class ContextDecoderLayer(tf.keras.layers.Layer):
         x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
 
         return x
-
 
 class ContextDecoder(tf.keras.layers.Layer):
     """A generalized decoder with configurable cross-attention schemes"""
@@ -129,14 +80,12 @@ class ContextDecoder(tf.keras.layers.Layer):
         num_layers,
         num_heads,
         dff,
-        cross_attention_type="std_encoder_decoder",
         dropout_rate=0.1,
         name="decoder",
     ):
 
         super(ContextDecoder, self).__init__(name=name)
 
-        self.cross_attention_type = cross_attention_type
         self.num_layers = num_layers
         self.num_heads = num_heads
         self.dff = dff
@@ -153,20 +102,19 @@ class ContextDecoder(tf.keras.layers.Layer):
                 d_model=self.d_model,
                 num_heads=self.num_heads,
                 dff=self.dff,
-                dropout_rate=self.dropout_rate,
-                cross_attention_type=self.cross_attention_type,
+                dropout_rate=self.dropout_rate
             )
             for _ in range(self.num_layers)
         ]
 
         self.last_attn_scores = None
 
-    def call(self, input_seq, context_seq):
+    def call(self, input_seq, query_seq, key_seq, value_seq):
 
         x = self.dropout(input_seq)
 
         for i in range(self.num_layers):
-            x = self.dec_layers[i](input_seq=x, context_seq=context_seq)
+            x = self.dec_layers[i](input_seq=x, query_seq=query_seq, key_seq=key_seq, value_seq=value_seq)
 
         #             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
 
