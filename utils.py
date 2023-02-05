@@ -85,3 +85,10 @@ def print_classification_report(model, X, y, **kwargs):
     pred = np.argmax(model(X), axis=1)
 
     print(sklearn.metrics.classification_report(y, pred, **kwargs))
+
+def print_section(section_title):
+    print('\n')
+    print('='*60)
+    print(section_title)
+    print('='*60)
+    print('\n')
