@@ -202,21 +202,6 @@ class CrossAttention(BaseAttention):
 
     return x
 
-class EpisodicAttention(BaseAttention):
-  def call(self, x, context):
-    attn_output, attn_scores = self.mha(
-        query=context,
-        key=context,
-        value=x ,
-        return_attention_scores=True)
-
-    # Cache the attention scores for plotting later.
-    self.last_attn_scores = attn_scores
-
-    x = self.add([x, attn_output])
-    x = self.layernorm(x)
-
-    return x
 
 class DecoderLayer(tf.keras.layers.Layer):
   def __init__(self,
@@ -249,36 +234,6 @@ class DecoderLayer(tf.keras.layers.Layer):
     x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
     return x
 
-class EpisodicDecoderLayer(tf.keras.layers.Layer):
-  def __init__(self,
-               *,
-               d_model,
-               num_heads,
-               dff,
-               dropout_rate=0.1):
-    super(EpisodicDecoderLayer, self).__init__()
-
-    self.self_attention = GlobalSelfAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.episodic_attention = EpisodicAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.ffn = FeedForward(d_model, dff)
-
-  def call(self, x, context):
-    x = self.self_attention(x=x)
-    x = self.episodic_attention(x=x, context=context)
-
-    # Cache the last attention scores for plotting later
-    self.last_attn_scores = self.episodic_attention.last_attn_scores
-
-    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
-    return x
 
 class Decoder(tf.keras.layers.Layer):
   def __init__(self, *, num_layers, d_model, num_heads, dff, vocab_size,
@@ -312,63 +267,7 @@ class Decoder(tf.keras.layers.Layer):
     # The shape of x is (batch_size, target_seq_len, d_model).
     return x
 
-class EpisodicDecoder(tf.keras.layers.Layer):
-    """
-    The 'Decoder' of the 'Abstracter' Model.
 
-    Based on the Transformer's decoder, except with the modification that
-    the queries and keys now both come from the encoder, and the values come
-    from the decoder. The input at the decoder is now a learned parameter.
-    """
-    def __init__(self, num_layers, num_heads, dff, use_pos_embedding=True,
-               dropout_rate=0.1, name='episodic_decoder'):
-        super(EpisodicDecoder, self).__init__(name=name)
-
-        self.num_layers = num_layers
-        self.num_heads = num_heads
-        self.dff = dff
-        self.use_pos_embedding = use_pos_embedding
-        self.dropout_rate = dropout_rate
-
-    def build(self, input_shape):
-
-        _, self.sequence_length, self.d_model = input_shape
-
-        # define the input-independent symbolic input vector sequence at the decoder
-        normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
-        self.decoder_symbol_sequence = tf.Variable(
-            normal_initializer(shape=(self.sequence_length, self.d_model)),
-            trainable=True)
-
-        # layer which adds positional embedding (to be used on symbol sequence)
-        if self.use_pos_embedding:
-            self.add_pos_embedding = AddPositionalEmbedding()
-
-        self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
-
-        self.dec_layers = [
-            EpisodicDecoderLayer(d_model=self.d_model, num_heads=self.num_heads,
-                         dff=self.dff, dropout_rate=self.dropout_rate)
-            for _ in range(self.num_layers)]
-
-        self.last_attn_scores = None
-
-    def call(self, encoder_context):
-        # symbol sequence is input independent, so use the same one for all computations in the given batch
-        symbol_seq = tf.zeros_like(encoder_context) + self.decoder_symbol_sequence
-
-        # add positional embedding
-        if self.use_pos_embedding:
-            symbol_seq = self.add_pos_embedding(symbol_seq)
-
-        symbol_seq = self.dropout(symbol_seq)
-
-        for i in range(self.num_layers):
-            symbol_seq = self.dec_layers[i](symbol_seq, encoder_context)
-
-#             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
-
-        return symbol_seq
 class Transformer(tf.keras.Model):
   def __init__(self, *, num_layers, d_model, num_heads, dff,
                input_vocab_size, target_vocab_size, dropout_rate=0.1):
@@ -407,30 +306,6 @@ class Transformer(tf.keras.Model):
     # Return the final output and the attention weights.
     return logits
 
-class Abstracter(tf.keras.Model):
-  def __init__(self, *, num_layers, d_model, num_heads, dff,
-               input_vocab_size, target_vocab_size, dropout_rate=0.1):
-    super().__init__()
-    self.encoder = Encoder(num_layers=num_layers, d_model=d_model,
-                           num_heads=num_heads, dff=dff,
-                           vocab_size=input_vocab_size,
-                           dropout_rate=dropout_rate)
-
-    self.decoder = EpisodicDecoder(num_layers=num_layers, d_model=d_model,
-                           num_heads=num_heads, dff=dff,
-                           vocab_size=target_vocab_size,
-                           dropout_rate=dropout_rate)
-
-  def call(self, inputs):
-    # To use a Keras model with `.fit` you must pass all your inputs in the
-    # first argument.
-    context, x  = inputs
-
-    context = self.encoder(context)  # (batch_size, context_len, d_model)
-
-    x = self.decoder(x, context)  # (batch_size, target_len, d_model)
-
-    return x
 
 class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
   def __init__(self, d_model, warmup_steps=4000):
