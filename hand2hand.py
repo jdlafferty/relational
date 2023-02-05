@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import image as mpimg
+import os
 import pydealer
 from pydealer import Card
 
 class Cards():
 
     def __init__(self, verbose=0):
-        im = mpimg.imread('./cards.jpg')
+        im = mpimg.imread(f'{os.path.dirname(os.path.abspath(__file__))}/cards.jpg')
         self.cards = im
         if (verbose):
             plt.figure(figsize=(15,15))
