@@ -53,7 +53,7 @@ metrics = [masked_accuracy]
 loss = masked_loss
 opt = tf.keras.optimizers.Adam()
 
-fit_kwargs = {'epochs': 50}
+fit_kwargs = {'epochs': 50, 'batch_size': 128}
 
 
 # ## Dataset
@@ -104,7 +104,7 @@ target_test = sorted_test[:,:-1]
 labels_test = sorted_test[:,1:]
 
 
-def evaluate_seq2seq_model(model, print=False):
+def evaluate_seq2seq_model(model, source_test, labels_test, print=False):
     n = len(source_test)
     output = np.zeros(n*(hand_size+2), dtype=int).reshape(n,hand_size+2)
     output[:,0] = BEGIN_HAND
@@ -119,8 +119,8 @@ def evaluate_seq2seq_model(model, print=False):
 
     return acc
 
-def log_to_wandb(model):
-    acc = evaluate_seq2seq_model(model, print=False)
+def log_to_wandb(model, source_test, labels_test):
+    acc = evaluate_seq2seq_model(model, source_test, labels_test, print=False)
     wandb.log({'test per-card accuracy': acc})
 
 
@@ -146,6 +146,7 @@ print(f'will run {num_trials} trials for each of the {len(train_sizes)} training
 
 def evaluate_learning_curves(create_model, group_name, 
     source_train=source_train, target_train=target_train, labels_train=labels_train,
+    source_test=source_test, target_test=target_test, labels_test=labels_test,
     train_sizes=train_sizes, num_trials=num_trials):
     accuracies = []
 
@@ -160,12 +161,12 @@ def evaluate_learning_curves(create_model, group_name,
             X_train = source_train[:train_size], target_train[:train_size]
             y_train = labels_train[:train_size]
 
-            train_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train)).batch(batch_size)
+            # train_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train)).batch(batch_size)
 
-            history = model.fit(train_ds, verbose=0, callbacks=create_callbacks(), **fit_kwargs)
+            history = model.fit(X_train, y_train, verbose=0, callbacks=create_callbacks(), **fit_kwargs)
 
-            acc = evaluate_seq2seq_model(model)
-            log_to_wandb(model)
+            acc = evaluate_seq2seq_model(model, source_test, labels_test, print=False)
+            log_to_wandb(model, source_test, labels_test)
             wandb.finish(quiet=True)
 
             train_size_accs.append(acc)
@@ -259,7 +260,9 @@ def create_model():
     return sensory_connected_abstracter
 
 
-accuracies = evaluate_learning_curves(create_model, group_name='sensory_connected_abstracter')
+accuracies = evaluate_learning_curves(create_model, 
+    source_train=source_train, target_train=target_train, group_name='sensory_connected_abstracter')
+
 print(accuracies)
 
 # endregion
