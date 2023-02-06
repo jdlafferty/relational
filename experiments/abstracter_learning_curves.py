@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm, trange
+import argparse
 
 import tensorflow as tf
 
@@ -17,12 +18,26 @@ import hand2hand
 import utils
 
 # region SETUP
+
+# parse arguments to script
+parser = argparse.ArgumentParser()
+parser.add_argument('--min_train_size', default=50, type=int, help='minimum training set size')
+parser.add_argument('--max_train_size', default=2000, type=int, help='maximum training set size')
+parser.add_argument('--train_size_step', default=50, type=int, help='training set step size')
+parser.add_argument('--num_trials', default=1, type=int, help='number of trials per training set size')
+parser.add_argument('--wandb_project_name', default='card-sorting-abstracters-learning-curves-testing', 
+    type=str, help='W&B project name')
+args = parser.parse_args()
+
 utils.print_section("SET UP")
 
+print(f'received the following arguments: {args}')
+
+# check if GPU is being used
 print(tf.config.list_physical_devices())
-assert len(tf.config.list_physical_devices('GPU')) > 0 # check if GPU is being used
+assert len(tf.config.list_physical_devices('GPU')) > 0
 
-
+# set up W&B logging
 import wandb
 wandb.login()
 
@@ -30,12 +45,12 @@ import logging
 logger = logging.getLogger("wandb")
 logger.setLevel(logging.ERROR)
 
-project_name = 'card-sorting-abstracters-learning-curves'
+wandb_project_name = args.wandb_project_name
 
 
 def create_callbacks(monitor='loss'):
     callbacks = [
-        tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, mode='auto', restore_best_weights=True),
+        # tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, mode='auto', restore_best_weights=True),
 #         tf.keras.callbacks.ReduceLROnPlateau( monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='auto'),
         wandb.keras.WandbMetricsLogger(log_freq='epoch'),
         # wandb.keras.WandbModelCheckpoint(filepath='models/model_{epoch:02d}', monitor=monitor, mode='auto', save_freq='epoch')
@@ -51,7 +66,7 @@ from seq2seq_transformer import masked_loss, masked_accuracy
 metrics = [masked_accuracy]
 
 loss = masked_loss
-opt = tf.keras.optimizers.Adam()
+create_opt = lambda : tf.keras.optimizers.Adam()
 
 fit_kwargs = {'epochs': 50, 'batch_size': 128}
 
@@ -104,7 +119,7 @@ target_test = sorted_test[:,:-1]
 labels_test = sorted_test[:,1:]
 
 
-def evaluate_seq2seq_model(model, source_test, labels_test, print=False):
+def evaluate_seq2seq_model(model, source_test, labels_test, print_=False):
     n = len(source_test)
     output = np.zeros(n*(hand_size+2), dtype=int).reshape(n,hand_size+2)
     output[:,0] = BEGIN_HAND
@@ -114,31 +129,27 @@ def evaluate_seq2seq_model(model, source_test, labels_test, print=False):
         predicted_id = tf.argmax(predictions, axis=-1)
         output[:,i+1] = predicted_id
 
-    acc = (np.sum(output[:,1:] == labels_test))/np.prod(labels_test.shape)
-    if print: print('per-card accuracy: %.2f%%' % (100*acc))
+    per_card_acc = (np.mean(output[:,1:] == labels_test))
+    seq_acc = np.mean(np.all(output[:,1:]==labels_test, axis=1))
 
-    return acc
+    if print_:
+        print('per-card accuracy: %.2f%%' % (100*per_card_acc))
+        print('full sequence accuracy: %.2f%%' % (100*seq_acc))
+
+    return_dict = {'per-card accuracy': per_card_acc, 'full sequence accuracy': seq_acc}
+    return return_dict
 
 def log_to_wandb(model, source_test, labels_test):
-    acc = evaluate_seq2seq_model(model, source_test, labels_test, print=False)
-    wandb.log({'test per-card accuracy': acc})
+    evaluation_dict = evaluate_seq2seq_model(model, source_test, labels_test, print_=False)
+    wandb.log(evaluation_dict)
 
 
-plt.style.use('seaborn-whitegrid')
-def plot_learning_curve(train_sizes, accuracies):
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.plot(train_sizes, accuracies)
-    ax.set_xlabel('Training Set Size')
-    ax.set_ylabel('Test Accuracy')
-    return fig
-
-
-max_train_size = len(hands_train)
-train_size_step = 500
-min_train_size = train_size_step
+max_train_size = args.max_train_size
+train_size_step = args.train_size_step
+min_train_size = args.min_train_size
 train_sizes = np.arange(min_train_size, max_train_size+1, step=train_size_step)
 
-num_trials = 5 # num of trials per train set size
+num_trials = args.num_trials # num of trials per train set size
 
 print(f'will evaluate learning curve for `train_sizes` from {min_train_size} to {max_train_size} in increments of {train_size_step}.')
 print(f'will run {num_trials} trials for each of the {len(train_sizes)} training set sizes for a total of {num_trials * len(train_sizes)} trials')
@@ -154,7 +165,7 @@ def evaluate_learning_curves(create_model, group_name,
 
         train_size_accs = []
         for trial in trange(num_trials, desc='trial', leave=False):
-            run = wandb.init(project=project_name, group=group_name, name=f'train size = {train_size}; trial = {trial}',
+            run = wandb.init(project=wandb_project_name, group=group_name, name=f'train size = {train_size}; trial = {trial}',
                             config={'train size': train_size, 'trial': trial})
             model = create_model()
 
@@ -165,11 +176,11 @@ def evaluate_learning_curves(create_model, group_name,
 
             history = model.fit(X_train, y_train, verbose=0, callbacks=create_callbacks(), **fit_kwargs)
 
-            acc = evaluate_seq2seq_model(model, source_test, labels_test, print=False)
+            eval_dict = evaluate_seq2seq_model(model, source_test, labels_test, print_=False)
             log_to_wandb(model, source_test, labels_test)
             wandb.finish(quiet=True)
 
-            train_size_accs.append(acc)
+            train_size_accs.append(eval_dict['full sequence accuracy'])
             del model
 
 
@@ -190,7 +201,7 @@ def create_model():
         num_layers=2, num_heads=2, dff=64, 
         input_vocab_size=54, target_vocab_size=54, embedding_dim=128)
 
-    transformer.compile(loss=loss, optimizer=opt, metrics=metrics)
+    transformer.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
     transformer((source_train, target_train))
 
     return transformer
@@ -210,7 +221,7 @@ def create_model():
         num_layers=2, num_heads=2, dff=64,
         input_vocab_size=54, target_vocab_size=54, embedding_dim=128)
 
-    seq2seq_symbolic_abstracter.compile(loss=loss, optimizer=opt, metrics=metrics)
+    seq2seq_symbolic_abstracter.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
     seq2seq_symbolic_abstracter((source_train, target_train))
 
     return seq2seq_symbolic_abstracter
@@ -229,7 +240,7 @@ def create_model():
         num_layers=2, num_heads=2, dff=64, 
         input_vocab_size=54, target_vocab_size=54, embedding_dim=128)
 
-    seq2seq_relational_abstracter.compile(loss=loss, optimizer=opt, metrics=metrics)
+    seq2seq_relational_abstracter.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
     seq2seq_relational_abstracter((source_train, target_train))
 
     return seq2seq_relational_abstracter
@@ -254,14 +265,16 @@ def create_model():
         num_layers=2, num_heads=2, dff=64, 
         input_vocab_size=54, target_vocab_size=54, embedding_dim=128)
 
-    sensory_connected_abstracter.compile(loss=loss, optimizer=opt, metrics=metrics)
+    sensory_connected_abstracter.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
     sensory_connected_abstracter((source_train, target_train))
 
     return sensory_connected_abstracter
 
 
 accuracies = evaluate_learning_curves(create_model, 
-    source_train=source_train, target_train=target_train, group_name='sensory_connected_abstracter')
+    source_train=source_train, target_train=target_train, labels_train=labels_train,
+    source_test=source_test, target_test=target_test, labels_test=labels_test,
+    group_name='sensory_connected_abstracter')
 
 print(accuracies)
 
