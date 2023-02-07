@@ -92,3 +92,33 @@ def print_section(section_title):
     print(section_title)
     print('='*60)
     print('\n')
+
+def get_wandb_project_table(project_name, entity='Awni00', attr_cols=('group', 'name'), config_cols='all', summary_cols='all'):
+    import wandb
+    import pandas as pd
+
+    api = wandb.Api()
+
+    runs = api.runs(entity + "/" + project_name)
+
+    if summary_cols == 'all':
+        summary_cols = set().union(*tuple(run.summary.keys() for run in runs))
+
+    if config_cols == 'all':
+        config_cols = set().union(*tuple(run.config.keys() for run in runs))
+
+    data = {key: [] for key in list(attr_cols) + list(summary_cols) + list(config_cols)}
+
+    for run in runs:
+        for summary_col in summary_cols:
+            data[summary_col].append(run.summary.get(summary_col, None))
+
+        for config_col in config_cols:
+            data[config_col].append(run.config.get(config_col, None))
+
+        for attr_col in attr_cols:
+            data[attr_col].append(getattr(run, attr_col, None))
+
+    runs_df = pd.DataFrame(data)
+
+    return runs_df
