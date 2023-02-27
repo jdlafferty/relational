@@ -323,29 +323,52 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
     return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
-def masked_loss(label, pred):
-  mask = label != 0
-  loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
-    from_logits=True, reduction='none')
-  loss = loss_object(label, pred)
 
-  mask = tf.cast(mask, dtype=loss.dtype)
-  loss *= mask
+class TeacherForcingAccuracy(tf.keras.metrics.Metric):
 
-  loss = tf.reduce_sum(loss)/tf.reduce_sum(mask)
-  return loss
+  def __init__(self, name='teacher_forcing_accuracy', ignore_class=None, **kwargs):
+    super(TeacherForcingAccuracy, self).__init__(name=name, **kwargs)
+    if ignore_class is None or isinstance(ignore_class, int):
+      self.ignore_class = ignore_class
+    else:
+      raise ValueError('`ignore_class` must be None or an integer')
 
+    self.correct_preds = self.add_weight(name='correct_preds', initializer='zeros')
+    self.mask_count = self.add_weight(name='mask_count', initializer='zeros')
 
-def masked_accuracy(label, pred):
-  pred = tf.argmax(pred, axis=2)
-  label = tf.cast(label, pred.dtype)
-  match = label == pred
+  def update_state(self, label, pred, sample_weight=None):
+    pred = tf.argmax(pred, axis=2)
+    label = tf.cast(label, pred.dtype)
+    match = label == pred
 
-  mask = label != 0
+    if self.ignore_class is None:
+      mask = tf.ones_like(label, dtype=tf.bool)
+    else:
+      mask = label != self.ignore_class
 
-  match = match & mask
+    match = match & mask
 
-  match = tf.cast(match, dtype=tf.float32)
-  mask = tf.cast(mask, dtype=tf.float32)
-  return tf.reduce_sum(match)/tf.reduce_sum(mask)
+    match = tf.cast(match, dtype=tf.float32)
+    mask = tf.cast(mask, dtype=tf.float32)
 
+    self.correct_preds.assign_add(tf.reduce_sum(match))
+    self.mask_count.assign_add(tf.reduce_sum(mask))
+
+  def result(self):
+    return self.correct_preds / self.mask_count
+
+# def masked_accuracy(label, pred):
+#   pred = tf.argmax(pred, axis=2)
+#   label = tf.cast(label, pred.dtype)
+#   match = label == pred
+
+#   mask = label != 0
+
+#   match = match & mask
+
+#   match = tf.cast(match, dtype=tf.float32)
+#   mask = tf.cast(mask, dtype=tf.float32)
+#   return tf.reduce_sum(match)/tf.reduce_sum(mask)
+
+# TODO: some of these should perhaps be in a separate module (the parts not strictly related to transformers)
+# e.g. teacher-forcing accuracy, etc.
