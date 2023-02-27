@@ -1,7 +1,9 @@
-# LEARNING CURVES: ARGSORT SEQUENCE-TO-SEQUENCE ABSTRACTERS
-# This notebook generates a set of random objects (each described by a random gaussian vector) with some associated ordering
-# It then trains a transformer and an abstracter model on sorting
-# The models do 'argsorting', meaning they predict the argsort of the sequnce rather than outputting the sorted sequence itself.
+# LEARNING CURVES AND ABSTRACTER GENERALIZATION: RANDOM OBJECT SORTING WITH SEQUENCE-TO-SEQUENCE ABSTRACTERS
+# We generate random objects (as gaussian vectors) and associate an ordering to them.
+# We train abstracter models to learn how to sort these objects
+# To test the generalization of abstracters, we first train one on another object-sorting task, 
+# then fix the abstracter module's weights and train the encoder/decoder
+# The models do 'argsorting', meaning they predict the argsort of the sequnce.
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,6 +36,7 @@ parser.add_argument('--min_train_size', default=50, type=int, help='minimum trai
 parser.add_argument('--max_train_size', default=2000, type=int, help='maximum training set size')
 parser.add_argument('--train_size_step', default=50, type=int, help='training set step size')
 parser.add_argument('--num_trials', default=1, type=int, help='number of trials per training set size')
+parser.add_argument('--start_trial', default=0, type=int, help='what to call first trial')
 parser.add_argument('--wandb_project_name', default='abstracter_argsort_generalization', 
     type=str, help='W&B project name')
 args = parser.parse_args()
@@ -149,6 +152,7 @@ min_train_size = args.min_train_size
 train_sizes = np.arange(min_train_size, max_train_size+1, step=train_size_step)
 
 num_trials = args.num_trials # num of trials per train set size
+first_trial = args.first_trial
 
 print(f'will evaluate learning curve for `train_sizes` from {min_train_size} to {max_train_size} in increments of {train_size_step}.')
 print(f'will run {num_trials} trials for each of the {len(train_sizes)} training set sizes for a total of {num_trials * len(train_sizes)} trials')
@@ -161,7 +165,7 @@ def evaluate_learning_curves(create_model, group_name,
 
     for train_size in tqdm(train_sizes, desc='train size'):
 
-        for trial in trange(num_trials, desc='trial', leave=False):
+        for trial in trange(start_trial, start_trial + num_trials, desc='trial', leave=False):
             run = wandb.init(project=wandb_project_name, group=group_name, name=f'train size = {train_size}; trial = {trial}',
                             config={'train size': train_size, 'trial': trial, 'group': group_name})
             model = create_model()
