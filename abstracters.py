@@ -71,7 +71,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
         # define the input-independent symbolic input vector sequence at the decoder
         normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
-        self.decoder_symbol_sequence = tf.Variable(
+        self.symbol_sequence = tf.Variable(
             normal_initializer(shape=(self.sequence_length, self.d_model)),
             trainable=True)
 
@@ -81,7 +81,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
-        self.dec_layers = [
+        self.abstracter_layers = [
             RelationalAbstracterLayer(d_model=self.d_model, num_heads=self.num_heads,
                          dff=self.dff, dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
@@ -90,7 +90,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
     def call(self, encoder_context):
         # symbol sequence is input independent, so use the same one for all computations in the given batch
-        symbol_seq = tf.zeros_like(encoder_context) + self.decoder_symbol_sequence
+        symbol_seq = tf.zeros_like(encoder_context) + self.symbol_sequence
 
         # add positional embedding
         if self.use_pos_embedding:
@@ -99,7 +99,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
         symbol_seq = self.dropout(symbol_seq)
 
         for i in range(self.num_layers):
-            symbol_seq = self.dec_layers[i](symbol_seq, encoder_context)
+            symbol_seq = self.abstracter_layers[i](symbol_seq, encoder_context)
 
 #             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
 
@@ -131,7 +131,7 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
 
         # define the input-independent symbolic input vector sequence at the decoder
         normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
-        self.decoder_symbol_sequence = tf.Variable(
+        self.symbol_sequence = tf.Variable(
             normal_initializer(shape=(self.sequence_length, self.d_model)),
             trainable=True)
 
@@ -141,7 +141,7 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
-        self.dec_layers = [
+        self.abstracter_layers = [
             SymbolicAbstracterLayer(d_model=self.d_model, num_heads=self.num_heads,
                          dff=self.dff, dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
@@ -150,7 +150,7 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
 
     def call(self, encoder_context):
         # symbol sequence is input independent, so use the same one for all computations in the given batch
-        symbol_seq = tf.zeros_like(encoder_context) + self.decoder_symbol_sequence
+        symbol_seq = tf.zeros_like(encoder_context) + self.symbol_sequence
 
         # add positional embedding
         if self.use_pos_embedding:
@@ -161,7 +161,7 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
 
 
         for i in range(self.num_layers):
-            symbol_seq = self.dec_layers[i](symbol_seq, encoder_context)
+            symbol_seq = self.abstracter_layers[i](symbol_seq, encoder_context)
 
 #             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
 
