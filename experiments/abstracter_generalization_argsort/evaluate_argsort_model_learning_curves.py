@@ -23,17 +23,30 @@ import utils
 
 seed = 314159
 
-# parse arguments to script
+# kwargs for all the models
+sc_abstracter_kwargs = dict(
+    num_layers=2, num_heads=2, dff=64, 
+    input_vocab='vector', target_vocab=seqs_length+1,
+    output_dim=seqs_length, embedding_dim=64)
+transformer_kwargs = dict(
+    num_layers=2, num_heads=2, dff=64, 
+    input_vocab='vector', target_vocab=seqs_length+1, 
+    output_dim=seqs_length, embedding_dim=64)
+
+# parse script arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, help='the model to evaluate learning curves on')
+parser.add_argument('--pretraining_mode', type=str, help='whether and how to pre-train on pre-training task')
 parser.add_argument('--pretraining_task_data_path', default='object_sorting_datasets/task1_object_sort_dataset.npy', 
     type=str, help='path to npy file containing sorting task dataset')
 parser.add_argument('--eval_task_data_path', default='object_sorting_datasets/task2_object_sort_dataset.npy', 
     type=str, help='path to npy file containing sorting task dataset')
+parser.add_argument('--pretraining_train_size', default=10_000, type=int,
+    help='training set size for pre-training (only used for pre-training tasks)')
 parser.add_argument('--n_epochs', default=200, type=int, help='number of epochs to train each model for')
 parser.add_argument('--early_stopping', default=True, type=bool, help='whether to use early stopping')
-parser.add_argument('--min_train_size', default=50, type=int, help='minimum training set size')
-parser.add_argument('--max_train_size', default=2000, type=int, help='maximum training set size')
+parser.add_argument('--min_train_size', default=500, type=int, help='minimum training set size')
+parser.add_argument('--max_train_size', default=5000, type=int, help='maximum training set size')
 parser.add_argument('--train_size_step', default=50, type=int, help='training set step size')
 parser.add_argument('--num_trials', default=1, type=int, help='number of trials per training set size')
 parser.add_argument('--start_trial', default=0, type=int, help='what to call first trial')
@@ -188,38 +201,8 @@ def evaluate_learning_curves(create_model, group_name,
 
 # region define models and model set up code
 
-# transformer
-if args.model == 'transformer':
-    def create_model():
-        argsort_model = seq2seq_abstracter_models.Transformer(
-            num_layers=2, num_heads=2, dff=64, 
-            input_vocab='vector', target_vocab=seqs_length+1, output_dim=seqs_length,
-            embedding_dim=64)
-
-        argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
-        argsort_model((source_train[:32], target_train[:32]));
-
-        return argsort_model
-    
-    group_name = 'Transformer'
-
-# sensory-connected abstracter (standard evaluation)
-elif args.model == 'sc-abstracter':
-    def create_model():
-        argsort_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
-            num_layers=2, num_heads=2, dff=64, 
-            input_vocab='vector', target_vocab=seqs_length+1, output_dim=seqs_length,
-            embedding_dim=64)
-
-        argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
-        argsort_model((source_train[:32], target_train[:32]));
-
-        return argsort_model
-    
-    group_name = 'S-C Abstracter'
-
-# sensory-connected abstracter (fixed abstracter module to be pre-trained on other task)
-elif args.model == 'sc-abstracter-pretrained':
+# pre-training set up
+if 'pretraining' in args.pretraining_mode:
 
     # load pre-training task data
     pretraining_task_data = np.load(args.eval_task_data_path, allow_pickle=True).item()
@@ -237,42 +220,104 @@ elif args.model == 'sc-abstracter-pretrained':
         labels_train_pretraining, labels_val_pretraining) = train_test_split(
         object_seqs_pretraining, target_pretraining, labels_pretraining, test_size=val_size/(1-test_size), random_state=seed)
 
-    source_train_pretraining, source_val_pretraining, source_test_pretraining = object_seqs_train_pretraining, object_seqs_val_pretraining, object_seqs_test_pretraining
+    (source_train_pretraining, source_val_pretraining, source_test_pretraining) = (object_seqs_train_pretraining,
+        object_seqs_val_pretraining, object_seqs_test_pretraining)
+
+    X_train = (source_train_pretraining[:args.pretraining_train_size], target_train_pretraining[:args.pretraining_train_size])
+    y_train = labels_train_pretraining[:args.pretraining_train_size]
+    X_val = (source_val_pretraining[:args.pretraining_train_size], target_val_pretraining[:args.pretraining_train_size])
+    y_val = labels_val_pretraining[:args.pretraining_train_size]
+
     
-    pretrained_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
-            num_layers=2, num_heads=2, dff=64, 
-            input_vocab='vector', target_vocab=seqs_length+1, output_dim=seqs_length,
-            embedding_dim=64)
 
-    pretrained_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
-    pretrained_model((source_train_pretraining[:32], target_train_pretraining[:32]));
+# transformer
+if args.model == 'transformer':
+    if args.pretraining_mode == 'none':
+        def create_model():
+            argsort_model = seq2seq_abstracter_models.Transformer(
+                **transformer_kwargs)
 
-    utils.print_section('Fitting Model on Pre-training Task')
-    run = wandb.init(project=wandb_project_name, group='Pre-training Task, S-C Abstracter', 
-        config={'train size': len(source_train_pretraining), 'group': 'Pre-Training Task; SC-Abstracter'})
-    X_train, y_train = (source_train_pretraining, target_train_pretraining), labels_train_pretraining
-    X_val, y_val = (source_val_pretraining, target_val_pretraining), labels_val_pretraining
-    history = pretrained_model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
-    eval_dict = evaluate_seq2seq_model(pretrained_model, source_test_pretraining, target_test_pretraining, labels_test_pretraining,
-        start_token_pretraining,  print_=False)
-    log_to_wandb(pretrained_model, eval_dict)
-    wandb.finish(quiet=True)
+            argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+            argsort_model((source_train[:32], target_train[:32]));
+
+            return argsort_model
         
-    group_name = 'S-C Abstracter (Pre-Trained)'
+        group_name = 'Transformer'
+    else:
+        raise NotImplementedError('Only pretraining_mode = `none`is supported for transformers')
 
-    def create_model():
-        argsort_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
-            num_layers=2, num_heads=2, dff=64, 
-            input_vocab='vector', target_vocab=seqs_length+1, output_dim=seqs_length,
-            embedding_dim=64)
+# sensory-connected abstracter (standard evaluation)
+elif args.model == 'sc-abstracter':
+    if args.pretraining_mode == 'none':
+        def create_model():
+            argsort_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
+                **sc_abstracter_kwargs)
 
-        argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
-        argsort_model((source_train[:32], target_train[:32]));
+            argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+            argsort_model((source_train[:32], target_train[:32]));
 
-        argsort_model.abstracter.set_weights(pretrained_model.abstracter.weights)
-        argsort_model.abstracter.trainable = False
+            return argsort_model
+        
+        group_name = 'S-C Abstracter'
+    
+    # if evaluating generalization via pre-training
+    elif args.pretraining_mode in ['pretraining_fix_abstracter', 'pretraining_fix_abstracter_decoder']:
+        
+        # fit model on pre-training task
+        pretrained_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
+            **sc_abstracter_kwargs)
 
-        return argsort_model
+        pretrained_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+        pretrained_model((source_train_pretraining[:32], target_train_pretraining[:32]));
+
+        utils.print_section('Fitting Model on Pre-training Task')
+        run = wandb.init(project=wandb_project_name, group='Pre-training Task, S-C Abstracter', 
+            config={'train size': len(source_train_pretraining), 'group': 'Pre-Training Task; SC-Abstracter'})
+        history = pretrained_model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
+        eval_dict = evaluate_seq2seq_model(pretrained_model, source_test_pretraining, target_test_pretraining, labels_test_pretraining,
+            start_token_pretraining,  print_=False)
+        log_to_wandb(pretrained_model, eval_dict)
+        wandb.finish(quiet=True)
+
+        if args.pretraining_mode == 'pretraining_fix_abstracter':
+
+            def create_model():
+                argsort_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
+                    **sc_abstracter_kwargs)
+
+                argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+                argsort_model((source_train[:32], target_train[:32]));
+
+                argsort_model.abstracter.set_weights(pretrained_model.abstracter.weights)
+                argsort_model.abstracter.trainable = False
+
+                return argsort_model
+
+            group_name = 'S-C Abstracter (Pre-Trained/Fixed Abstracter)'
+        
+        elif args.pretraining_mode == 'pretraining_fix_abstracter_decoder':
+            def create_model():
+                argsort_model = seq2seq_abstracter_models.Seq2SeqSensoryConnectedAbstracter(
+                    **sc_abstracter_kwargs)
+
+                argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+                argsort_model((source_train[:32], target_train[:32]));
+
+                argsort_model.abstracter.set_weights(pretrained_model.abstracter.weights)
+                argsort_model.abstracter.trainable = False
+
+                argsort_model.decoder.set_weights(pretrained_model.decoder.weights)
+                argsort_model.decoder.trainable = False
+
+                return argsort_model
+
+            group_name = 'S-C Abstracter (Pre-Trained/Fixed Abstracter/Decoder)'
+    else:
+        raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
+
+else:
+    raise ValueError(f'`model` argument {args.model} is invalid')
+
 
 # endregion
 
