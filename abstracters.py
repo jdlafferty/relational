@@ -5,46 +5,17 @@ The abstracter is a module for transformer-based models which aims to encourage
 learning abstract relations.
 
 It is characterized by employing learned input-independent 'symbols' in its computation
-and using cross-attention mechanisms which respect the 'firewall'.
+and using adjusted cross-attention mechanisms (e.g.: relational attention).
 
 Typically, an abstracter module follows an 'encoder'.
 For Seq2Seq models, it may be followed by a decoder.
 """
 
 import tensorflow as tf
-from seq2seq_transformer import AddPositionalEmbedding, GlobalSelfAttention, BaseAttention, FeedForward
+from transformer_modules import AddPositionalEmbedding, FeedForward
+from attention import GlobalSelfAttention, BaseAttention, RelationalAttention, SymbolicAttention
 
 
-class RelationalAbstracterLayer(tf.keras.layers.Layer):
-  def __init__(self,
-               *,
-               d_model,
-               num_heads,
-               dff,
-               dropout_rate=0.1):
-    super(RelationalAbstracterLayer, self).__init__()
-
-    self.self_attention = GlobalSelfAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.episodic_attention = RelationalAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.ffn = FeedForward(d_model, dff)
-
-  def call(self, x, context):
-    x = self.self_attention(x=x)
-    x = self.episodic_attention(x=x, context=context)
-
-    # Cache the last attention scores for plotting later
-    self.last_attn_scores = self.episodic_attention.last_attn_scores
-
-    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
-    return x
 
 class RelationalAbstracter(tf.keras.layers.Layer):
     """
@@ -104,6 +75,37 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 #             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
 
         return symbol_seq
+
+class RelationalAbstracterLayer(tf.keras.layers.Layer):
+  def __init__(self,
+               *,
+               d_model,
+               num_heads,
+               dff,
+               dropout_rate=0.1):
+    super(RelationalAbstracterLayer, self).__init__()
+
+    self.self_attention = GlobalSelfAttention(
+        num_heads=num_heads,
+        key_dim=d_model,
+        dropout=dropout_rate)
+
+    self.episodic_attention = RelationalAttention(
+        num_heads=num_heads,
+        key_dim=d_model,
+        dropout=dropout_rate)
+
+    self.ffn = FeedForward(d_model, dff)
+
+  def call(self, x, context):
+    x = self.self_attention(x=x)
+    x = self.episodic_attention(x=x, context=context)
+
+    # Cache the last attention scores for plotting later
+    self.last_attn_scores = self.episodic_attention.last_attn_scores
+
+    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
+    return x
 
 
 class SymbolicAbstracter(tf.keras.layers.Layer):
@@ -193,36 +195,3 @@ class SymbolicAbstracterLayer(tf.keras.layers.Layer):
         x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
 
         return x
-
-class SymbolicAttention(BaseAttention):
-    def call(self, x, context):
-        attn_output, attn_scores = self.mha(
-            query=x,
-            key=context,
-            value=x ,
-            return_attention_scores=True)
-
-        # Cache the attention scores for plotting later.
-        self.last_attn_scores = attn_scores
-
-        x = self.add([x, attn_output])
-
-        x = self.layernorm(x)
-
-        return x
-
-class RelationalAttention(BaseAttention):
-  def call(self, x, context):
-    attn_output, attn_scores = self.mha(
-        query=context,
-        key=context,
-        value=x ,
-        return_attention_scores=True)
-
-    # Cache the attention scores for plotting later.
-    self.last_attn_scores = attn_scores
-
-    x = self.add([x, attn_output])
-    x = self.layernorm(x)
-
-    return x
