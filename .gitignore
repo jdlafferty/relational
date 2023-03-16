@@ -1,5 +1,11 @@
-#
-wandb
+# ignore wandb directories
+wandb/
+
+# ignore figure directories
+figs/
+
+# ignore .vscode files
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
