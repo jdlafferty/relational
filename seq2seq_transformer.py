@@ -43,7 +43,7 @@ class TokenAndPositionEmbedding(layers.Layer):
         positions = self.pos_emb(positions)
         x = self.token_emb(x)
         return x + positions
-    
+
 class TokenEmbedding(layers.Layer):
     def __init__(self, maxlen, vocab_size, embed_dim):
         super(TokenEmbedding, self).__init__()
@@ -64,44 +64,30 @@ def positional_encoding(length, depth):
 
   pos_encoding = np.concatenate(
       [np.sin(angle_rads), np.cos(angle_rads)],
-      axis=-1) 
+      axis=-1)
 
   return tf.cast(pos_encoding, dtype=tf.float32)
 
-class PositionalEmbedding(tf.keras.layers.Layer):
-  def __init__(self, vocab_size, d_model):
-    super().__init__()
-    self.d_model = d_model
-    self.embedding = tf.keras.layers.Embedding(vocab_size, d_model, mask_zero=True) 
-    self.pos_encoding = positional_encoding(length=2048, depth=d_model)
+class AddPositionalEmbedding(tf.keras.layers.Layer):
 
-  def compute_mask(self, *args, **kwargs):
-    return self.embedding.compute_mask(*args, **kwargs)
+  def __init__(self, name='add_positional_embedding'):
+      super().__init__(name=name)
 
-  def call(self, x):
-    length = tf.shape(x)[1]
-    x = self.embedding(x)
-    # This factor sets the relative scale of the embedding and positonal_encoding.
-    x *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
-    x = x + self.pos_encoding[tf.newaxis, :length, :]
-    return x
-
-class Embedding(tf.keras.layers.Layer):
-  def __init__(self, vocab_size, d_model):
-    super().__init__()
-    self.d_model = d_model
-    self.embedding = tf.keras.layers.Embedding(vocab_size, d_model, mask_zero=True) 
-    self.pos_encoding = positional_encoding(length=2048, depth=d_model)
-
-  def compute_mask(self, *args, **kwargs):
-    return self.embedding.compute_mask(*args, **kwargs)
+  def build(self, input_shape):
+      _, self.seq_length, self.vec_dim = input_shape
+      # compute fixed positional encoding to be added
+      # TODO: why length=2048 and not seq_length?
+      self.pos_encoding = positional_encoding(length=2048, depth=self.vec_dim)
 
   def call(self, x):
-    length = tf.shape(x)[1]
-    x = self.embedding(x)
-    # This factor sets the relative scale of the embedding and positonal_encoding.
-    x *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
-    return x
+      # This factor sets the relative scale of the embedding and positonal_encoding.
+      x *= tf.math.sqrt(tf.cast(self.vec_dim, tf.float32))
+
+      # add positional encoding
+      x = x + self.pos_encoding[tf.newaxis, :self.seq_length, :] # NOTE: see build
+
+      return x
+
 
 class FeedForward(tf.keras.layers.Layer):
   def __init__(self, d_model, dff, dropout_rate=0.1):
@@ -116,7 +102,7 @@ class FeedForward(tf.keras.layers.Layer):
 
   def call(self, x):
     x = self.add([x, self.seq(x)])
-    x = self.layer_norm(x) 
+    x = self.layer_norm(x)
     return x
 
 class BaseAttention(tf.keras.layers.Layer):
@@ -164,66 +150,41 @@ class EncoderLayer(tf.keras.layers.Layer):
     return x
 
 class Encoder(tf.keras.layers.Layer):
-  def __init__(self, *, num_layers, d_model, num_heads,
-               dff, vocab_size, dropout_rate=0.1):
-    super().__init__()
+    def __init__(self, num_layers, num_heads,
+               dff, dropout_rate=0.1, name='encoder'):
 
-    self.d_model = d_model
-    self.num_layers = num_layers
+        super().__init__(name=name)
+        self.num_layers = num_layers
+        self.num_heads = num_heads
+        self.dff = dff
+        self.dropout_rate = dropout_rate
 
-    self.pos_embedding = PositionalEmbedding(
-        vocab_size=vocab_size, d_model=d_model)
+    def build(self, input_shape):
 
-    self.enc_layers = [
-        EncoderLayer(d_model=d_model,
-                     num_heads=num_heads,
-                     dff=dff,
-                     dropout_rate=dropout_rate)
-        for _ in range(num_layers)]
-    self.dropout = tf.keras.layers.Dropout(dropout_rate)
+        _, self.sequence_length, self.d_model = input_shape
 
-  def call(self, x):
-    # `x` is token-IDs shape: (batch, seq_len)
-    x = self.pos_embedding(x)  # Shape `(batch_size, seq_len, d_model)`.
+        self.enc_layers = [
+            EncoderLayer(d_model=self.d_model,
+                         num_heads=self.num_heads,
+                         dff=self.dff,
+                         dropout_rate=self.dropout_rate)
+            for _ in range(self.num_layers)
+            ]
 
-    # Add dropout.
-    x = self.dropout(x)
+        self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
-    for i in range(self.num_layers):
-      x = self.enc_layers[i](x)
 
-    return x  # Shape `(batch_size, seq_len, d_model)`
+    def call(self, x):
+        # `x` is shape: (batch, seq_len, vec_dim)
 
-class EncoderNoPos(tf.keras.layers.Layer):
-  def __init__(self, *, num_layers, d_model, num_heads,
-               dff, vocab_size, dropout_rate=0.1):
-    super().__init__()
+        # Add dropout.
+        x = self.dropout(x)
 
-    self.d_model = d_model
-    self.num_layers = num_layers
+        for i in range(self.num_layers):
+            x = self.enc_layers[i](x)
 
-    self.pos_embedding = Embedding(
-        vocab_size=vocab_size, d_model=d_model)
-
-    self.enc_layers = [
-        EncoderLayer(d_model=d_model,
-                     num_heads=num_heads,
-                     dff=dff,
-                     dropout_rate=dropout_rate)
-        for _ in range(num_layers)]
-    self.dropout = tf.keras.layers.Dropout(dropout_rate)
-
-  def call(self, x):
-    # `x` is token-IDs shape: (batch, seq_len)
-    x = self.pos_embedding(x)  # Shape `(batch_size, seq_len, d_model)`.
-
-    # Add dropout.
-    x = self.dropout(x)
-
-    for i in range(self.num_layers):
-      x = self.enc_layers[i](x)
-
-    return x  # Shape `(batch_size, seq_len, d_model)`
+        return x  # Shape `(batch_size, seq_len, d_model)` Shape `(batch_size, seq_len, d_model)`
+# Shape `(batch_size, seq_len, d_model)`
 
 class CrossAttention(BaseAttention):
   def call(self, x, context):
@@ -241,21 +202,6 @@ class CrossAttention(BaseAttention):
 
     return x
 
-class EpisodicAttention(BaseAttention):
-  def call(self, x, context):
-    attn_output, attn_scores = self.mha(
-        query=context,
-        key=context,
-        value=x ,
-        return_attention_scores=True)
-
-    # Cache the attention scores for plotting later.
-    self.last_attn_scores = attn_scores
-
-    x = self.add([x, attn_output])
-    x = self.layernorm(x)
-
-    return x
 
 class DecoderLayer(tf.keras.layers.Layer):
   def __init__(self,
@@ -288,36 +234,6 @@ class DecoderLayer(tf.keras.layers.Layer):
     x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
     return x
 
-class EpisodicDecoderLayer(tf.keras.layers.Layer):
-  def __init__(self,
-               *,
-               d_model,
-               num_heads,
-               dff,
-               dropout_rate=0.1):
-    super(EpisodicDecoderLayer, self).__init__()
-
-    self.self_attention = GlobalSelfAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.episodic_attention = EpisodicAttention(
-        num_heads=num_heads,
-        key_dim=d_model,
-        dropout=dropout_rate)
-
-    self.ffn = FeedForward(d_model, dff)
-
-  def call(self, x, context):
-    x = self.self_attention(x=x)
-    x = self.episodic_attention(x=x, context=context)
-
-    # Cache the last attention scores for plotting later
-    self.last_attn_scores = self.episodic_attention.last_attn_scores
-
-    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
-    return x
 
 class Decoder(tf.keras.layers.Layer):
   def __init__(self, *, num_layers, d_model, num_heads, dff, vocab_size,
@@ -351,37 +267,6 @@ class Decoder(tf.keras.layers.Layer):
     # The shape of x is (batch_size, target_seq_len, d_model).
     return x
 
-class EpisodicDecoder(tf.keras.layers.Layer):
-  def __init__(self, *, num_layers, d_model, num_heads, dff, vocab_size,
-               dropout_rate=0.1):
-    super(EpisodicDecoder, self).__init__()
-
-    self.d_model = d_model
-    self.num_layers = num_layers
-
-    self.pos_embedding = PositionalEmbedding(vocab_size=vocab_size,
-                                             d_model=d_model)
-    self.dropout = tf.keras.layers.Dropout(dropout_rate)
-    self.dec_layers = [
-        EpisodicDecoderLayer(d_model=d_model, num_heads=num_heads,
-                     dff=dff, dropout_rate=dropout_rate)
-        for _ in range(num_layers)]
-
-    self.last_attn_scores = None
-
-  def call(self, x, context):
-    # `x` is token-IDs shape (batch, target_seq_len)
-    x = self.pos_embedding(x)  # (batch_size, target_seq_len, d_model)
-
-    x = self.dropout(x)
-
-    for i in range(self.num_layers):
-      x  = self.dec_layers[i](x, context)
-
-    self.last_attn_scores = self.dec_layers[-1].last_attn_scores
-
-    # The shape of x is (batch_size, target_seq_len, d_model).
-    return x
 
 class Transformer(tf.keras.Model):
   def __init__(self, *, num_layers, d_model, num_heads, dff,
@@ -421,30 +306,6 @@ class Transformer(tf.keras.Model):
     # Return the final output and the attention weights.
     return logits
 
-class Abstracter(tf.keras.Model):
-  def __init__(self, *, num_layers, d_model, num_heads, dff,
-               input_vocab_size, target_vocab_size, dropout_rate=0.1):
-    super().__init__()
-    self.encoder = Encoder(num_layers=num_layers, d_model=d_model,
-                           num_heads=num_heads, dff=dff,
-                           vocab_size=input_vocab_size,
-                           dropout_rate=dropout_rate)
-
-    self.decoder = EpisodicDecoder(num_layers=num_layers, d_model=d_model,
-                           num_heads=num_heads, dff=dff,
-                           vocab_size=target_vocab_size,
-                           dropout_rate=dropout_rate)
-
-  def call(self, inputs):
-    # To use a Keras model with `.fit` you must pass all your inputs in the
-    # first argument.
-    context, x  = inputs
-
-    context = self.encoder(context)  # (batch_size, context_len, d_model)
-
-    x = self.decoder(x, context)  # (batch_size, target_len, d_model)
-
-    return x
 
 class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
   def __init__(self, d_model, warmup_steps=4000):
@@ -462,29 +323,52 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
     return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
-def masked_loss(label, pred):
-  mask = label != 0
-  loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
-    from_logits=True, reduction='none')
-  loss = loss_object(label, pred)
 
-  mask = tf.cast(mask, dtype=loss.dtype)
-  loss *= mask
+class TeacherForcingAccuracy(tf.keras.metrics.Metric):
 
-  loss = tf.reduce_sum(loss)/tf.reduce_sum(mask)
-  return loss
+  def __init__(self, name='teacher_forcing_accuracy', ignore_class=None, **kwargs):
+    super(TeacherForcingAccuracy, self).__init__(name=name, **kwargs)
+    if ignore_class is None or isinstance(ignore_class, int):
+      self.ignore_class = ignore_class
+    else:
+      raise ValueError('`ignore_class` must be None or an integer')
 
+    self.correct_preds = self.add_weight(name='correct_preds', initializer='zeros')
+    self.mask_count = self.add_weight(name='mask_count', initializer='zeros')
 
-def masked_accuracy(label, pred):
-  pred = tf.argmax(pred, axis=2)
-  label = tf.cast(label, pred.dtype)
-  match = label == pred
+  def update_state(self, label, pred, sample_weight=None):
+    pred = tf.argmax(pred, axis=2)
+    label = tf.cast(label, pred.dtype)
+    match = label == pred
 
-  mask = label != 0
+    if self.ignore_class is None:
+      mask = tf.ones_like(label, dtype=tf.bool)
+    else:
+      mask = label != self.ignore_class
 
-  match = match & mask
+    match = match & mask
 
-  match = tf.cast(match, dtype=tf.float32)
-  mask = tf.cast(mask, dtype=tf.float32)
-  return tf.reduce_sum(match)/tf.reduce_sum(mask)
+    match = tf.cast(match, dtype=tf.float32)
+    mask = tf.cast(mask, dtype=tf.float32)
 
+    self.correct_preds.assign_add(tf.reduce_sum(match))
+    self.mask_count.assign_add(tf.reduce_sum(mask))
+
+  def result(self):
+    return self.correct_preds / self.mask_count
+
+# def masked_accuracy(label, pred):
+#   pred = tf.argmax(pred, axis=2)
+#   label = tf.cast(label, pred.dtype)
+#   match = label == pred
+
+#   mask = label != 0
+
+#   match = match & mask
+
+#   match = tf.cast(match, dtype=tf.float32)
+#   mask = tf.cast(mask, dtype=tf.float32)
+#   return tf.reduce_sum(match)/tf.reduce_sum(mask)
+
+# TODO: some of these should perhaps be in a separate module (the parts not strictly related to transformers)
+# e.g. teacher-forcing accuracy, etc.
