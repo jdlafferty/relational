@@ -21,6 +21,11 @@
 \usepackage{dsfont}
 \usepackage{wrapfig}
 
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
 \renewcommand{\d}{\mathrm{d}}
 \newcommand{\E}{\operatorname{\mathbb E}}
 
@@ -124,6 +129,7 @@
 
 %\input{outline}
 \input{transformer_modules}
+\input{functions}
 
 
 %\input{awni_outline}
