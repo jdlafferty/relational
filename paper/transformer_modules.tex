@@ -39,8 +39,8 @@ states to influence the transformation of abstract states.
     \vspace{-3mm}
     \begin{center}
     \begin{tabular}{cc}
-        \hskip-2pt\includegraphics[width=.50\textwidth]{figures/algorithm-diagram2} &
-        \hskip-10pt\includegraphics[width=.55\textwidth]{figures/algorithm-diagram3} 
+        \hskip2pt\includegraphics[width=.46\textwidth]{figures/algorithm-diagram2-crop} &
+        \hskip5pt\includegraphics[width=.47\textwidth]{figures/algorithm-diagram3-crop} 
     \end{tabular}
     \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. Left: In general, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. The architecture is motivated by principles of brain organization separating sensory processing from abstract reasoning and decision making. Right: Simplification in terms of a transformer architecture, where the abstract symbols depend only on relations between encoder states. %This allows abstract states---e.g., emergent symbols---to be shared and reused across problems and %domains, leading to data efficiency and generalization. When Encoder/Decoder states appear together %repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct %connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation %and automatization). 
     }
@@ -111,7 +111,7 @@ Algorithmically, task performance can be described as follows. The visual arrang
 \begin{tabular}{ccc}
 \includegraphics[width=.23\textwidth]{figures/set_example}
 & &\\[-1.45in]
-&\renewcommand{\arraystretch}{1.4}
+&\hskip10pt\ &\renewcommand{\arraystretch}{1.4}
 \begin{small}
 \begin{tabular}{|c|c|c|}
 %\hline
@@ -131,7 +131,7 @@ $\frac{1}{3}(A_1+A_2+A_3)$ & $\frac{1}{2}(A_1+A_2)$ & $\frac{1}{2}(A_1+A_2)$ \\
 %& \\[-1.45in]
 %&&\includegraphics[width=.23\textwidth]{ppo-results/epoch_14_decision_boundaries} \vspace{-2mm} \\ 
 \\[10pt]
-\scriptsize (a) SET game & \scriptsize (b) Example of symbols/attention 
+\scriptsize (a) SET game && \scriptsize (b) Example of symbols/attention 
 \end{tabular}
 \vspace{-1mm}
 \end{center}
