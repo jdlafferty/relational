@@ -1,6 +1,6 @@
 
 \section{Function classes}
-\label{sec:functions}
+\label{sec:function_spaces}
 
 \def\rdot{\bigcdot}
 \def\F{{\mathfrak{F}}}
@@ -9,30 +9,28 @@ In this section we discuss function classes for relational learning and symbolic
 
 \subsection{Robustness and error correction}
 
-\section{Recovering relations from transformed abstract symbols}
-
-\textit{What are properties of the abstract symbols that allow the relation tensor 
-to be identified from the symbols transformed by relational cross-attention?}
-
-For the relational cross-attention we have a $k\times k$ relation 
-computed as 
+For the relational cross-attention mechanism used by abstrators, an $m\times m$ relation 
+is computed as 
 \begin{equation}
-  R = \mbox{Softmax}(Q^T K)
+  R = \mbox{Softmax}(K^T Q)
 \end{equation}
-where $Q = W_Q E\in \reals^{d\times k}$ and $K = W_K E\in \reals^{d\times k}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of 
-non-negative $k$-vectors summing to one. Let $S\in\reals^{d\times k}$ be
-the matrix of symbols. The relational cross attention then transforms the symbols by 
+where $Q = W_Q E\in \reals^{d\times m}$ and $K = W_K E\in \reals^{d\times m}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of 
+non-negative $k$-vectors summing to one. Let $(s_1,\ldots, s_m) = S\in\reals^{d\times m}$ be
+a matrix of symbols. The relational cross attention then transforms the symbols by 
 \begin{equation}
   A = SR
 \end{equation}
-so that each abstract variable $A_j$ is in the convex hull of the set of symbols.
-More generally, we can assume that $A$ is transformed and corrupted with additive noise:
+so that each abstract variable $a_j$ is in the convex hull of the set of symbols.
+As long as $S$ has rank $m$, this a linear transformation and the relations are 
+uniquely determined from the abstract symbols. 
+
+More generally, suppose that the symbols $S$ are transformed to $A$ and corrupted with additive noise:
 \begin{equation}
   A = SR + \Xi
 \end{equation}
-where a fraction $\epsilon$ of the entries of $\Xi$ are drawn from an adversarial noise distribution, and the other entries are zero; dropout noise is also possible.
+where a fraction $\epsilon$ of the entries of $\Xi$ are drawn from an adversarial noise distribution, and the other entries are zero; dropout noise is also possible. 
 
-This can be considered under the framework of ``model repair'' (arXiv:2005.09912). In particular, we can use the  robust regression estimator
+This can be studied as an  instance of compressed sensing and ``model repair'' \citep{model_repair}.  In particular, we can use the  robust regression estimator
 \begin{equation}
   \hat r_j = \argmin_{u \in\reals^k} \| a_j - S u\|_1 \label{eq:lp}
 \end{equation}
