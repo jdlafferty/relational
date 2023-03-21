@@ -1,0 +1,115 @@
+
+\section{Function classes}
+\label{sec:functions}
+
+\def\rdot{\bigcdot}
+\def\F{{\mathfrak{F}}}
+
+In this section we discuss function classes for relational learning and symbolic message passing.
+
+\subsection{Robustness and error correction}
+
+\section{Recovering relations from transformed abstract symbols}
+
+\textit{What are properties of the abstract symbols that allow the relation tensor 
+to be identified from the symbols transformed by relational cross-attention?}
+
+For the relational cross-attention we have a $k\times k$ relation 
+computed as 
+\begin{equation}
+  R = \mbox{Softmax}(Q^T K)
+\end{equation}
+where $Q = W_Q E\in \reals^{d\times k}$ and $K = W_K E\in \reals^{d\times k}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of 
+non-negative $k$-vectors summing to one. Let $S\in\reals^{d\times k}$ be
+the matrix of symbols. The relational cross attention then transforms the symbols by 
+\begin{equation}
+  A = SR
+\end{equation}
+so that each abstract variable $A_j$ is in the convex hull of the set of symbols.
+More generally, we can assume that $A$ is transformed and corrupted with additive noise:
+\begin{equation}
+  A = SR + \Xi
+\end{equation}
+where a fraction $\epsilon$ of the entries of $\Xi$ are drawn from an adversarial noise distribution, and the other entries are zero; dropout noise is also possible.
+
+This can be considered under the framework of ``model repair'' (arXiv:2005.09912). In particular, we can use the  robust regression estimator
+\begin{equation}
+  \hat r_j = \argmin_{u \in\reals^k} \| a_j - S u\|_1 \label{eq:lp}
+\end{equation}
+where $A = (a_1,a_2,\ldots, a_k)$ with columns $a_j\in\reals^d$.
+The main lemma in the model repair paper states that the following two conditions suffice:
+
+\underline{Condition A:}
+  There exists some $\sigma^2$, such that for any fixed $c_1,...,c_d$ satisfying $\max_i|c_i|\leq 1$,
+  \begin{equation}
+    \left\|\frac{1}{d}\sum_{i=1}^d c_i s_{i\rdot} \right\|^2\leq \frac{\sigma^2 k}{d},
+  \end{equation}
+with high probability, where $s_{i\rdot}\in\reals^k$ is the $i$th row of $S$.
+  
+\underline{Condition B:}
+  There exist $\underline{\kappa}$ and $\overline{\kappa}$, such that
+  \begin{eqnarray}
+  \label{eq:l1-upper-A} \inf_{\|\Delta\|=1}\frac{1}{d}\sum_{i=1}^d|s_{i\rdot}^T\Delta| &\geq& \underline{\kappa}, \\
+  \label{eq:l2-upper-A} \sup_{\|\Delta\|=1}\frac{1}{d}\sum_{i=1}^d|s_{i\rdot}^T\Delta|^2 &\leq& \overline{\kappa}^2,
+  \end{eqnarray}
+  with high probability.
+
+\begin{thm}\label{thm:main-improved}
+  Assume the symbol matrix $S$ satisfies Condition A and Condition B. Then if
+  \begin{equation}
+  \frac{\overline{\kappa}\sqrt{\frac{k}{d}\log\left(\frac{e d}{k}\right)}+\epsilon\sigma\sqrt{\frac{k}{d}}}{\underline{\kappa}(1-\epsilon)}
+  \end{equation}
+  is sufficiently small, the linear program \eqref{eq:lp} recovers $R$, so that $\hat r_j = r_j$ with high probability.
+  \end{thm}
+
+The condition is essentially that 
+  \begin{equation}
+    \frac{1}{1-\epsilon} \sqrt{\frac{k}{d}}
+  \end{equation}
+  is small, meaning that the dimension $d$ of the symbols needs to be sufficiently large relative 
+  to the dimension $k$ of the relation.
+
+  \section{Sparse, high-dimensional relations} 
+
+ The above setting ensures enough redundancy to recover the relations, constraining the number of symbols $k$ to be small relative to the symbol dimension $d$. This is not appropriate in the situation where the relations are over a large number $m$ of elements (for example the contents of the entire episodic memory).
+
+ In this setting we assume that the relation tensor $R \in \reals^{m\times m}$ is sparse; that is, 
+ each column $r_j \in \Delta_m$ has at most $k$ nonzero entries: $\|r_j\|_0 \leq k$. To recover the relation 
+ we now use the robust lasso estimator (another linear program)
+\begin{equation}
+  \hat r_j = \argmin_{u \in\reals^k} \| a_j - S u\|_1 + \lambda\|u\|_1. \label{eq:rlasso}
+\end{equation}  
+Here we have an analogous theorem:
+\begin{thm}
+  Assume the symbol matrix $S$ satisfies Condition A and Condition B, and some other assumptions hold (not detailed). Suppose that 
+\begin{eqnarray}
+  \frac{\overline{\kappa}/\underline{\kappa}}{1-\epsilon}\sqrt{\frac{k}{d}\log(2m)}\leq c,
+\end{eqnarray}
+for some sufficiently small constant $c>0$. Then the robust lasso estimator \eqref{eq:rlasso} satisfies
+\begin{equation}
+  \|\hat r_j - r_j\| \leq C \frac{\overline{\kappa}/\underline{\kappa}^2}{1-\epsilon} \sqrt{\frac{\sigma^2 k}{d} \log(2m)}
+\end{equation}
+for some constant $C$.
+\end{thm}
+This implies that we can accurately recover the relation tensor in the high dimensional setting, even when many of the entries of the transformed abstract symbols are corrupted.
+
+\section{Prediction without recovering the relations}
+
+The above discussion shows how the relation tensor can be recovered from the transformed symbols, even under adversarial noise, assuming there is sufficient redundancy in the symbols. We'd like to go further, and show that it is possible to predict as well from the transformed symbols as from the relations, without explicitly recovering the relations. 
+
+A possible route to analyzing this is through complexity measures.  
+Suppose that we have a class of binary functions $\F_R$ on relations. Estimating a function $f\in\F_R$ 
+from examples is a relational learning task---we have examples $y_i = f(R_i) + \eta_i$ and want to estimate $f$. The Rademacher complexity or 
+VC dimension of $\F_R$ characterizes the sample complexity of such tasks.
+
+An abstractor 
+maps the relations to abstract symbols; the corresponding class of binary functions is denoted $\mathfrak{F}_A$. If we can 
+show that the complexity of $\mathfrak{F}_A$ is approximately equal to the complexity of $\mathfrak{F}_R$,  
+  this would imply that the relational task can be performed equally well on the abstract symbols. 
+
+Typically for robust regression, where noise is added to the covariates, accurate prediction requires $\epsilon\to 0$, so that the fraction of corrupted variables is small. Here we may have a setting where 
+$\epsilon$ can remain constant and accurate prediction is still possible.
+
+
+
+
