@@ -192,3 +192,25 @@ Suppose a relation is learned such that  $\braket{E_i}{E_j}$ is large if cards $
  \end{minipage}%
 \end{figure}
 \end{comment}
+
+\subsection{Configuring abstractors for different tasks}
+\def\module#1{{\small\texttt{#1}}}
+
+Abstractors can be used to approach a variety of relational learning tasks. In the case of classification 
+or regression, the default architecture would be 
+$$\module{Encoder} \rightarrow \module{Abstractor}$$
+where the discriminant or regression function is computed as $f(A)$ where $A$ is the final abstract state.
+
+For relational sequence-to-sequence tasks, the default architecture is 
+$$\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}$$
+In a ``fully relational'' task, the decoder can only attend to the abstractor, and therefore 
+only uses relational information from the input. An example is sorting objects; we give 
+experimental details for this example in Section~\ref{sec:experiments}.
+In a ``partially-relational'' task, the decoder will attend to both the abstractor and encoder modules. In such cases, relational information is important to solving the task, but information about input ``values'' is 
+also important. This provides an extension of general sequence-to-sequence models with transformers.
+
+
+We note that composing abstractor modules, as in the architecture
+$$\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}$$
+enables learning of higher order relations. To explain why, 
+
