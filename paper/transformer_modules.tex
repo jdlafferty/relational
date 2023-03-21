@@ -209,11 +209,10 @@ In a ``partially-relational'' task, the decoder will attend to both the abstract
 also important. This provides an extension of general sequence-to-sequence models with transformers.
 
 
-We note learning higher order relations is made possible by composing 
+We note that learning higher order relations is made possible by composing 
 abstractors, as in the architecture
 $$\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}.$$
-In particular, since a 
-one-layer abstractor is able to compute arbitrary functions of each object's relations, 
+Since a one-layer abstractor is able to compute arbitrary functions of each object's relations, 
 chaining together abstractors allows the computation of relations on relations. We formalize 
 these comments in Section~\ref{sec:function_spaces}.
 
