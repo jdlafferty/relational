@@ -8,25 +8,21 @@
 \def\softmax#1{\mbox{Softmax}\left(#1\right)}
 \def\emph#1{\vskip5pt\noindent{\it\bfseries #1}}
 \def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
-\def\qkv#1#2#3{Q\!=\!#1,\; K\!=\!#2,\; V\!=\!#3}
+\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
 
 \addtocounter{section}{2}
 \section{Relational abstractors as transformer modules}
 
-In the previous section we presented relational learning 
-in terms of symbolic message passing operations. In this section, 
-we formulate these operations as extensions of transformer architectures
-in a way that preserves the separation between sensory processing and 
-abstract reasoning motivated by principles of brain organization.
+In the previous section relational learning 
+in terms of symbolic message passing operations, where the connection to transformers 
+was suggested. In this section, we make the connection more explicit, formulating 
+these operations as extensions of transformer architectures.
 
-The success of transformers lies in combining the inferential capabilities of deep learning with the use of attentional mechanisms to support richly context-sensitive processing \citep{transformers,vaswani2017attention,kerg2020untangling}. At the same time, it is clear that transformers are missing core capabilities required for modeling human thought (e.g., \cite{mahowald2023dissociating}).  In particular, they lack critical mechanisms required to emulate forms of flexibility and efficiency exhibited by the human brain, including an ability to support abstraction from limited data. The algorithmic challenge is to provide ways of binding domain-specific information to low dimensional, abstract representations that can be used to compute a given function in any setting for which it is relevant. 
 
-The ESBN architecture \citep{esbn} enables learning of simple relations and sequential rules. The abstractor 
-framework proposed here extends ESBN to enable more complex, higher order forms of relations by combining it with both the attentional mechanisms and hierarchical structure of transformers. This creates a powerful combination of deep learning and relational learning that enables abstraction and generalization from limited data.
 
 \subsection{Relational learning using transformers}
 
-In the abstractor framework, processing occurs in encoder/decoder modules that handle particular types of information, separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate through cross attention mechanisms that couple abstract states (or ``symbols'') with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
+In the abstractor framework, processing occurs in encoder/decoder modules that handle particular types of information, separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate through cross attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
 The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder and decoder states are vectors
 that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled  
@@ -57,7 +53,7 @@ In transformers, attention is used to access convex combinations of vectors call
     & V R  \\
     & R \equiv \softmax{K^T Q}
 \end{align*}
-with  the $\softmax{\cdot}$ operation applied column-wise. The $m\times m$ matrix $R = (r_{ij})$ is thought of 
+with  the $\softmax{\cdot}$ operation applied to the columns, so that the rows sum to one. The $m\times m$ matrix $R = (r_{ij})$ is thought of 
 as a relation between keys and values, computed in terms of inner products, with column $r_j$ 
 encoding the relations between query $q_j$ and the keys $k_1, k_2, \ldots, k_m$. Thus, the transformed 
 values are 

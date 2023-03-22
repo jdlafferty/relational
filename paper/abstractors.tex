@@ -21,6 +21,14 @@
 \usepackage{dsfont}
 \usepackage{wrapfig}
 
+
+\usepackage{amsmath, amssymb}
+\usepackage{cleveref}
+\usepackage{algorithm2e}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\RestyleAlgo{ruled}
+
 \makeatletter
 \newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
 \newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
@@ -128,6 +136,8 @@
 \end{frontmatter}
 
 %\input{outline}
+\input{intro}
+\input{abstractor_symbolic_awni}
 \input{transformer_modules}
 \input{functions}
 \input{experiments}
