@@ -1,16 +1,5 @@
-\def\bra#1{\langle #1 \vert}
-\def\ket#1{\vert #1 \rangle}
-\def\braket#1#2{\langle #1 \vert #2 \rangle}
-%\def\bind#1#2{\ket{#1}\bra{#2}}
-\def\bind#1#2{\ket{#1}|\ket{#2}}
-\def\bind#1#2{#1 \| #2}
-\let\tilde\widetilde
-\def\softmax#1{\mbox{Softmax}\left(#1\right)}
-\def\emph#1{\vskip5pt\noindent{\it\bfseries #1}}
-\def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
-\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
 
-\addtocounter{section}{2}
+
 \section{Relational abstractors as transformer modules}
 
 In the previous section relational learning 

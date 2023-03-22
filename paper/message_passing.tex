@@ -1,0 +1,88 @@
+
+\newcommand{\MLP}{\text{MLP}}
+\newcommand{\FeedForward}{\text{FeedForward}}
+\newcommand{\Softmax}{\text{Softmax}}
+%\newcommand{\reals}{\mathbb{R}}
+\def\m{m}
+
+
+\section{Relational symbolic message-passing}
+\label{sec:message_passing}
+
+At a high level, the primary function of a relational abstractor is to compute abstract relational features of its inputs. That is, given a set of input objects $o_1, \ldots, o_\m$, the relational abstractor computes a function on the set of pairwise relations between objects $\{ R(o_i, o_j) \}_{i,j}$, where $R(\cdot, \cdot)$ is a relation between a pair of objects; the relations are learned to carry out a specific prediction task.
+
+At the core of relational abstractors is an operation we refer to as \textit{relational symbolic message-passing}. The input to this operation is a relation tensor $R = \left[R(o_i, o_j)\right]_{i,j=1}^\m$, where $R(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an abstractor computes the relation tensor.
+
+The first set of learnable parameters of symbolic message-passing is a set of symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to") a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of those learned input-indpendent symbols is how symbolic message-passing achieves its abstraction.
+
+In relational symbolic message-passing, we perform message-passing on these learned symbolic parameters according to the relation tensor $R$. In general, this message-passing operation can be described as a set-valued function of the form
+\begin{equation}
+    \label{eq:symbolic_message_passing}
+    s_i \leftarrow \text{Update}\Big( s_i, \ \left\{ \left(R[i,j], s_j\right)\right\}_{j\in[m]}\Big), \quad i = 1, \ldots, m
+\end{equation}
+That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed 
+as values on the nodes of a graph, and the relations $R[i,j]$ are naturally viewed as weights on the edges. A simple but important special case of this is
+\begin{equation}
+    \label{eq:linear_symbolic_mp}
+    s_i \leftarrow \sum_{j=1}^{m} R[i,j] s_j, \quad i=1, \ldots, m
+\end{equation}
+In the above, suppose that $d_r = 1$. Otherwise, the above operation is done for each dimension of the relation $R$ and the result is concatenated, as in multi-head attention.
+
+Following message-passing, each updated symbol $s_i$, can be passed through a feedforward neural network $f:\reals^{d_s}\rightarrow \reals^{d_s}$ to compute a non-linear function of the output. %Empirically, a residual connection and layer normalization may be useful, as in a transformer.
+This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors.  The output of relational symbolic message-passing is the set of symbols $A$ at the end of this sequence of message-passing operations. The overall procedure is summarized in Algorithm~\ref{alg:relational_abstractor}. In Section~\ref{sec:function_spaces} we characterize the class of functions on relations that this operation can compute.
+
+\begin{algorithm}[th!]
+    \caption{Relational Abstractor}\label{alg:relational_abstractor}
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \SetKwInOut{LearnableParams}{Learnable Parameters}
+    \SetKwInOut{HyperParams}{Hyper Parameters}
+
+    \Input{Encoder entities: $E = (z_1, \ldots, z_\m) \in \mathbb{R}^{d_e \times m}$}
+    \HyperParams{$L$ (number of layers), $H$ (number of heads), hyperparameters of feedforward network}
+    \LearnableParams{symbols $S \in \reals^{d_s \times m}$, parameters $\{\theta_l\}$ of attention head and feedforward models}
+    \Output{Abstracted sequence: $A = (a_1, \ldots, a_\m) \in \reals^{d_a \times m}$}
+    \vspace{1em}
+
+    $A \gets S$
+
+    \For{$l \gets 1$ \KwTo $L$}{
+        $A \gets \text{SelfAttention}_{\theta_l}(A)$
+
+        $A \gets \crossattend{E}{E}{A}{\theta_l}$
+
+        $A \gets\FeedForward_{\theta_l}(A)$
+        }
+\end{algorithm}
+
+\subsection{Computing the relation tensor with relational cross-attention}
+
+Symbolic message passing is the first of the two main ingredients of abstractors. What remains is to describe how the abstractor computes the relation tensor $R$. This is done through a variant of transformer cross-attention that we refer to as \textit{relational cross-attention}.
+To motivate this, we first describe how we can compute relations between pairs of objects through inner products. The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space, inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
+
+In general, we can formulate inner product relations as the standard Euclidean inner product between a pair of transformed object vectors. That is, $R(o_i, o_j) = \langle \phi(o_i), \psi(o_j) \rangle$. This captures a large class of relation functions. In particular, the theory of reproducing kernel Hilbert spaces implies that any continuous, symmetric function on pairs of objects can be approximated with such functions
+\citep{universal}. Multi-dimensional relation functions can be achieved by stacking multiple such inner products.
+
+We will take the transformations $\phi$ and $\psi$ to be linear, suggestively denoting them $W_Q$ and $W_K$, respectively. For the message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols that is determined by the relations. This can be compactly written as
+\begin{equation}
+    \label{eq:relational_crossattention}
+    \begin{split}
+        A &= S R, \\
+        R &= \Softmax\left((W_K E)^\top (W_Q E)\right),
+    \end{split}
+\end{equation}
+where $S = (s_1, \ldots, s_\m) \in \reals^{d_s \times m}$ is the matrix of symbols and $E 
+= (o_1, \ldots, o_\m) \in \reals^{d_o \times m}$ is the matrix of embeddings of input objects. This is essentially the cross-attention operation of transformers, where the queries and keys both come from the input objects, and the values come from the learned input-independent symbols. Hence, we refer to this operation as relational cross-attention and denote it by $\qkv{E}{E}{S}$. %\text{CrossAttention}(Q \gets E, K \gets E, V \gets $)$
+
+Using relations and message passing as the key operations, the relational abstractor 
+framework is described in Algorithm~\ref{alg:relational_abstractor}. Our presentation suggests 
+a close connection to transformers; we further develop this connection in the following section.
+
+
+
+
+% NOTE / TODO: need to describe what we mean by `relations', `relation functions', `inner product relations', etc. in more detail somewhere? 
+% maybe in intro at high-level
+
+% comment this out
+% \end{document}
