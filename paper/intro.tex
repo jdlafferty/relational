@@ -1,11 +1,11 @@
 \section{Introduction}
 \label{sec:intro}
 
-Relational learning refers to the inference of rules that operate in terms of the pairwise relationship between 
-objects, independent of how the objects may be represented. The relation ``less than'' is applied to natural numbers, ``same color as'' is applied to visual objects, and the relation ``friend of'' is applied to social relationships.Consider the task of sorting objects. For example, a standard 52-card deck of playing cards has 13 ranks in each of four suits, clubs, diamonds, hearts, and spaces. The cards might be sorted using the relation that takes 
+Relational learning refers to the inference of rules that operate in terms of pairwise relationships between 
+objects, independent of how the objects may be represented. Common relations are ``less than'' applied to natural numbers, ``same color as'' applied to visual objects, and ``friend of'' applied to social relationships. Consider the task of sorting objects. For example, a standard 52-card deck of playing cards has 13 ranks in each of four suits, clubs, diamonds, hearts, and spaces. The cards might be sorted using the relation that takes 
 the suit as the primary attribute, and the rank as the secondary attribute; this would be the typical 
 way of ordering cards in a bridge or poker hand. If a sorting algorithm is learned that depends 
-only on the relation between objects, it can in principle be applied in a new domain with little 
+only on the relations between objects, it can in principle be applied in a new domain with little 
 or no modification. 
 
 Reasoning in terms of relations and analogies is a hallmark of natural intelligence. 
@@ -14,7 +14,7 @@ Indeed, the Wisconsin card sorting task \citep{berg} has been used for decades a
 In this paper we propose a framework that casts relational learning in terms of transformers. 
 The success of transformers lies in combining the function approximation capabilities of deep learning with the use of attentional mechanisms to support richly context-sensitive processing \citep{transformers,vaswani2017attention,kerg2020untangling}. Yet it is clear that transformers are missing core capabilities required for modeling human thought (e.g., \cite{mahowald2023dissociating}).  In particular, they lack mechanisms required to emulate forms of flexibility and efficiency exhibited by the human brain, including an ability to support analogy and abstraction from limited data. The algorithmic challenge is to provide ways of binding domain-specific information to low dimensional, abstract representations that can be used to compute a given function in any setting for which it is relevant. 
 
-Our approach is motivated by a type of inductive bias for learning architectures we call the ``relational bottleneck," which is motivated by principles of cognitive neuroscience. Research has shed light on the brain subsystems that are involved when natural intelligence shows an ability to flexibly generalize abstract structure across domains of processing, while also being able to learn complex representations and functions in specific domains and compute these with remarkable efficiency.  In particular, the framework of 
+Our approach is motivated by a type of inductive bias for relational learning architectures we call the ``relational bottleneck," which is motivated by principles of cognitive neuroscience. Research has shed light on the brain subsystems that are involved when natural intelligence shows an ability to flexibly generalize abstract structure across domains of processing, while also being able to learn complex representations and functions in specific domains and compute these with remarkable efficiency.  In particular, the framework of 
 complementary learning systems \citep{McClelland:1995, Kumaran:2016} describes two distinct types of neural mechanisms for learning and memory around which the brain is organized, implementing a tradeoff between slow, incremental forms of learning required to encode stable statistical structure present in the environment (semantic memory), and the ability to rapidly encode and remember novel associations and form analogies (episodic memory). In its most basic and simplified form, the ``relational bottleneck'' imposes an inductive bias that limits the flow of information from sensory subsystems to reasoning and decision making subsystems to relations, as computed through inner products between distributed representations. In this paper we present a framework that casts this inductive bias in terms of 
 an extension of transformers, where specific types of attention mechanisms enforce the relational bottleneck, 
 and certain types of layers implement a form of abstraction and relational reasoning.
