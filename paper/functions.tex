@@ -145,21 +145,14 @@ We saw in the previous section that a one-layer abstracter is able to compute ar
 \subsection{Robustness and error correction}
 
 For the relational cross-attention mechanism used by abstrators, an $m\times m$ relation
-is computed as
-\begin{equation}
-  R = \mbox{Softmax}(K^T Q)
-\end{equation}
-where $Q = W_Q E\in \reals^{d\times m}$ and $K = W_K E\in \reals^{d\times m}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of
-non-negative $k$-vectors summing to one. Let $(s_1,\ldots, s_m) = S\in\reals^{d\times m}$ be
-a matrix of symbols. The relational cross attention then transforms the symbols by
-\begin{equation}
-  A = SR
-\end{equation}
-so that each abstract variable $a_j$ is in the convex hull of the set of symbols.
-As long as $S$ has rank $m$, relations are
-uniquely determined from the abstract symbols.
+is computed as  $R = \mbox{Softmax}(K^T Q)$
+and relational cross attention then transforms the symbols by
+$A = SR$ so that each abstract variable $a_j$ is in the convex hull of the set of symbols.
+As long as $S$ has rank $m$, relations are uniquely determined from the abstract symbols.
+Here we point out how the transformed symbols can be robust to noise if the symbols are 
+sufficiently redundant.
 
-More generally, suppose that the symbols $S$ are transformed to $A$ and corrupted with additive noise:
+Specifically, suppose that the symbols $S$ are transformed to $A$ and corrupted with additive noise:
 \begin{equation}
   A = SR + \Xi
 \end{equation}

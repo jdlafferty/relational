@@ -23,26 +23,32 @@ states to influence the transformation of abstract states.
 \begin{figure}[t]
     \vspace{-3mm}
     \begin{center}
-    \begin{tabular}{cc}
-        \hskip2pt\includegraphics[width=.46\textwidth]{figures/algorithm-diagram2-crop} &
-        \hskip5pt\includegraphics[width=.47\textwidth]{figures/algorithm-diagram3-crop}
+    \begin{tabular}{c}
+        \hskip5pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram3-crop}
     \end{tabular}
-    \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. Left: In general, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. The architecture is motivated by principles of brain organization separating sensory processing from abstract reasoning and decision making. Right: Simplification in terms of a transformer architecture, where the abstract symbols depend only on relations between encoder states. %This allows abstract states---e.g., emergent symbols---to be shared and reused across problems and %domains, leading to data efficiency and generalization. When Encoder/Decoder states appear together %repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct %connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation %and automatization).
-    }
+    \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. For purely relational reasining the abstract symbols depend only on relations between encoder states, which is a form of the ``relational bottleneck.''}
     \label{fig:algo}
     \vskip-12pt
     \end{center}
 \end{figure}
 
+
+
 \subsection{Relational cross-attention}
 
-
-In transformers, attention is used to access convex combinations of vectors called \text{values}. The weights are normalized inner products between other vectors called the keys and queries, after mapping each with a separate, learned linear transformation. If the queries are the columns of a matrix $Q = (q_1,\ldots, q_m)\in\reals^{d_1\times m}$, the keys are the columns of a matrix $K = (k_1, \ldots, k_m)\in\reals^{d_1\times m}$, and the values are the columns a matrix $V\in\reals^{d_2\times m}$, then the cross-attention mechanism computes the convex combination in the column space of $V = (v_1, \ldots, v_m)$ given by
-\begin{align*}
-    & V R  \\
-    & R \equiv \softmax{K^T Q}
-\end{align*}
-with  the $\softmax{\cdot}$ operation applied to the columns, so that the rows sum to one. The $m\times m$ matrix $R = (r_{ij})$ is thought of 
+In the message passing message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols that is determined by the relations. Renaming the linear mappings of \eqref{eq:relation_innerproduct} as $W_Q$ and $W_K$, this can be compactly written as
+\begin{equation}
+    \label{eq:relational_crossattention}
+    \begin{split}
+        A &= S R, \\
+        R &= \Softmax\left((W_K E)^\top (W_Q E)\right) = \Softmax\left(K^\top Q\right),
+    \end{split}
+\end{equation}
+where $S = (s_1, \ldots, s_\m) \in \reals^{d_s \times m}$ is the matrix of symbols and $E
+= (o_1, \ldots, o_\m) \in \reals^{d_o \times \m}$ is the matrix of embeddings of input objects. 
+The softmax operation is applied column-wise, so that each column sums to one across the rows.
+This is essentially the cross-attention operation of transformers, where the queries and keys both come from the input objects, and the values come from the learned input-independent symbols. Hence, we refer to this operation as relational cross-attention and denote it by $\qkv{E}{E}{S}$. 
+The $\m\times \m$ matrix $R = (r_{ij})$ is thought of 
 as a relation between keys and values, computed in terms of inner products, with column $r_j$ 
 encoding the relations between query $q_j$ and the keys $k_1, k_2, \ldots, k_m$. Thus, the transformed 
 values are 
