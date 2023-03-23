@@ -119,6 +119,8 @@
 \def\softmax#1{\mbox{Softmax}\left(#1\right)}
 \def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
 \def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\def\selfattention#1{\mbox{SelfAttention}(#1)}
+\def\crossattention#1#2#3{\qkv{#1}{#2}{#3}}
 \def\crossattend#1#2#3#4{\mbox{CrossAttention}_{#4}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
 
 \renewcommand{\baselinestretch}{1.05}

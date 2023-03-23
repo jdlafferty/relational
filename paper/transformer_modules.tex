@@ -56,19 +56,17 @@ values are
     v_j \leftarrow V r_j = \sum_{i=1}^m r_{ij} v_i .
 \end{equation*}
 
-In standard transformers, the cross-attention mechanism between encoder states $E$ and decoder states $D$
-uses queries $Q = AD$, keys $K = BE$, and values $V = CE$, where the matrices $A,B,C \in\reals^{d\times d}$ are
-linear transformations learned for each attention head.  We denote this with the notation
+In standard transformers, the self-attention operation between encoder 
+states is 
+\begin{equation*}
+    \selfattention{E} \equiv \crossattention{E}{E}{E},
+\end{equation*} 
+and the cross-attention mechanism between encoder states $E$ and decoder states $D$ takes the form 
 \begin{equation*}
      \qkv{D}{E}{E}
 \end{equation*}
-where the linear transformations $A, B, C$ are not shown. The self-attention for the encoder
-states is then
-\begin{equation*}
-    \qkv{E}{E}{E}
-\end{equation*}
 
-Given the context of the encoder states $E$, a sequence of abstractor layers transforms the abstract symbols $A = (a_1,\ldots, a_m)$, using two types of attention: Self-attention $\qkv{A}{A}{A}$ and
+Given the context of the encoder states $E$, a sequence of abstractor layers transforms the abstract symbols $A = (a_1,\ldots, a_m)$, using two types of attention: $\selfattention{E}$ and 
 \textit{relational cross-attention}
 \begin{equation*}
     \qkv{E}{E}{A}.
@@ -80,7 +78,8 @@ encode learned relations and attributes, and can be reused across tasks.
 
 
 Only relational information in the encoder states, computed through inner products,
-is used to transform the abstract variables; no information about the encoder states $E$ is directly accessed by the abstract side. For example, an attention head may learn to be directed toward the relevant dimension of an $E$ state (e.g., the color or shape of an object), without being associated with any particular value along that dimension. If the specific representation of $E$ changes, the same abstract relations will hold as long as the transformed inner products are approximately preserved.
+is used to transform the abstract variables; no information about the encoder states $E$ is directly accessed by the abstract side. For example, an attention head may learn to be directed toward the relevant dimension of an $E$ state (e.g., the color or shape of an object), without being associated with any particular value along that dimension. If the specific representation of $E$ changes, the same abstract relations will hold as long as the transformed inner products are approximately preserved. Thus, an abstractor is constructed to enforce the relational bottleneck 
+no matter which transformations are learned by the attention heads.
 
 
 
