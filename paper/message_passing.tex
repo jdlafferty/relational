@@ -1,7 +1,7 @@
 
-\newcommand{\MLP}{\text{MLP}}
-\newcommand{\FeedForward}{\text{FeedForward}}
-\newcommand{\Softmax}{\text{Softmax}}
+%\newcommand{\MLP}{\text{MLP}}
+%\newcommand{\FeedForward}{\text{FeedForward}}
+%\newcommand{\Softmax}{\text{Softmax}}
 %\newcommand{\reals}{\mathbb{R}}
 \def\m{m}
 
@@ -20,7 +20,7 @@ In relational symbolic message-passing, we perform message-passing on these lear
     \label{eq:symbolic_message_passing}
     s_i \leftarrow \text{Update}\Big( s_i, \ \left\{ \left(R[i,j], s_j\right)\right\}_{j\in[m]}\Big), \quad i = 1, \ldots, m
 \end{equation}
-That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed 
+That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed
 as values on the nodes of a graph, and the relations $R[i,j]$ are naturally viewed as weights on the edges. A simple but important special case of this is
 \begin{equation}
     \label{eq:linear_symbolic_mp}
@@ -63,25 +63,25 @@ To motivate this, we first describe how we can compute relations between pairs o
 In general, we can formulate inner product relations as the standard Euclidean inner product between a pair of transformed object vectors. That is, $R(o_i, o_j) = \langle \phi(o_i), \psi(o_j) \rangle$. This captures a large class of relation functions. In particular, the theory of reproducing kernel Hilbert spaces implies that any continuous, symmetric function on pairs of objects can be approximated with such functions
 \citep{universal}. Multi-dimensional relation functions can be achieved by stacking multiple such inner products.
 
-We will take the transformations $\phi$ and $\psi$ to be linear, suggestively denoting them $W_Q$ and $W_K$, respectively. For the message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols that is determined by the relations. This can be compactly written as
+We will take the transformations $\phi$ and $\psi$ to be linear, suggestively denoting them $W^q$ and $W^k$, respectively. For the message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols that is determined by the relations. This can be compactly written as
 \begin{equation}
     \label{eq:relational_crossattention}
     \begin{split}
         A &= S R, \\
-        R &= \Softmax\left((W_K E)^\top (W_Q E)\right),
+        R &= \Softmax\left((W^k E)^\top (W^q E)\right),
     \end{split}
 \end{equation}
-where $S = (s_1, \ldots, s_\m) \in \reals^{d_s \times m}$ is the matrix of symbols and $E 
+where $S = (s_1, \ldots, s_\m) \in \reals^{d_s \times m}$ is the matrix of symbols and $E
 = (o_1, \ldots, o_\m) \in \reals^{d_o \times m}$ is the matrix of embeddings of input objects. This is essentially the cross-attention operation of transformers, where the queries and keys both come from the input objects, and the values come from the learned input-independent symbols. Hence, we refer to this operation as relational cross-attention and denote it by $\qkv{E}{E}{S}$. %\text{CrossAttention}(Q \gets E, K \gets E, V \gets $)$
 
-Using relations and message passing as the key operations, the relational abstractor 
-framework is described in Algorithm~\ref{alg:relational_abstractor}. Our presentation suggests 
+Using relations and message passing as the key operations, the relational abstractor
+framework is described in Algorithm~\ref{alg:relational_abstractor}. Our presentation suggests
 a close connection to transformers; we further develop this connection in the following section.
 
 
 
 
-% NOTE / TODO: need to describe what we mean by `relations', `relation functions', `inner product relations', etc. in more detail somewhere? 
+% NOTE / TODO: need to describe what we mean by `relations', `relation functions', `inner product relations', etc. in more detail somewhere?
 % maybe in intro at high-level
 
 % comment this out
