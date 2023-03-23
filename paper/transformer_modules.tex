@@ -36,7 +36,7 @@ states to influence the transformation of abstract states.
 
 \subsection{Relational cross-attention}
 
-In the message passing message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols that is determined by the relations. Renaming the linear mappings of \eqref{eq:relation_innerproduct} as $W_Q$ and $W_K$, this can be compactly written as
+In the message passing message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols determined by the relations. Suggestively renaming the linear mappings of \eqref{eq:relation_innerproduct} as $W_Q$ and $W_K$, this can be compactly written as
 \begin{equation}
     \label{eq:relational_crossattention}
     \begin{split}
