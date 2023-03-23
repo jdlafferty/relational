@@ -14,8 +14,8 @@ For the purposes of this analysis, the algorithmic description of symbolic messa
 	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
 	\SetKwInOut{Input}{Input}
 	\SetKwInOut{Output}{Output}
-	\SetKwInOut{LearnableParams}{Learnable Parameters}
-	\SetKwInOut{HyperParams}{Hyper Parameters}
+	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
+	\SetKwInOut{HyperParams}{Hyperparameters}
 	
 	\Input{Relation tensor: $R \in \mathbb{R}^{n \times n \times d_r}$}
 	\HyperParams{$L$ (number of steps/layers), hyperparameters of feedforward networks}
@@ -23,7 +23,7 @@ For the purposes of this analysis, the algorithmic description of symbolic messa
 	\Output{Abstracted sequence: $\boldsymbol{a} = (a_1, ..., a_n) \in \reals^{d_a \times n}$}
 	\vspace{1em}
 	
-	$\boldsymbol{a} \gets \boldsymbol{s}$
+	$A \gets S$
 	
 	\For{$l \gets 1$ \KwTo $L$}{
 		$a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, ..., n$

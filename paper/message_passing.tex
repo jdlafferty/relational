@@ -33,25 +33,24 @@ This message-passing operation can be repeated multiple times to iteratively upd
 
 \begin{algorithm}[th!]
     \caption{Relational Abstractor}\label{alg:relational_abstractor}
+    \SetKwFor{For}{for}{do}{end}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
-    \SetKwInOut{LearnableParams}{Learnable Parameters}
-    \SetKwInOut{HyperParams}{Hyper Parameters}
+    \SetKwInOut{LearnableParams}{Learnable parameters{\ }}
+    \SetKwInOut{HyperParams}{Hyperparameters}
 
     \Input{Encoder entities: $E = (z_1, \ldots, z_\m) \in \mathbb{R}^{d_e \times m}$}
-    \HyperParams{$L$ (number of layers), $H$ (number of heads), hyperparameters of feedforward network}
-    \LearnableParams{symbols $S \in \reals^{d_s \times m}$, parameters $\{\theta_l\}$ of attention head and feedforward models}
+    \HyperParams{$L$ (number of layers), $H$ (number of heads), feedforward network structure}
+    \LearnableParams{Symbols $S \in \reals^{d_s \times m}$, parameters $\{\theta_l\}$ of attention heads and feedforward models}
     \Output{Abstracted sequence: $A = (a_1, \ldots, a_\m) \in \reals^{d_a \times m}$}
     \vspace{1em}
 
     $A \gets S$
 
     \For{$l \gets 1$ \KwTo $L$}{
-        $A \gets \text{SelfAttention}_{\theta_l}(A)$
-
-        $A \gets \crossattend{E}{E}{A}{\theta_l}$
-
-        $A \gets\FeedForward_{\theta_l}(A)$
+        $A \gets \text{SelfAttention}_{\theta_l}(A)$\;
+        $A \gets \crossattend{E}{E}{A}{\theta_l}$\;
+        $A \gets\FeedForward_{\theta_l}(A)$\;
         }
 \end{algorithm}
 
