@@ -21,6 +21,14 @@
 \usepackage{dsfont}
 \usepackage{wrapfig}
 
+
+\usepackage{amsmath, amssymb}
+\usepackage{cleveref}
+\usepackage{algorithm2e}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\RestyleAlgo{ruled}
+
 \makeatletter
 \newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
 \newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
@@ -101,6 +109,19 @@
 \newcommand{\blue}{\color{blue}}
 \newcommand{\nb}[1]{\texttt{\blue[#1]}}
 
+\def\bra#1{\langle #1 \vert}
+\def\ket#1{\vert #1 \rangle}
+\def\braket#1#2{\langle #1 \vert #2 \rangle}
+%\def\bind#1#2{\ket{#1}\bra{#2}}
+\def\bind#1#2{\ket{#1}|\ket{#2}}
+\def\bind#1#2{#1 \| #2}
+\let\tilde\widetilde
+\def\softmax#1{\mbox{Softmax}\left(#1\right)}
+\def\emph#1{\vskip5pt\noindent{\it\bfseries #1}}
+\def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
+\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\def\crossattend#1#2#3#4{\mbox{CrossAttention}_{#4}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+
 \renewcommand{\baselinestretch}{1.05}
 
 \usepackage{cleveref}
@@ -137,7 +158,8 @@
 \end{frontmatter}
 
 %\input{outline}
-\input{abstractor_symbolic_mp}
+\input{intro}
+\input{message_passing}
 \input{transformer_modules}
 \input{functions}
 \input{experiments}

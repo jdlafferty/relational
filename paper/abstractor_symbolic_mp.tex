@@ -1,9 +1,8 @@
-% comment these out
-% \documentclass{article}
-% \usepackage[utf8]{inputenc}
-% \usepackage[letterpaper, total={6in, 9in}]{geometry}
-% \usepackage{graphicx}
 
+\newcommand{\MLP}{\text{MLP}}
+\newcommand{\FeedForward}{\text{FeedForward}}
+\newcommand{\Softmax}{\text{Softmax}}
+%\newcommand{\reals}{\mathbb{R}}
 
 
 
@@ -35,13 +34,13 @@ That is, the value of the $i$th symbol is updated as a function of the set of tu
 
 In the above, suppose that $d_r = 1$. Otherwise, the above operation is done for each dimension of the relation $R$ and the result is concatenated, as in multi-head attention.
 
-Following message-passing, each updated symbol $s_i'$, can be passed through a feedforward neural network to compute a non-linear function of the output. Empirically, a residual connection and layer normalization may be useful, as in a transformer.
+Following message-passing, each updated symbol $s_i'$, can be passed through a feedforward neural network $f:\reals^{d_s}\rightarrow \reals^{d_s}$ to compute a non-linear function of the output. Empirically, a residual connection and layer normalization may be useful, as in a transformer.
 
 This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors. We can index the updated symbolic vectors at layer $l$ by $(s_1^{(l)}, ..., s_n^{(l)})$. The output of relational symbolic message-passing is the set of symbols at the end of this sequence of mesage-passing operations. In \Cref{sec:function_spaces} we characterize the class of functions on relations that this operation can compute.
 
 \subsection{Computing the Relation Tensor via Relational Cross-Attention}
 
-The above subsection describes the first of the two main ingredients of Abstractors. What remains is to describe the Abstractor computes the relation tensor $R$. This is done through a variant of transformer cross-attention that we refer to as \textit{relational cross-attention}.
+The above subsection describes the first of the two main ingredients of abstractors. What remains is to describe how the abstractor computes the relation tensor $R$. This is done through a variant of transformer cross-attention that we refer to as \textit{relational cross-attention}.
 
 To motivate this, we first describe how we can compute `relations' between pairs of object through inner products. The inner product operation is a natural way to capture notions of `relations' and `similarity'. In euclidean space, inner products capture `alignment' between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
 
@@ -63,10 +62,10 @@ This can be compactly written as
 
 \subsection{Abstractors}
 
-With the two ingredients in place, we can formulate the `Abstractor' framework. The input to an abstractor is a set of entities $(z_1, ..., z_n)$. As described in the next section, we will see that abstractors can be integrated into a transformer-based model in a powerful way by having these entities come from a transformer encoder. At each layer, the abstractor updates the abstract symbolic vectors referencing the input objects via a series of self-attention, relational cross-attention, and feedforward operations. This is summarized in \Cref{alg:relational_abstractor}.
+With the two ingredients in place, we can formulate the general framework. The input to an abstractor is a set of entities $(z_1, ..., z_n)$. As described in the next section, we will see that abstractors can be integrated into a transformer-based model in a powerful way by having these entities come from a transformer encoder. At each layer, the abstractor updates the abstract symbolic vectors referencing the input objects via a series of self-attention, relational cross-attention, and feedforward operations. This is summarized in \ref{alg:relational_abstractor}.
 
-\begin{algorithm}[h!]
-    \caption{Relational Abstracter}\label{alg:relational_abstractor}
+\begin{algorithm}[ht!]
+    \caption{Relational Abstractor}\label{alg:relational_abstractor}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
     \SetKwInOut{LearnableParams}{Learnable Parameters}
