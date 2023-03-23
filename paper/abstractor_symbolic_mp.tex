@@ -4,25 +4,14 @@
 % \usepackage[letterpaper, total={6in, 9in}]{geometry}
 % \usepackage{graphicx}
 
-\usepackage{amsmath, amssymb}
-\usepackage{cleveref}
-\usepackage{algorithm2e}
-\crefname{algocf}{alg.}{algs.}
-\Crefname{algocf}{Algorithm}{Algorithms}
-\RestyleAlgo{ruled}
-
-\newcommand{\MLP}{\text{MLP}}
-\newcommand{\FeedForward}{\text{FeedForward}}
-\newcommand{\Softmax}{\text{Softmax}}
-\newcommand{\reals}{\mathbb{R}}
 
 
 
 % \begin{document}
 
 
-\addtocounter{section}{1}
 \section{Abstractors: Symbolic Message-Passing and Relational Cross-Attention}
+\label{sec:abstractors_symbolic_mp}
 
 \subsection{Relational Symbolic Message-Passing}
 At a high level, the primary function of a relational abstractor is to compute abstract relational features of its inputs. That is, given a set of input objects $o_1, ..., o_n$, the relational abstractor computes a function on the set of pairwise relations between objects $\{ R(o_i, o_j) \}_{i,j}$, where $R(\cdot, \cdot)$ is a relation between a pair of objects.
@@ -48,7 +37,7 @@ In the above, suppose that $d_r = 1$. Otherwise, the above operation is done for
 
 Following message-passing, each updated symbol $s_i'$, can be passed through a feedforward neural network to compute a non-linear function of the output. Empirically, a residual connection and layer normalization may be useful, as in a transformer.
 
-This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors. We can index the updated symbolic vectors at layer $l$ by $(s_1^{(l)}, ..., s_n^{(l)})$. The output of relational symbolic message-passing is the set of symbols at the end of this sequence of mesage-passing operations. The overall procedure is summarized in \Cref{alg:relational_symbolic_mp}. In \Cref{sec:functions} we characterize the class of functions on relations that this operation can compute.
+This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors. We can index the updated symbolic vectors at layer $l$ by $(s_1^{(l)}, ..., s_n^{(l)})$. The output of relational symbolic message-passing is the set of symbols at the end of this sequence of mesage-passing operations. In \Cref{sec:function_spaces} we characterize the class of functions on relations that this operation can compute.
 
 \subsection{Computing the Relation Tensor via Relational Cross-Attention}
 
@@ -58,7 +47,7 @@ To motivate this, we first describe how we can compute `relations' between pairs
 
 In general, we can formulate inner product relations as the standard euclidean inner product between a pair of transformed object vectors. That is, $R(o_i, o_j) = \langle \phi(o_i), \psi(o_j) \rangle$. This captures a large class of relation functions. In particular, it includes any function on pairs of objects which is continuous, symmetric, and positive semi-definite (by Mercer's theorem). Multi-dimensional relation functions can be achieved by stacking multiple such inner products.
 
-Assuming that the vector representation of the objects is already rich enough, the transformations $\phi$ and $\psi$ can be limited to be linear transformations. We will Suggestively call these linear transformations $W_Q$ and $W_K$, respectively. For the message-passing operation \cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to 1. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols, proportion to the relations between them.
+Assuming that the vector representation of the objects is already rich enough, the transformations $\phi$ and $\psi$ can be limited to be linear transformations. We will Suggestively call these linear transformations $W^q$ and $W^k$, respectively. For the message-passing operation \cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to 1. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols, proportion to the relations between them.
 
 This can be compactly written as
 
@@ -66,7 +55,7 @@ This can be compactly written as
     \label{eq:relational_crossattention}
     \begin{split}
         \boldsymbol{s}' &= \boldsymbol{s} R, \\
-        R &= \Softmax\left((W_Q \boldsymbol{o})^\top (W_K \boldsymbol{o})\right),
+        R &= \Softmax\left((W^k \boldsymbol{o})^\top (W^q \boldsymbol{o})\right),
     \end{split}
 \end{equation}
 
