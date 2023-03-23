@@ -11,7 +11,7 @@ these operations as extensions of transformer architectures.
 
 \subsection{Relational learning using transformers}
 
-In the abstractor framework, processing occurs in encoder/decoder modules that handle particular types of information, separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate through cross attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
+In our extended framework, processing occurs in encoder/decoder modules that handle particular types of information, separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate through cross attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
 The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder and decoder states are vectors
 that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled  
