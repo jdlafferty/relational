@@ -1,6 +1,15 @@
 #
 wandb
 
+# ignore certain files in paper directory
+paper/*.pdf
+paper/*.aux
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.synctex.gz
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
