@@ -1,34 +1,169 @@
+\def\rdot{\bigcdot}
+\def\F{{\mathfrak{F}}}
 
 \section{Function classes}
 \label{sec:function_spaces}
 
-\def\rdot{\bigcdot}
-\def\F{{\mathfrak{F}}}
+In this section, we will discuss the class of relational functions computable by the symbolic message-passing operation in relational abstractors. We also comment on the robustness of these operations.
 
-In this section we discuss function classes for relational learning and symbolic message passing.
+\subsection{Class of Relational Functions Computable by Symbolic Message-Passing}
+\label{ssec:function_class_symbolic_mp}
+For the purposes of this analysis, the algorithmic description of symbolic message-passing is presented in \Cref{alg:symbolic_mp}. It is slightly simpler than the algorithmic description of the full relational Abstractor in \Cref{alg:relational_abstractor} (the primary difference is that we omit self-attention between symbolic states).
+
+\begin{algorithm}[h!]
+	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKwInOut{LearnableParams}{Learnable Parameters}
+	\SetKwInOut{HyperParams}{Hyper Parameters}
+	
+	\Input{Relation tensor: $R \in \mathbb{R}^{n \times n \times d_r}$}
+	\HyperParams{$L$ (number of steps/layers), hyperparameters of feedforward networks}
+	\LearnableParams{symbols $\boldsymbol{s} = (s_1, ..., s_n) \in \reals^{d_s \times n}$, feedforward neural networks $\phi^{(1)}, ..., \phi^{(L)}$}
+	\Output{Abstracted sequence: $\boldsymbol{a} = (a_1, ..., a_n) \in \reals^{d_a \times n}$}
+	\vspace{1em}
+	
+	$\boldsymbol{a} \gets \boldsymbol{s}$
+	
+	\For{$l \gets 1$ \KwTo $L$}{
+		$a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, ..., n$
+		
+		$a_i \gets \phi^{(l)}(a_i), \quad i = 1, ..., n$
+	}
+\end{algorithm}
+
+
+
+By, \cref{eq:linear_symbolic_mp}, the symbolic message-passing operation is clearly bijective as a function on the input relation tensor $R$, for an appropriate choice of the symbol parameters $\boldsymbol{s}$. For example, choosing $\boldsymbol{s} = I_{n \times n}$ (i.e.: the $i$th symbolic vector is the indicator $n$-vector with a $1$ in the $i$th position, $s_i = e_i$) reproduces the relation tensor after one message-passing operation. 
+
+\begin{equation*}
+	s_i' =  \sum_{j=1}^{n} R[i,j] e_j = \begin{pmatrix}R[i,1] \\ R[i,2] \\ \vdots \\ R[i,n]\end{pmatrix}
+\end{equation*}
+
+More generally, one linear step of symbolic message-passing yields updated symbolic vectors such that $s_i'$ is a linear function of the vector of all objects' relations with object $i$.
+
+\begin{equation*}
+	s_i' = \boldsymbol{s} \begin{pmatrix}R[i,1] \\ \vdots \\ R[i,n]\end{pmatrix}
+\end{equation*}
+
+Following the linear step in symbolic message-passing, each updated symbolic state is transformed via a neural network. Hence, the $i$th abstracted value after symbolic message-passing is given by 
+
+\begin{equation*}
+	a_i = \phi\left(\boldsymbol{s} R_i \right),
+\end{equation*}
+
+\noindent where $\phi$ is a neural network, and $R_i$ is the vector of object $i$'s relations with every other object, $R_i = \begin{pmatrix}R[i,1] & \cdots & R[i,n]\end{pmatrix}^\top$. Hence, $a_i$ summarizes all the information about object $i$'s relations to all other objects.
+
+We state the above discussion as a lemma in \Cref{lemma:function_class_1_step_symbolic_mp}.
+
+\begin{lemma}
+	\label{lemma:function_class_1_step_symbolic_mp}
+	A one-step symbolic message-passing operation (in \Cref{alg:symbolic_mp}) can compute arbitrary functions of a each object's relations with other objects in the input sequence. That is, there exists a choice of symbols $s_1, ..., s_n$ and parameters of the feed-forward network such that $a_i$ computes an arbitrary function of object $i$'s relations, $\begin{pmatrix}R[i,1] & R[i,2] & \cdots & R[i,n]\end{pmatrix}^\top$
+\end{lemma}
+\begin{proof}
+	This follows by the above discussion and universal approximation of feed-forward networks.
+\end{proof}
+
+Thus, the abstracted sequence after a single step of symbolic message-passing has the form
+
+\begin{equation}
+	\label{eq:abstracted_seq_1_layer_abstracter}
+	\boldsymbol{a}^{(1)} = (a_1^{(1)}, ..., a_n^{(1)}) = \left(\phi(R_1), \phi(R_2), ..., \phi(R_n)\right),
+\end{equation}
+\noindent where $\phi$ is an arbitrary learnable function shared by all abstracted objects, and $R_i$ is the vector of object $i$'s relations with every other object. 
+
+That is, $a_i^{(1)}$ summarizes object $i$'s relations with other objects. With further symbolic message-passing operations, the $i$th abstracted vector can be made to represent information about other relations, not necessarily involving the $i$th object. In particular, for example, at the second layer, the abstracted vectors take the form
+
+\begin{equation}
+	a_i^{(2)} = \phi^{(2)} \left( \sum_{j=1}^{n} R[i,j] a_j^{(1)} \right) = \phi^{(2)} \left( \sum_{j=1}^{n} R[i,j] \phi^{(1)}(R_j) \right).
+\end{equation}
+
+We conclude this subsection by remarking that the above analysis concerns \Cref{alg:symbolic_mp}---a simplified version of the relational Abstractor. In particular, while it captures the effects of relational cross-attention, it does not include self-attention on the abstracted . The analysis indicates that we should expect the function class generated by a relational Abstractor module \Cref{alg:relational_abstractor} to be no smaller than that of the simple symbolic message-passing in \Cref{alg:symbolic_mp}.
+
+
+\subsection{Composing Abstractors to Compute Relations on Relations}
+\label{ssec:compsing_abstracters}
+
+As described in \Cref{sec:abstractors_as_transformer_modules}, the Abstactor framework supports composing Abstractors in the form 
+
+\begin{equation*}
+	\texttt{Encoder} \to \texttt{Abstracter} \to \cdots \to \texttt{Abstracter} \to \texttt{Output}    
+\end{equation*}
+
+Here, we analyze the function class generated by a composition of several abstractors. We make the simplifying assumption that each 1-layer `Abstractor` takes the simplified form of the symbolic message-passing operation in \Cref{alg:symbolic_mp}. This corresponds to omitting the self-attention operation in \Cref{alg:relational_abstractor} while maintaining the relational cross-attention with the sequence of output vectors at the previous Abstractor.
+
+We saw in the previous section that a one-layer abstracter is able to compute arbitrary functions  of each object's relations. Observe that the output sequence of abstracted objects is a sequence of `relational vectors'. That is, objects which summarize relational information. Hence, chaining together a sequence of Abstractors would allow us to compute relations on relations. 
+
+% TODO: formalize or refine presentation of result
+\begin{lemma}
+	\label{lemma:function_class_composed_abstractors}
+	A chain of $k$ 1-layer Abstractors is able to compute arbitrary ``$k$th order relational functions'' (in the sense of the proof below).
+\end{lemma}
+\begin{proof}[proof sketch]
+	In \Cref{ssec:function_class_symbolic_mp} we characterized the output of a 1-layer abstractor as
+	\begin{equation*}
+		\boldsymbol{a}^{(1)} = (a_1^{(1)}, ..., a_n^{(1)}) = \left(\phi^{(1)}(R_1), \phi^{(1)}(R_2), ..., \phi^{(1)}(R_n)\right),
+	\end{equation*}
+	
+	Note that we will now use the superscript to denote the abstracter in the chain rather than the layer depth in a single Abstractor (all Abstractors have a depth of 1). 
+	
+	Let the second Abstracter's symbols be denoted by $\boldsymbol{s}^{(2)} = (s_1^{(2)}, ..., s_n^{(2)})$. Then, 
+	
+	\begin{equation*}
+		a_i^{(2)} = \boldsymbol{s}^{(2)} \begin{bmatrix}R^{(2)}[i,1] \\ \vdots \\ R^{(2)}[i,n]\end{bmatrix},
+	\end{equation*}
+	
+	where,
+	\begin{equation*}
+		R^{(2)} = \Softmax\left((W^k \boldsymbol{a}^{(1)})^\top (W^q \boldsymbol{a}^{(1)})\right)
+	\end{equation*}
+	
+	Observe that 
+	\begin{equation*}
+		\left[(W^k \boldsymbol{a}^{(1)})^\top (W^q \boldsymbol{a}^{(1)})\right]_{ij} = \langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle.
+	\end{equation*}
+	
+	By the universal approximation results in the ``relational neural framework'' (involving Mercer's theorem), composing an arbitrary learnable function $\phi$ with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric semi-positive definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when $W^q \neq W^k$). \textcolor{red}{[Need to add this result from ``relational neural networks'' and revise the wording here. how/where should it be added?]}
+	
+	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, $\langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle$ computes a relation between object $i$'s relations and object $j$'s relations. Hence, choosing $s_i^{(2)} = e_i$ and ignoring the Softmax for now, yields
+	\begin{equation*}
+		a_i^{(2)} = \phi^{(2)}\left(\begin{bmatrix}\langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_1) \rangle \\ \vdots \\ \langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_n) \rangle\end{bmatrix}\right).
+	\end{equation*}
+	
+	Thus, $a_i^{(2)}$ computes arbitrary second-order relation functions. Namely, it computes arbitrary relations between object $i$'s relation vector and every other object's relation vector.
+	
+	More generally, at layer $l$, we have 
+	\begin{align*}
+		R^{(l)} &= \Softmax\left((W^k \boldsymbol{a}^{(l-1)})^\top (W^q \boldsymbol{a}^{(l-1)})\right),\\
+		a_i^{(l)} &= \phi^{(l)}\left(\boldsymbol{s}^{(l)} \begin{bmatrix}R^{(l)}[i,1] \\ \vdots \\ R^{(l)}[i,n]\end{bmatrix}\right).
+	\end{align*}
+	
+	Thus, $R^{(l)}$ computes $l$th order-relations, and $a_i^{(l)}$ is a linear map applied to the $l$th-order relations involving object $i$.
+\end{proof}
+
 
 \subsection{Robustness and error correction}
 
-For the relational cross-attention mechanism used by abstrators, an $m\times m$ relation 
-is computed as 
+For the relational cross-attention mechanism used by abstrators, an $m\times m$ relation
+is computed as
 \begin{equation}
   R = \mbox{Softmax}(K^T Q)
 \end{equation}
-where $Q = W_Q E\in \reals^{d\times m}$ and $K = W_K E\in \reals^{d\times m}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of 
+where $Q = W_Q E\in \reals^{d\times m}$ and $K = W_K E\in \reals^{d\times m}$ are the query and keys; the softmax is applied column-wise. So, each column $r_j \in \Delta_k$ is in the simplex of
 non-negative $k$-vectors summing to one. Let $(s_1,\ldots, s_m) = S\in\reals^{d\times m}$ be
-a matrix of symbols. The relational cross attention then transforms the symbols by 
+a matrix of symbols. The relational cross attention then transforms the symbols by
 \begin{equation}
   A = SR
 \end{equation}
 so that each abstract variable $a_j$ is in the convex hull of the set of symbols.
-As long as $S$ has rank $m$, relations are 
+As long as $S$ has rank $m$, relations are
 uniquely determined from the abstract symbols.
 
 More generally, suppose that the symbols $S$ are transformed to $A$ and corrupted with additive noise:
 \begin{equation}
   A = SR + \Xi
 \end{equation}
-where a fraction $\epsilon$ of the entries of $\Xi$ are drawn from an adversarial noise distribution, and the other entries are zero; dropout noise is also possible. 
+where a fraction $\epsilon$ of the entries of $\Xi$ are drawn from an adversarial noise distribution, and the other entries are zero; dropout noise is also possible.
 This can be studied as an instance of compressed sensing and ``model repair'' \citep{candes_randall,model_repair}.  In particular, the relations can be recovered using the  robust regression estimator
 \begin{equation}
   \hat r_j = \argmin_{u \in\reals^m} \| a_j - S u\|_1 \label{eq:lp}
@@ -42,7 +177,7 @@ The main lemma in \cite{model_repair} states that the following two conditions s
     \left\|\frac{1}{d}\sum_{i=1}^d c_i s_{i\rdot} \right\|^2\leq \frac{\sigma^2 m}{d},
   \end{equation}
 with high probability, where $s_{i\rdot}\in\reals^m$ is the $i$th row of $S$.
-  
+
 \underline{Condition B:}
   There exist $\underline{\kappa}$ and $\overline{\kappa}$, such that
   \begin{eqnarray}
@@ -59,23 +194,23 @@ with high probability, where $s_{i\rdot}\in\reals^m$ is the $i$th row of $S$.
   is sufficiently small, the linear program \eqref{eq:lp} recovers $R$, so that $\hat r_j = r_j$ with high probability.
   \end{thm}
 
-The condition is essentially that 
+The condition is essentially that
   \begin{equation}
     \frac{1}{1-\epsilon} \sqrt{\frac{m}{d}}
   \end{equation}
-  is small, meaning that the dimension $d$ of the symbols needs to be sufficiently large relative 
+  is small, meaning that the dimension $d$ of the symbols needs to be sufficiently large relative
   to the dimension $k$ of the relation.
 
-  \subsection{Sparse, high-dimensional relations} 
+  \subsection{Sparse, high-dimensional relations}
 
  The above setting ensures enough redundancy to recover the relations, constraining the number of symbols $k$ to be small relative to the symbol dimension $d$. This is not appropriate in the situation where the relations are over a large number $m$ of elements, for example, the contents of the entire episodic memory.
- In this setting we assume that the relation tensor $R \in \reals^{m\times m}$ is sparse; that is, 
- each column $r_j \in \Delta_m$ has at most $k$ nonzero entries: $\|r_j\|_0 \leq k$. To recover the relation 
+ In this setting we assume that the relation tensor $R \in \reals^{m\times m}$ is sparse; that is,
+ each column $r_j \in \Delta_m$ has at most $k$ nonzero entries: $\|r_j\|_0 \leq k$. To recover the relation
  we now use the robust lasso estimator, which is a related linear program
 \begin{equation}
   \hat r_j = \argmin_{u \in\reals^m} \| a_j - S u\|_1 + \lambda\|u\|_1. \label{eq:rlasso}
-\end{equation}  
-Here we have an analogous theorem, stating that if 
+\end{equation}
+Here we have an analogous theorem, stating that if
 \begin{eqnarray}
   \frac{\overline{\kappa}/\underline{\kappa}}{1-\epsilon}\sqrt{\frac{k}{d}\log(2m)}\leq c,
 \end{eqnarray}
@@ -87,8 +222,8 @@ for some constant $C$.
 This implies that we can accurately recover the relation tensor in the high dimensional setting, even when many of the entries of the transformed abstract symbols are corrupted.
 
 
-The above discussion shows how the relation tensor can be recovered from the transformed symbols, even under adversarial noise, assuming there is sufficient redundancy in the symbols. This implies that it is possible to predict as well from the transformed symbols as from the relations, without explicitly recovering the relations. 
-Using ideas from \citep{surfing,HandV17}, it may be possible to extend this theory to nonlinear mappings 
-$y = \varphi(Au) + \eta$ where $\varphi(\cdot)$ is an activation function; this could serve as 
+The above discussion shows how the relation tensor can be recovered from the transformed symbols, even under adversarial noise, assuming there is sufficient redundancy in the symbols. This implies that it is possible to predict as well from the transformed symbols as from the relations, without explicitly recovering the relations.
+Using ideas from \citep{surfing,HandV17}, it may be possible to extend this theory to nonlinear mappings
+$y = \varphi(Au) + \eta$ where $\varphi(\cdot)$ is an activation function; this could serve as
 an alternative to the Hopfield model of memory retrieval and pattern completion.
 
