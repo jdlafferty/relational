@@ -208,24 +208,21 @@ We saw in the previous section that a one-layer abstracter is able to compute ar
 	\end{equation*}
 	Observe that
 	\begin{equation*}
-		\left[(W^k \boldsymbol{a}^{(1)})^\top (W^q \boldsymbol{a}^{(1)})\right]_{ij} = \langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle.
+		\left[(W_K A^{(1)})^\top (W_Q A^{(1)})\right]_{ij} = \langle W_Q \phi^{(1)}(r_j), W_K \phi^{(1)}(r_i) \rangle.
 	\end{equation*}
+	By Theorem \ref{thm:universal_approx_inner_product_relnn}, composing an arbitrary learnable function $\phi$ with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when $W_Q \neq W_K$).
 
-	By \Cref{thm:universal_approx_inner_product_relnn}, composing an arbitrary learnable function $\phi$ with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when $W^q \neq W^k$).
-
-	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, $\langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle$ computes a relation between object $i$'s relations and object $j$'s relations. Hence, choosing $s_i^{(2)} = e_i$ and ignoring the Softmax for now, yields
+	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, $\langle W_Q \phi^{(1)}(R_j), W_K \phi^{(1)}(R_i) \rangle$ computes a relation between object $i$'s relations and object $j$'s relations. Hence, choosing $s_i^{(2)} = e_i$ and ignoring the Softmax for now, yields
 	\begin{equation*}
-		a_i^{(2)} = \phi^{(2)}\left(\begin{bmatrix}\langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_1) \rangle \\ \vdots \\ \langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_\m) \rangle\end{bmatrix}\right).
+		a_i^{(2)} = \phi^{(2)}\left(\begin{bmatrix}\langle W_Q \phi^{(1)}(r_i), W_K \phi^{(1)}(r_1) \rangle \\ \vdots \\ \langle W_Q \phi^{(1)}(r_i), W_K \phi^{(1)}(r_\m) \rangle\end{bmatrix}\right).
 	\end{equation*}
-
 	Thus, $a_i^{(2)}$ computes arbitrary second-order relation functions. Namely, it computes arbitrary relations between object $i$'s relation vector and every other object's relation vector.
 
 	More generally, at layer $l$, we have
 	\begin{align*}
-		R^{(l)} &= \Softmax\left((W^k \boldsymbol{a}^{(l-1)})^\top (W^q \boldsymbol{a}^{(l-1)})\right),\\
-		a_i^{(l)} &= \phi^{(l)}\left(\boldsymbol{s}^{(l)} \begin{bmatrix}R^{(l)}[i,1] \\ \vdots \\ R^{(l)}[i,n]\end{bmatrix}\right).
+		R^{(l)} &= \Softmax\left((W_K A^{(l-1)})^\top (W_Q A^{(l-1)})\right),\\
+		a_i^{(l)} &= \phi^{(l)}\left(S^{(l)} \begin{bmatrix}R^{(l)}[i,1] \\ \vdots \\ R^{(l)}[i,n]\end{bmatrix}\right).
 	\end{align*}
-
 	Thus, $R^{(l)}$ computes $l$th order-relations, and $a_i^{(l)}$ is a linear map applied to the $l$th-order relations involving object $i$.
 \end{proof}
 
