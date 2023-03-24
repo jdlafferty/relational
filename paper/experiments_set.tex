@@ -24,9 +24,10 @@ for an attribute \attr{attr}, then the first three cards in each of the three ro
 To simulate this task we first train a convolutional neural network to process the color images 
 of the cards (a full deck includes 81 cards). The CNN is trained to predict the attribute of 
 each card, as a multi-label classification, and then an embedding of dimension $d=32$ of 
-each card is obtained as a fixed input vector. 
+each card is obtained as a fixed input vector. This embedding layer uses an \MLP{} to 
+map the convolutional feature maps into a distributed representation.
 
-\subtask{Same/Different task} We train a first Abstractor on a Same/Different task, 
+\subtask{Same/Different task} We train an Abstractor on a Same/Different task, 
 where for a training set of pairs of cards, the Abstractor predicts whether the cards are 
 the same or different in each of the four attributes. The Abstractor is trained with 
 four relational cross attention heads on this task.
@@ -52,7 +53,7 @@ pattern or an AAA pattern, the class label is one. For each attribute we train
 two different Abstractors---the first is trained from scratch, and includes the learning 
 of four new relational cross attention heads. The second Abstractor is 
 initialized so that the attention heads are given by the Abstractor learned for the 
-Same/Different task. Thus, only the \MLP used to classify the abstract state $A$ is 
+Same/Different task. Thus, only the \MLP{} used to classify the abstract state $A$ is 
 learned for this task.
 
 \subtask{Evaluation} We evaluate learning curves on the AAB tak for each 
