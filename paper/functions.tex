@@ -6,39 +6,40 @@
 
 In this section, we will discuss the class of relational functions computable by the symbolic message-passing operation in relational abstractors. We also comment on the robustness of these operations.
 
-We start by presenting a universal approximation result for inner product relations. This will be useful when characterizing the class of functions computable by Abstractors, but is also of interest more generally for relational machine learning.
+We start by presenting a universal approximation result for inner product relations. This will be useful when characterizing the class of functions computable by abstractors, but is also of interest more generally for relational machine learning.
 
-\subsection{Universal approximation for Inner Product Relations}
-A natural way to model relations between objects is through inner products between their vector representations. Consider vectors living in a space $\mathcal{X}$. We would like to learn a relation function $R: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}$ which maps pairs of objects in $\mathcal{X}$ to a $d_r$ dimensional vector describing the relation between these objects.
+\subsection{Universal approximation for inner product relations}
 
-We will model this relation function as a vector of inner products between transformations of the two objects representation
+A natural way to model relations between objects is through inner products between their vector representations. Consider vectors living in a space $\mathcal{X}$. We would like to learn a relation function $R: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}$ which maps pairs of objects in $\mathcal{X}$ to a $d_r$-dimensional vector describing the relation between these objects. We will model this relation function as a vector of inner products between transformations of the objects' representations:
 \begin{equation}
 	\label{eq:inner_product_relations}
 	R(x, y) = \begin{pmatrix}\langle \phi^{(1)}(x), \phi^{(1)}(y) \rangle \\ \vdots \\ \langle \phi^{(d_r)}(x), \phi^{(d_r)}(y) \rangle \end{pmatrix},
 \end{equation}
-
-\noindent where $\phi^{(1)}, ..., \phi^{(d_r)}$ are learnable transformations corresponding to each dimension of the relation. Intuitively, these transformations can be thought of as \textit{relational filters}. They extract a particular attribute of the objects such that an inner product of the transformed objects indicates the alignment or similarity along this attribute. Having several different filters allows for modeling rich multi-dimensional relations. This is one notable advantage of this formulation over the CoRelNet model proposed in \citep{kerg2022neural}.
+where $\phi^{(1)}, ..., \phi^{(d_r)}$ are learnable transformations corresponding to each dimension of the relation. These transformations can be thought of as \textit{relational filters}. They extract a particular attribute of the objects such that an inner product of the transformed objects indicates the alignment or similarity along this attribute. Having several different filters allows for modeling rich multi-dimensional relations. This is one notable advantage of this formulation over the CoRelNet model \citep{kerg2022neural}.
 
 In a deep learning model, a natural choice is for $\phi^{(1)}, ..., \phi^{(d_r)}$ to be $d_r$ different neural networks (e.g.: MLPs, CNNs, etc. depending on the object space $\mathcal{X}$). Hence, the parameters of $R$ are $\boldsymbol{\theta} = (\theta^{(1)}, ..., \theta^{(d_r)})$, where $\theta^{(i)}$ are the parameters of $\phi^{(i)}$.
 
-Next, we present a result characterizing the class of inner product relations computable by \Cref{eq:inner_product_relations} when $\phi^{(1)}, ..., \phi^{(d_r)}$ are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
+The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when $\phi^{(1)}, ..., \phi^{(d_r)}$ are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
 
 \begin{thm}[Universal Approximation of Inner Product Relational Neural Networks]
 	\label{thm:universal_approx_inner_product_relnn}
 	\hphantom{~}
 
-	Suppose the data lies in a compact Hausdorff space $\mathcal{X}$ (e.g.: a metric space) with a finite countably additive measure. In particular, $\mathcal{X}$ can be any compact subset of $\mathbb{R}^d$. Let $R: \mathcal{X} \times \mathcal{X} \to \mathbb{R}^{d_r}$ be any relation function mapping pairs in $\mathcal{X}$ to a $d_r$-dimensional relation feature vector. Suppose that $R$ is continuous, symmetric ($R(x,y) = R(y,x) \ \forall x,y \in \mathcal{X}$), and positive semi-definite component-wise ($[R(x,x)]_i \geq 0 \ \forall x \in \mathcal{X}$). Consider an inner product relational neural network of the form in \Cref{eq:inner_product_relations} with output given by the inner product of MLPs:
+	Suppose the data lies in a compact Hausdorff space $\mathcal{X}$ (e.g.: a metric space) with a finite countably additive measure. In particular, $\mathcal{X}$ can be any compact subset of $\mathbb{R}^d$. Let $R: \mathcal{X} \times \mathcal{X} \to \mathbb{R}^{d_r}$ be any relation function mapping pairs in $\mathcal{X}$ to a $d_r$-dimensional relation feature vector. Suppose that $R$ is continuous, symmetric ($R(x,y) = R(y,x) \ \forall x,y \in \mathcal{X}$), and positive semi-definite component-wise ($[R(x,x)]_i \succeq 0 \ \forall x \in \mathcal{X}$). Consider an inner product relational neural network of the form in equation \eqref{eq:inner_product_relations} with output given by the inner product of MLPs:
 	\begin{equation*}
-		\langle x, y \rangle_{\MLP} := \begin{bmatrix}\langle \MLP_{\theta_1}(x), \MLP_{\theta_1}(y) \rangle \\ \vdots \\ \langle \MLP_{\theta_{d_r}}(x), \MLP_{\theta_{d_r}}(y) \rangle\end{bmatrix}
+		\langle x, y \rangle_{\MLP} := \begin{bmatrix}\langle \MLP_{\theta_1}(x), \MLP_{\theta_1}(y) \rangle \\ \vdots \\ \langle \MLP_{\theta_{d_r}}(x), \MLP_{\theta_{d_r}}(y) \rangle\end{bmatrix}.
 	\end{equation*}
-
-	Then, $\langle x, y \rangle_{\MLP}$ approximates the relation function $R$ arbitrarily closely. That is, for all $\epsilon > 0$, there exists $\theta_1, ..., \theta_{d_r}$ such that $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$.
+	Then, $\langle x, y \rangle_{\MLP}$ approximates the relation function $R$ arbitrarily closely in the supremum norm. That is, for all $\epsilon > 0$, there exists $\theta_1, ..., \theta_{d_r}$ such that $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$.
 \end{thm}
 
 \begin{proof}[Proof sketch]
 	\hphantom{~}
 
-	Denote the given relation function $R$ by its $d_r$ components: $R(x,y) = (R_1(x,y), ..., R_{d_r}(x,y))$. By assumption, $R_i$ is a Mercer kernel for each $i = 1, ..., d_r$. Consider the component $R_i$. By Mercer's theorem, there exists $(\psi_i)_{i \in \mathbb{N}}$, $\lambda_i \geq 0$ such that $R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}$, where $\psi_i$ and $\lambda_i$ are eigenvectors and eigenvalues of the integral operator $T_R: L_2(\mathcal{X}) \to L_2(\mathcal{X})$, $T_R(f) = \int_{\mathcal{X}}{R(\cdot, x) f(x) dx}$. Furthermore, the convergence of the series is uniform:
+	Denote the given relation function $R$ by its $d_r$ components: 
+	\begin{equation}
+		R(x,y) = (R_1(x,y), ..., R_{d_r}(x,y)). 
+	\end{equation}
+	By assumption, $R_i$ is a Mercer kernel for each $i = 1, ..., d_r$. Consider the component $R_i$. By Mercer's theorem, there exists $(\psi_i)_{i \in \mathbb{N}}$, $\lambda_i \geq 0$ such that $R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}$, where $\psi_i$ and $\lambda_i$ are eigenfunctions and eigenvalues of the integral operator $T_R: L_2(\mathcal{X}) \to L_2(\mathcal{X})$, $T_R(f) = \int_{\mathcal{X}}{R(\cdot, x) f(x) dx}$. Furthermore, the convergence of the series is uniform:
 	\begin{equation}
 		\lim_{n \to \infty} \sup_{x,y \in \mathcal{X}} \lvert R_i(x,y) - \sum_{j=1}^{n}{\lambda_j \psi_j(x) \psi_j(y) \rvert} = 0
 	\end{equation}
@@ -55,8 +56,7 @@ Next, we present a result characterizing the class of inner product relations co
 		\sup_{x\in \mathcal{X}}{\left\lvert (\MLP(x))_j - \sqrt{\lambda_j} \psi_j(x) \right\lvert } < \epsilon_1
 	\end{equation}
 
-	For ease of notation, we denote $\MLP_{\hat{\theta}_i}$ simply by $\MLP$ (omitting the dependence on $i$ since it is fixed for now). Furthermore, $\MLP(x)_j$ is the $j$th component of the output of $\MLP(x)$. Now note that the approximation error for $R_i$ is bounded by
-
+	For ease of notation, we denote $\MLP_{\hat{\theta}_i}$ simply by $\MLP$, omitting the dependence on fixed $i$. Furthermore, $\MLP(x)_j$ is the $j$th component of the output of $\MLP(x)$. Now note that the approximation error for $R_i$ is bounded by
 	\begin{equation}
 		\label{eq:proof_approx_bound}
 		\begin{split}
@@ -69,9 +69,7 @@ Next, we present a result characterizing the class of inner product relations co
 				+ \left\lvert \sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y) - \MLP(x)_j \MLP(y)_j} \right\rvert  \right) }
 		\end{split}
 	\end{equation}
-
-	The first term is less than $\frac{\epsilon}{2}$ by \cref{eq:proof_mercer_thm_unif_abs_cv}. The second term can be bounded uniformly on $x,y$ by
-
+	The first term is less than $\frac{\epsilon}{2}$ by \eqref{eq:proof_mercer_thm_unif_abs_cv}. The second term can be bounded uniformly on $x,y$ by
 	\begin{equation*}
 		\begin{split}
 			&\left\lvert \left(\sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y)}\right) - \langle \MLP(x), \MLP(y) \rangle \right\rvert  \\
@@ -82,44 +80,40 @@ Next, we present a result characterizing the class of inner product relations co
 				\right)}
 		\end{split}
 	\end{equation*}
-
-	Let $\epsilon_1$ in \cref{eq:proof_MLP_UAP} be small enough such that the above is smaller than $\frac{\epsilon}{2}$.
-
-	Then, by \cref{eq:proof_approx_bound}, we have that
+	Let $\epsilon_1$ in \eqref{eq:proof_MLP_UAP} be small enough such that the above is smaller than $\frac{\epsilon}{2}$. 	Then, by \eqref{eq:proof_approx_bound}, we have that
 	\begin{equation*}
 		\sup_{x, y \in \mathcal{X}}{
 			\lvert R_i(x,y) - \langle \MLP(x), \MLP(y) \rangle \rvert} \leq \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon
 	\end{equation*}
 
-	We repeat this for each component of the relation function $R_i$, $i=1, ..., d_r$, obtaining $d_r$ MLPs each with paramters $\hat{\theta}_i$. Thus, $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$
-
+	We repeat this for each component of the relation function $R_i$, $i=1, ..., d_r$, obtaining $d_r$ MLPs each with parameters $\hat{\theta}_i$. Thus, $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$.
 \end{proof}
 
 \begin{remark}
-	The result also holds for universal approximators other than MLPs, with a nearly identical proof.
+	The result also holds for universal approximators other than multi-layer perceptrons, with a nearly identical proof.
 \end{remark}
 
 \Cref{thm:universal_approx_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions $R(\cdot, \cdot)$. We now make a couple of remarks.
 
-Learning the relation function in \Cref{eq:inner_product_relations} involves learning $d_r$ different non-linear transformations $\phi^{(1)}, ..., \phi^{(d_r)}$. To enable greater weight-sharing, we can instead have a single non-linear learned function $\phi: \mathcal{X} \to \mathbb{R}^{\tilde{d}}$ along with $d_r$ linear projections $W_k \in \mathbb{R}^{m \times \tilde{d}}$, such that
+Learning the relation function in equation \eqref{eq:inner_product_relations} involves learning $d_r$ different non-linear transformations $\phi^{(1)}, ..., \phi^{(d_r)}$. To enable greater weight-sharing, we can instead have a single non-linear learned function $\phi: \mathcal{X} \to \mathbb{R}^{\tilde{d}}$ along with $d_r$ linear projections $W_k \in \mathbb{R}^{m \times \tilde{d}}$, such that
 \begin{equation}
 	\label{eq:weight_sharing_inner_product_relnn}
 	R(x,y) = \begin{pmatrix}\langle W_1 \phi(x), W_1 \phi(y) \rangle \\ \vdots \\ \langle W_{d_r}\phi(x), W_{d_r}\phi(y) \rangle\end{pmatrix}.
 \end{equation}
-This is does not shrink the class of computable relation functions since for any set of learned functions $\phi_1, ..., \phi_{d_r}$ in the former set up, we can consider a single $\phi$ which is simply a concatenation of all these outputs and have the linear projections simply extract the appropriate components.
+This is does not shrink the class of computable relation functions since for any set of learned functions $\phi_1, ..., \phi_{d_r}$ in the former set up, we can consider a single $\phi$ which is simply a concatenation of all these outputs and have the linear projections extract the appropriate components.
 
 Additionally, we can consider inner products of the form
 \begin{equation}
 	\label{eq:nonsymmetric_inner_product_relnn}
 	\langle W_k^{(1)} \phi(x_i), W_k^{(2)} \phi(x_j) \rangle,
 \end{equation}
-\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in \cref{thm:universal_approx_inner_product_relnn}.
+\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{thm:universal_approx_inner_product_relnn}.
 
-This is closely related to the cross-attention operation in Transformers (and Abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: $\langle W^q x, W^k y \rangle$. A `relation tensor' giving pairwise relations is then computed as $\Softmax((W^k X)^\top (W^q X))$, where $X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}$ are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations $\phi^{(1)}, ..., \phi^{(d_r)}$ in the inner product relational neural network \cref{eq:inner_product_relations}.
+This is closely related to the cross-attention operation in transformers (and  abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: $\langle W_Q x, W_K y \rangle$. A `relation tensor' giving pairwise relations is then computed as $\Softmax((W_K X)^\top (W_Q X))$, where $X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}$ are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations $\phi^{(1)}, ..., \phi^{(d_r)}$ in the inner product relational neural network \ref{eq:inner_product_relations}.
 
-\subsection{Class of Relational Functions Computable by Symbolic Message-Passing}
+\subsection{Class of relational functions computable by symbolic message-passing}
 \label{ssec:function_class_symbolic_mp}
-For the purposes of this analysis, the algorithmic description of symbolic message-passing is presented in \Cref{alg:symbolic_mp}. It is slightly simpler than the algorithmic description of the full relational Abstractor in \Cref{alg:relational_abstractor} (the primary difference is that we omit self-attention between symbolic states).
+For the purposes of this analysis, the algorithmic description of symbolic message-passing is presented in \Cref{alg:symbolic_mp}. It is slightly simpler than the algorithmic description of the full relational  abstractor in \Cref{alg:relational_abstractor}---the primary difference is that we omit self-attention between symbolic states.
 
 \begin{algorithm}[ht!]
 	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
@@ -128,10 +122,10 @@ For the purposes of this analysis, the algorithmic description of symbolic messa
 	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
 	\SetKwInOut{HyperParams}{Hyperparameters}
 
-	\Input{Relation tensor: $R \in \mathbb{R}^{n \times n \times d_r}$}
+	\Input{Relation tensor: $R \in \mathbb{R}^{n \times \m \times d_r}$}
 	\HyperParams{$L$ (number of steps/layers), hyperparameters of feedforward networks}
-	\LearnableParams{symbols $\boldsymbol{s} = (s_1, ..., s_n) \in \reals^{d_s \times n}$, feedforward neural networks $\phi^{(1)}, ..., \phi^{(L)}$}
-	\Output{Abstracted sequence: $\boldsymbol{a} = (a_1, ..., a_n) \in \reals^{d_a \times n}$}
+	\LearnableParams{symbols $\boldsymbol{s} = (s_1, ..., s_\m) \in \reals^{d_s \times \m}$, feedforward neural networks $\phi^{(1)}, ..., \phi^{(L)}$}
+	\Output{Abstracted sequence: $\boldsymbol{a} = (a_1, ..., a _\m) \in \reals^{d_a \times \m}$}
 	\vspace{1em}
 
 	$A \gets S$
@@ -145,80 +139,66 @@ For the purposes of this analysis, the algorithmic description of symbolic messa
 
 
 
-By, \cref{eq:linear_symbolic_mp}, the symbolic message-passing operation is clearly bijective as a function on the input relation tensor $R$, for an appropriate choice of the symbol parameters $\boldsymbol{s}$. For example, choosing $\boldsymbol{s} = I_{n \times n}$ (i.e.: the $i$th symbolic vector is the indicator $n$-vector with a $1$ in the $i$th position, $s_i = e_i$) reproduces the relation tensor after one message-passing operation.
-
+From equation \eqref{eq:linear_symbolic_mp}, the symbolic message-passing operation is clearly bijective as a function on the input relation tensor $R$, for an appropriate choice of the symbol parameters $S = (s_1,\ldots, s_\m)$. For example, choosing $S = I_{\m \times \m}$ (i.e.: the $i$th symbolic vector is the indicator $\m$-vector with a $1$ in the $i$th position, $s_i = e_i$) reproduces the relation tensor after one message-passing operation:
 \begin{equation*}
-	s_i' =  \sum_{j=1}^{n} R[i,j] e_j = \begin{pmatrix}R[i,1] \\ R[i,2] \\ \vdots \\ R[i,n]\end{pmatrix}
+	s_i  \leftarrow  \sum_{j=1}^{n} R[i,j] e_j = \begin{pmatrix}R[i,1] \\ R[i,2] \\ \vdots \\ R[i,n]\end{pmatrix}.
 \end{equation*}
-
-More generally, one linear step of symbolic message-passing yields updated symbolic vectors such that $s_i'$ is a linear function of the vector of all objects' relations with object $i$.
-
+More generally, one linear step of symbolic message-passing yields updated symbolic vectors such that $s_i'$ is a linear function of the vector of all objects' relations with object $i$:
 \begin{equation*}
-	s_i' = \boldsymbol{s} \begin{pmatrix}R[i,1] \\ \vdots \\ R[i,n]\end{pmatrix}
+	s_i \leftarrow = S \begin{pmatrix}R[i,1] \\ \vdots \\ R[i,n]\end{pmatrix}.
 \end{equation*}
-
 Following the linear step in symbolic message-passing, each updated symbolic state is transformed via a neural network. Hence, the $i$th abstracted value after symbolic message-passing is given by
-
 \begin{equation*}
-	a_i = \phi\left(\boldsymbol{s} R_i \right),
+	a_i = \phi\left(S r_i \right),
 \end{equation*}
-
-\noindent where $\phi$ is a neural network, and $R_i$ is the vector of object $i$'s relations with every other object, $R_i = \begin{pmatrix}R[i,1] & \cdots & R[i,n]\end{pmatrix}^\top$. Hence, $a_i$ summarizes all the information about object $i$'s relations to all other objects.
-
-We state the above discussion as a lemma in \Cref{lemma:function_class_1_step_symbolic_mp}.
+where $\phi$ is a neural network, and $R_i$ is the vector of object $i$'s relations with every other object, $R_i = \begin{pmatrix}R[i,1] & \cdots & R[i,n]\end{pmatrix}^\top$. Hence, $a_i$ summarizes all the information about object $i$'s relations to all other objects. We summarize this discussion by the following 
+lemma, which follows from universal approximation properties of feed-forward networks.
 
 \begin{lemma}
 	\label{lemma:function_class_1_step_symbolic_mp}
-	A one-step symbolic message-passing operation (in \Cref{alg:symbolic_mp}) can compute arbitrary functions of a each object's relations with other objects in the input sequence. That is, there exists a choice of symbols $s_1, ..., s_n$ and parameters of the feed-forward network such that $a_i$ computes an arbitrary function of object $i$'s relations, $\begin{pmatrix}R[i,1] & R[i,2] & \cdots & R[i,n]\end{pmatrix}^\top$
+	A one-step symbolic message-passing operation (in \Cref{alg:symbolic_mp}) can compute arbitrary functions of a each object's relations with other objects in the input sequence. That is, there exists a choice of symbols $s_1, ..., s _\m$ and parameters of the feed-forward network such that $a_i$ computes an arbitrary function of object $i$'s relations, $r_i = \begin{pmatrix}R[i,1] & R[i,2] & \cdots & R[i,n]\end{pmatrix}^\top$.
 \end{lemma}
-\begin{proof}
-	This follows by the above discussion and universal approximation of feed-forward networks.
-\end{proof}
+
 
 Thus, the abstracted sequence after a single step of symbolic message-passing has the form
-
 \begin{equation}
 	\label{eq:abstracted_seq_1_layer_abstracter}
-	\boldsymbol{a}^{(1)} = (a_1^{(1)}, ..., a_n^{(1)}) = \left(\phi(R_1), \phi(R_2), ..., \phi(R_n)\right),
+	A^{(1)} = (a_1^{(1)}, ..., a_\m^{(1)}) = \left(\phi(r_1), \phi(r_2), ..., \phi(r_\m)\right),
 \end{equation}
-\noindent where $\phi$ is an arbitrary learnable function shared by all abstracted objects, and $R_i$ is the vector of object $i$'s relations with every other object.
+where $\phi$ is an arbitrary learnable function shared by all abstracted objects, and $r_i$ is the vector of object $i$'s relations with every other object.
 
-That is, $a_i^{(1)}$ summarizes object $i$'s relations with other objects. With further symbolic message-passing operations, the $i$th abstracted vector can be made to represent information about other relations, not necessarily involving the $i$th object. In particular, for example, at the second layer, the abstracted vectors take the form
-
+That is, $a_i^{(1)}$ summarizes object $i$'s relations with other objects. With further symbolic message-passing operations, the $i$th abstracted vector can be made to represent information about other relations, not necessarily involving the $i$th object. For example, at the second layer, the abstracted vectors take the form
 \begin{equation}
 	a_i^{(2)} = \phi^{(2)} \left( \sum_{j=1}^{n} R[i,j] a_j^{(1)} \right) = \phi^{(2)} \left( \sum_{j=1}^{n} R[i,j] \phi^{(1)}(R_j) \right).
 \end{equation}
 
-We conclude this subsection by remarking that the above analysis concerns \Cref{alg:symbolic_mp}---a simplified version of the relational Abstractor. In particular, while it captures the effects of relational cross-attention, it does not include self-attention on the abstracted . The analysis indicates that we should expect the function class generated by a relational Abstractor module \Cref{alg:relational_abstractor} to be no smaller than that of the simple symbolic message-passing in \Cref{alg:symbolic_mp}.
+We conclude this subsection by remarking that the above analysis concerns \Cref{alg:symbolic_mp}---a simplified version of the relational  abstractor. In particular, while it captures the effects of relational cross-attention, it does not include self-attention on the abstract symbols. The analysis indicates that we should expect the function class generated by a relational  abstractor module in \Cref{alg:relational_abstractor} to be no smaller than that of the simple symbolic message-passing in \Cref{alg:symbolic_mp}.
 
 
-\subsection{Composing Abstractors to Compute Relations on Relations}
+\subsection{Composing  abstractors to compute relations on relations}
 \label{ssec:compsing_abstracters}
 
-As described in \Cref{sec:abstractors_as_transformer_modules}, the Abstactor framework supports composing Abstractors in the form
-
+As described in \Cref{sec:abstractors_as_transformer_modules}, the abstactor framework supports composing  abstractors in the form
 \begin{equation*}
-	\texttt{Encoder} \to \texttt{Abstracter} \to \cdots \to \texttt{Abstracter} \to \texttt{Output}
+	\texttt{Encoder} \to \texttt{Abstractor} \to \cdots \to \texttt{Abstractor} \to \texttt{Output}
 \end{equation*}
+Here, we analyze the function class generated by a composition of several abstractors. We make the simplifying assumption that each single layer abstractor takes the simplified form of the symbolic message-passing operation in \Cref{alg:symbolic_mp}. This corresponds to omitting the self-attention operation in \Cref{alg:relational_abstractor} while maintaining the relational cross-attention with the sequence of output vectors at the previous  abstractor.
 
-Here, we analyze the function class generated by a composition of several abstractors. We make the simplifying assumption that each 1-layer `Abstractor` takes the simplified form of the symbolic message-passing operation in \Cref{alg:symbolic_mp}. This corresponds to omitting the self-attention operation in \Cref{alg:relational_abstractor} while maintaining the relational cross-attention with the sequence of output vectors at the previous Abstractor.
-
-We saw in the previous section that a one-layer abstracter is able to compute arbitrary functions  of each object's relations. Observe that the output sequence of abstracted objects is a sequence of `relational vectors'. That is, objects which summarize relational information. Hence, chaining together a sequence of Abstractors would allow us to compute relations on relations.
+We saw in the previous section that a one-layer abstracter is able to compute arbitrary functions  of each object's relations. Observe that the output sequence of abstracted objects is a sequence of `relational vectors'. That is, objects which summarize relational information. Hence, chaining together a sequence of  abstractors allows the computation of relations on relations.
 
 % TODO: formalize or refine presentation of result
 \begin{lemma}
 	\label{lemma:function_class_composed_abstractors}
-	A chain of $k$ 1-layer Abstractors is able to compute arbitrary ``$k$th order relational functions'' (in the sense of the proof below).
+	A chain of $k$ single-layer  abstractors is able to compute arbitrary ``$k$th order relational functions'' in the sense of the proof below.
 \end{lemma}
-\begin{proof}[proof sketch]
+\begin{proof}[Proof sketch]
 	In \Cref{ssec:function_class_symbolic_mp} we characterized the output of a 1-layer abstractor as
 	\begin{equation*}
-		\boldsymbol{a}^{(1)} = (a_1^{(1)}, ..., a_n^{(1)}) = \left(\phi^{(1)}(R_1), \phi^{(1)}(R_2), ..., \phi^{(1)}(R_n)\right),
+		A^{(1)} = (a_1^{(1)}, ..., a_\m^{(1)}) = \left(\phi^{(1)}(r_1), \phi^{(1)}(r_2), \ldots, \phi^{(1)}(r_\m)\right),
 	\end{equation*}
+	Note that we will now use the superscript to denote the abstractor in the chain rather than the layer depth in a single  abstractor, as all  abstractors have a depth of one.
 
-	Note that we will now use the superscript to denote the abstracter in the chain rather than the layer depth in a single Abstractor (all Abstractors have a depth of 1).
-
-	Let the second Abstracter's symbols be denoted by $\boldsymbol{s}^{(2)} = (s_1^{(2)}, ..., s_n^{(2)})$. Then,
+	Let the second abstractor's symbols be denoted by $S^{(2)} = (s_1^{(2)}, ..., s_\m^{(2)})$. Then,
 
 	\begin{equation*}
 		a_i^{(2)} = \boldsymbol{s}^{(2)} \begin{bmatrix}R^{(2)}[i,1] \\ \vdots \\ R^{(2)}[i,n]\end{bmatrix},
@@ -238,7 +218,7 @@ We saw in the previous section that a one-layer abstracter is able to compute ar
 
 	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, $\langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle$ computes a relation between object $i$'s relations and object $j$'s relations. Hence, choosing $s_i^{(2)} = e_i$ and ignoring the Softmax for now, yields
 	\begin{equation*}
-		a_i^{(2)} = \phi^{(2)}\left(\begin{bmatrix}\langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_1) \rangle \\ \vdots \\ \langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_n) \rangle\end{bmatrix}\right).
+		a_i^{(2)} = \phi^{(2)}\left(\begin{bmatrix}\langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_1) \rangle \\ \vdots \\ \langle W^q \phi^{(1)}(R_i), W^k \phi^{(1)}(R_\m) \rangle\end{bmatrix}\right).
 	\end{equation*}
 
 	Thus, $a_i^{(2)}$ computes arbitrary second-order relation functions. Namely, it computes arbitrary relations between object $i$'s relation vector and every other object's relation vector.
