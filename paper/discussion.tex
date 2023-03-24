@@ -26,10 +26,11 @@ can be seen as relational cross-attention with weights
 and values $y_{1:n}$; The second equality above holds when the vectors $x_i$ are normalized.
 The episodic memory has bindings $\{x_i\| y_i\}$ with values $y_i$ that 
 might be viewed as on the abstract side if they are rewards or labels that are associated with 
-a particular input. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute inner products $\langle W_Q x, W_K \rangle$. 
+a particular input. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute inner products $\langle W_Q x, W_K \rangle$, leading 
+to a semiparametric model. 
 The number of keys grows unboundedly with the number of ``episodes'' experienced 
 and the number of queries remains of constant size for the current event where predictions are made.
-This allows a regulation of the bias-variance tradeoff through the way that the attention is implemented, 
+This allows a regulation of the bias-variance tradeoff through the way that attention is implemented, 
 while limiting the number of parameters that need to be learned.
 
 \begin{figure}[t]
@@ -47,13 +48,12 @@ while limiting the number of parameters that need to be learned.
 \end{figure}
 
 A second direction, also motivated from cognitive neuroscience principles, is to replace 
-parallel execution of attention heads with evaluate of attention heads as directed by a serial controller. 
+parallel execution of attention heads with serial evaluation as directed by a controller. 
 In standard transformers, attention operations are spread across multiple attention heads,
-each of which is restricted in scope, and that are evaluated in parallel across GPUs by embedding them in matrix multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned representations to be abstract and attentional operations to be generalizable over those, in ways that exhibited by the flexiblity of human cognition.  It will be important to add an {\it attentional control} mechanism that resides on the abstract side (implementing a form of ``cognitive control'') responsible for selecting attention heads to be evaluated in each step in a serial fashion, which might be seen as analogous to gating and updating functions 
-in that coordinate prefrontal cortex and basal ganglia.
+each of which is restricted in scope, and that are evaluated in parallel across GPUs by embedding them in matrix multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned representations to be abstract and attentional operations to be generalizable over those, in ways that exhibited by the flexiblity of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion. This could be seen as analogous to gating and updating functions that coordinate prefrontal cortex and basal ganglia activity.
 
-Finally, while this framework is designed to provide the flexibility of abstract, relational reasoning that can be generalized to novel inputs, this comes at the expense of control-dependent serial encoding and inference, which can be avoided in cases where the stimuli and relationships among them are highly consistent. By allowing
-direct connections $E \Rightarrow D$ from encoder to decoder states to be learned if a task is repeated or replayed repeatedly, then inferential abstract reasoning---which can be highly data efficient but relatively slow---can gradually be replaced by direct transformations between processing modules once a task is learned and repeatedly used, or internally replayed.  Together, the additions of episodic memory, attentional control, and automatization 
+Finally, while this more general framework is designed to provide the flexibility of abstract, relational reasoning that can be generalized to novel inputs, it comes at the expense of control-dependent serial encoding and inference, which can be avoided in cases where the stimuli and relationships among them are highly consistent. By allowing
+direct connections $E \Rightarrow D$ from encoder to decoder states to be learned if a task is repeated or replayed repeatedly, inferential abstract reasoning---which can be highly data efficient but relatively slow---can gradually be replaced by direct transformations between processing modules once a task is learned and repeatedly used, or internally replayed.  Together, the additions of episodic memory, attentional control, and automatization 
 suggest the picture shown in Figure~\ref{fig:algo2}. Whether this should be tucked into the Procrustean bed of transformers or make use of a more flexible architecture will be part of the exploration.
 
 
