@@ -1,19 +1,7 @@
 \section{Discussion}
 \label{sec:discuss}
 
-\begin{figure}[t]
-    \vspace{-3mm}
-    \begin{center}
-    \begin{tabular}{c}
-        \hskip2pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram2-crop} 
-    \end{tabular}
-    \caption{In a more general architecture, motivated by principles of information processing 
-    in the brain, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. This allows abstract states---e.g., emergent symbols---to be shared and reused across problems and domains. When Encoder/Decoder states appear together repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation and automatization).
-    }
-    \label{fig:algo2}
-    \vskip-12pt
-    \end{center}
-\end{figure}
+
 
 In this work have shown how transformers naturally support types of relational learning, through cross attention mechanisms that enforce a relational bottleneck, so that only information about relations between encoder states 
 are used in transformations of the abstract states. Experiments with sorting and other relational tasks indicate that this framework has the potential to seamlessly combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. But much 
@@ -21,6 +9,8 @@ work remains to fully realize this potential, and to further align the algorithm
 
 Two directions to highlight are the use of external memories and attentional control. The flexibility of transformer attention mechanisms comes with a computational and statistical price. Put simply, an attention head over 
 $O(\m)$ objects incurs a quadratic $O(\m^2)$ expansion of parameters, limiting the ability to generalize. This is a reason that large language models based on transformers require such a large number of parameters, and consequently so much training data. 
+
+
 
 From a statistical perspective, the use of an external memory effectively allows nonparametric and semiparametric models. To make this explicit, note that the classical kernel regression estimator for the Gaussian kernel,
 given by
@@ -41,6 +31,20 @@ The number of keys grows unboundedly with the number of ``episodes'' experienced
 and the number of queries remains of constant size for the current event where predictions are made.
 This allows a regulation of the bias-variance tradeoff through the way that the attention is implemented, 
 while limiting the number of parameters that need to be learned.
+
+\begin{figure}[t]
+    \vspace{-3mm}
+    \begin{center}
+    \begin{tabular}{c}
+        \hskip2pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram2-crop} 
+    \end{tabular}
+    \caption{In a more general architecture, motivated by principles of information processing 
+    in the brain, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. This allows abstract states---e.g., emergent symbols---to be shared and reused across problems and domains. When Encoder/Decoder states appear together repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation and automatization).
+    }
+    \label{fig:algo2}
+    \vskip-12pt
+    \end{center}
+\end{figure}
 
 A second direction, also motivated from cognitive neuroscience principles, is to replace 
 parallel execution of attention heads with evaluate of attention heads as directed by a serial controller. 
