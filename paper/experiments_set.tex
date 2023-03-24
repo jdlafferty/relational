@@ -53,11 +53,9 @@ pattern or an AAA pattern, the class label is one. For each attribute we train
 two different Abstractors---the first is trained from scratch, and includes the learning 
 of four new relational cross attention heads. The second Abstractor is 
 initialized so that the attention heads are given by the Abstractor learned for the 
-Same/Different task. Thus, only the \MLP{} used to classify the abstract state $A$ is 
+Same/Different task. Thus, only the \MLP{} used to classify the abstract state $A=(a_1, a_2, a_3)$ is 
 learned for this task.
 
-\subtask{Evaluation} We evaluate learning curves on the AAB tak for each 
-model and attribute, for training set sizes ranging from $10$ triples to $1,000$ sequences in increments of $100$. For each training set size we run 10 trials each. Each trial consists of training a model on a dataset of the corresponding size for 50 epochs. For each trial, we evaluate the classification 
-accuracy on an independent test sample of $500$ triples of card images. The results are shown 
-in Figure~\ref{fig:aab_learning_curves}
+\subtask{Evaluation} We evaluate learning curves on the AAB task for each 
+model and attribute, for training set sizes ranging from $10$ triples to $800$ sequences in increments of $80$. For each training set size we run 10 trials. Each trial consists of training a model on a dataset of the corresponding size for 50 epochs. The classification accuracy is evaluated on an independent test sample of $500$ triples of card images. The results are shown in Figure~\ref{fig:aab_learning_curves}.
 
