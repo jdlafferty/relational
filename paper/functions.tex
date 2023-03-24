@@ -199,16 +199,13 @@ We saw in the previous section that a one-layer abstracter is able to compute ar
 	Note that we will now use the superscript to denote the abstractor in the chain rather than the layer depth in a single  abstractor, as all  abstractors have a depth of one.
 
 	Let the second abstractor's symbols be denoted by $S^{(2)} = (s_1^{(2)}, ..., s_\m^{(2)})$. Then,
-
 	\begin{equation*}
-		a_i^{(2)} = \boldsymbol{s}^{(2)} \begin{bmatrix}R^{(2)}[i,1] \\ \vdots \\ R^{(2)}[i,n]\end{bmatrix},
+		a_i^{(2)} = S^{(2)} \begin{bmatrix}R^{(2)}[i,1] \\ \vdots \\ R^{(2)}[i,n]\end{bmatrix},
 	\end{equation*}
-
 	where,
 	\begin{equation*}
-		R^{(2)} = \Softmax\left((W^k \boldsymbol{a}^{(1)})^\top (W^q \boldsymbol{a}^{(1)})\right)
+		R^{(2)} = \Softmax\left((W_K A^{(1)})^\top (W_Q A^{(1)})\right).
 	\end{equation*}
-
 	Observe that
 	\begin{equation*}
 		\left[(W^k \boldsymbol{a}^{(1)})^\top (W^q \boldsymbol{a}^{(1)})\right]_{ij} = \langle W^q \phi^{(1)}(R_j), W^k \phi^{(1)}(R_i) \rangle.
