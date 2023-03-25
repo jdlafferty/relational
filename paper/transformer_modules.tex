@@ -11,7 +11,9 @@ these operations as extensions of transformer architectures.
 
 \subsection{Relational learning using transformers}
 
-In our extended framework, processing occurs in encoder/decoder modules that handle particular types of information, separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate through cross attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
+In our extended framework, processing occurs in encoder/decoder modules that handle particular types of information,
+separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate
+through cross-attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
 The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder and decoder states are vectors
 that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled
@@ -90,7 +92,10 @@ no matter which transformations are learned by the attention heads.
 
 We use the game SET to illustrate relational cross-attention.
 % JDC: COULD REFERENCE WIKIPEDIA PAGE FOR SET:  https://en.wikipedia.org/wiki/Set_(card_game)
-SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory embeddings. Players are presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape; see Figure \ref{fig_set}a) and they must find subsets of three cards which obey a simple but challenging rule: along each dimension, all cards in a set must either have the same or unique values (e.g., in Figure \ref{fig_set}, cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs: same color, same number, different patterns, different shapes).
+SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative
+, attentionally directed manner, requiring several levels of abstraction over sensory embeddings. Players are
+presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and
+shape; see Figure \ref{fig_set}a) and they must find subsets of three cards which obey a deceptively simple rule: along each dimension, all cards in a set must either have the same or unique values (e.g., in Figure \ref{fig_set}, cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs: same color, same number, different patterns, different shapes).
 
 Algorithmically, task performance can be described as follows. The visual arrangement of cards is processed into a set of encoder states $E$ by standard deep learning mechanisms. The abstractor, starting in some initial abstract state $A$, transforms the state by the evaluation of attention heads that extract relations between the cards, each head giving a relation between them in a learned attribute.
 
@@ -171,11 +176,13 @@ Attributes $\bra{E}$: & \redcard \redcard \redcard & \redcard\bluecard\greencard
 & \onecard \onecard \onecard & \onecard\twocard\threecard & \onecard\onecard\twocard
 \end{tabulary}
 %\end{table}
-        \caption{Illustration of mechanism used in abstractor layers with relational cross attention using the game of SET (see text for description).
+        \caption{Illustration of mechanism used in abstractor layers with relational cross-attention using the game
+        of SET (see text for description).
 %To provide a basic working of example of abstraction in our framework,
 As an example, consider an initial abstract symbol $A = A_{1:3}$ for three cards, and the color attribute.
 %, for concreteness.
-Suppose a relation is learned such that  $\braket{E_i}{E_j}$ is large if cards $i$ and $j$ have different color, and is small if they are the same color.  Then relational cross-attention (approximately) transforms the initial abstract symbol $A$ as shown in the above table. A simple multilayer perceptron can learn to discriminate between these three cases with very little training data. Once learned, the symbol $A$ then can be used to represent abstract ``same/different'' relations for any triple of inputs, regardless of their sensory encoding.}
+Suppose a relation is learned such that  $\braket{E_i}{E_j}$ is large if cards $i$ and $j$ have different colors, and
+        is small if they are the same color.  Then relational cross-attention (approximately) transforms the initial abstract symbol $A$ as shown in the above table. A simple multilayer perceptron can learn to discriminate between these three cases with very little training data. Once learned, the symbol $A$ then can be used to represent abstract ``same/different'' relations for any triple of inputs, regardless of their sensory encoding.}
         \label{fig:perf-node}
     \end{minipage}%
         \hspace{3mm}%
