@@ -2,7 +2,7 @@
 \section{Relational abstractors as transformer modules}
 \label{sec:abstractors_as_transformer_modules}
 
-In the previous section relational learning 
+In the previous section we considered relational learning
 in terms of symbolic message passing operations, where the connection to transformers 
 was suggested. In this section, we make the connection more explicit, formulating 
 these operations as extensions of transformer architectures.
@@ -18,7 +18,7 @@ that represent domain-specific information (e.g., sensory or motor), which are o
 by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors
 that are learned and processed using similar mechanisms but, critically, without direct exposure to the $E$ and $D$ states.  In particular, the encoder states are separated from the abstract states by a ``relational bottleneck''
 that only allows information about relations (that is, inner-products) between encoder
-states to influence the transformation of abstract states.
+states to influence the learning and transformation of abstract states.
 
 \begin{figure}[t]
     \vspace{-3mm}
@@ -26,7 +26,8 @@ states to influence the transformation of abstract states.
     \begin{tabular}{c}
         \hskip5pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram3-crop}
     \end{tabular}
-    \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. For purely relational reasining the abstract symbols depend only on relations between encoder states, which is a form of the ``relational bottleneck.''}
+    \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for
+    sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. For purely relational reasoning the abstract symbols depend only on relations between encoder states, which is a form of the ``relational bottleneck.''}
     \label{fig:algo}
     \vskip-12pt
     \end{center}
@@ -36,7 +37,7 @@ states to influence the transformation of abstract states.
 
 \subsection{Relational cross-attention}
 
-In the message passing message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols determined by the relations. Suggestively renaming the linear mappings of \eqref{eq:relation_innerproduct} as $W_Q$ and $W_K$, this can be compactly written as
+In the message-passing operation \Cref{eq:linear_symbolic_mp}, it is useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. Hence, after each symbolic message-passing operation, the updated representation of each symbol involves a convex combination of the other symbols determined by the relations. Suggestively renaming the linear mappings of \eqref{eq:relation_innerproduct} as $W_Q$ and $W_K$, this can be compactly written as
 \begin{equation}
     \label{eq:relational_crossattention}
     \begin{split}
@@ -73,7 +74,8 @@ Given the context of the encoder states $E$, a sequence of abstractor layers tra
 \end{equation*}
 The initial abstract state is $S = (s_1,\ldots, s_m)$
 with abstract symbols $s_j$ that are task-dependent but input-indendent, trainable using
-backpropagation. The relational cross-attention mechanism learns relations among the encoder states and use those relations to transform the abstract state. Importantly, the relational cross-attention heads
+backpropagation. The relational cross-attention mechanism learns relations among the encoder states and uses those
+relations to transform the abstract state. Importantly, the relational cross-attention heads
 encode learned relations and attributes, and can be reused across tasks.
 
 
@@ -86,7 +88,9 @@ no matter which transformations are learned by the attention heads.
 \subsection{Example}
 \label{ssec:set}
 
-We use the game SET to illustrate relational cross-attention. SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory embeddings. Players are presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape; see Figure \ref{fig_set}a) and they must find subsets of three cards which obey a simple but challenging rule: along each dimension, all cards in a set must either have the same or unique values (e.g., in Figure \ref{fig_set}, cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs: same color, same number, different patterns, different shapes).
+We use the game SET to illustrate relational cross-attention.
+% JDC: COULD REFERENCE WIKIPEDIA PAGE FOR SET:  https://en.wikipedia.org/wiki/Set_(card_game)
+SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory embeddings. Players are presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape; see Figure \ref{fig_set}a) and they must find subsets of three cards which obey a simple but challenging rule: along each dimension, all cards in a set must either have the same or unique values (e.g., in Figure \ref{fig_set}, cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs: same color, same number, different patterns, different shapes).
 
 Algorithmically, task performance can be described as follows. The visual arrangement of cards is processed into a set of encoder states $E$ by standard deep learning mechanisms. The abstractor, starting in some initial abstract state $A$, transforms the state by the evaluation of attention heads that extract relations between the cards, each head giving a relation between them in a learned attribute.
 
