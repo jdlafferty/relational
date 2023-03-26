@@ -11,7 +11,7 @@ naturally support types of relational learning, through cross-attention
 mechanisms that enforce a relational bottleneck, so that only information about relations between encoder states
 are used in transformations of the abstract states.
 % JDC ADDED:
-This builds on insights gained from the implementation of a relational bottleneck in other forms \cite{esbn, kerg2022neural},
+This builds on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural},
 that exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
 %
 Experiments with sorting and other relational tasks indicate that this framework has the potential to seamlessly combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. Interesting
@@ -68,7 +68,7 @@ each of which is restricted in scope, and that are evaluated in parallel across 
 multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned
 representations to be abstract and attentional operations to be generalizable over those, in ways that are exhibited
 by the flexiblity of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
-the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \cite{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingualte cortex, prefrontal cortex and basal ganglia,
+the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingualte cortex, prefrontal cortex and basal ganglia,
 % JDC:  ADD CITES HERE
 % Miller, E. K., & Cohen, J. D. (2001). An integrative theory of prefrontal cortex function. Annual review of
 %neuroscience, 24(1), 167-202.
@@ -77,7 +77,7 @@ the abstract side and is responsible for selecting attention heads to be evaluat
 % O'Reilly, R. C., & Frank, M. J. (2006). Making working memory work: a computational model of learning in the
 %prefrontal cortex and basal ganglia. Neural computation, 18(2), 283-328.
 % Shenhav, A., Botvinick, M. M., & Cohen, J. D. (2013). The expected value of control: an integrative theory of anterior cingulate cortex function. Neuron, 79(2), 217-240.
-and implemented using neural network mechanisms such as LSTMs \cite{lstm} and/or variations on the transformer
+and implemented using neural network mechanisms such as LSTMs \citep{lstm} or variations on the transformer
 architecture
 % JDC:  ADD CITES HERE:
 % Vaishnav, M., & Serre, T. GAMR: A Guided Attention Model for (visual) Reasoning. In The Eleventh International
@@ -88,7 +88,7 @@ direct connections $E \Rightarrow D$ from encoder to decoder states to be learne
 repeatedly, inferential abstract reasoning---which can be highly data efficient but relatively slow---can gradually
 be replaced by direct transformations between processing modules once a task is learned and repeatedly used, or
 internally replayed, corresponding to the process of automatization in humans that leads to more efficient, parallel
-processing \cite{schneider1977controlled, ravi2020navigatingm, usslick2021rationalizing}.  Together, the additions of
+processing \citep{schneider1977controlled, ravi2020navigating, musslick2021rationalizing}.  Together, the additions of
 episodic memory, attentional control, and automatization suggest the picture shown in Figure~\ref{fig:algo2}. Whether
 this should be tucked into the Procrustean bed of transformers or make use of a more flexible architecture will be part of the exploration.
 
