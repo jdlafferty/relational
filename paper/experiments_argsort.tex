@@ -27,7 +27,7 @@ better generalization performance) than a Transformer
 
 \subtask{Model} We compare analogous configurations of a standard Transformer and a relational Abstractor. The sequence-to-sequence relational Abstractor is of the form $\texttt{Encoder} \to \texttt{Abstractor} \to \texttt{Decoder}$. The Encoder-to-Abstractor interface uses relational cross-attention and the Abstractor-to-Decoder interface uses standard cross-attention. The Abstractor and Transformer share the same hyperparameters: 2 layers (for each of the encoder, abstractor, and decoder), 2 attention heads, and a `model dimension' of 64.
 
-\subtask{Evaluation of learning efficiency} We evaluate learning curves on this task for each model for training set
+\subtask{Evaluation of sample efficiency} We evaluate learning curves on this task for each model for training set
 sizes ranging from $
 100$ sequences to $3,000$ sequences in increments of $100$. For each training set size we run 5 trials each. Each trial consists of training a model on a dataset of the corresponding size for 200 epochs. Throughout training, performance metrics are tracked on both the training and validation datasets. The model from the best-performing epoch for that trial according to the validation dataset is restored and evaluated on the testing dataset. For each trial, we evaluate $\text{sequence sorting accuracy} = \frac{\text{\# of sequence sorted correctly}}{\text{Total \# of test set sequences}}$.
 
@@ -55,5 +55,8 @@ We evaluate whether this results in improved sample efficiency.
 \end{figure}
 
 
-The learning curves for each model configuration are shown in \Cref{fig:random_object_argsort_learning_curves}. We observe that the relational Abstractors have significantly improved sample efficiency for this task over a standard Transformer. In fact, with training set sizes between 1,000-1,500 sequences, the Abstractors can perfectly perform the task while the Transformer fails to sort any sequences in the testing dataset fully correctly. We also observe reduced trial-to-trial variability in model performance in the Abstractors. The relational Abstractor with a pre-trained abstractor module displays a small improvement in sample efficiency and a further reduction in the sample-to-sample variability of model performance.
+The learning curves for each model configuration are shown in \Cref{fig:random_object_argsort_learning_curves}. We observe that the relational Abstractors have significantly improved sample efficiency for this task over a standard Transformer. In fact, with training set sizes between 1,000-1,500 sequences, the Abstractors can perfectly perform the task while the Transformer fails to sort any sequences in the testing dataset fully correctly. We also observe reduced trial-to-trial variability in model performance in the Abstractors.
+% JDC: THE LATTER MAY RELATE CLOSELY TO THE POINT MADE ABOVE (ABOUT THE CONSISTENCY OF THE REPRESENTATIONS AS
+% EVIDENCE OF SYMBOLIC COMPUTING)
+The relational Abstractor with a pre-trained abstractor module displays a small improvement in sample efficiency and a further reduction in the sample-to-sample variability of model performance.
 
