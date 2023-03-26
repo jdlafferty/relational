@@ -135,7 +135,7 @@
 
 
 \begin{document}
-
+\def\snote#1{${}^{#1}$}
 \setlength{\parskip}{0.5em}
 \begin{frontmatter}
 %{\bf\Large Relational Abstracters and Symbolic Message Passing: \\[7pt] Transformer Modules for Relational Reasoning}
@@ -146,9 +146,15 @@
 \vskip15pt
 \address{
 \begin{tabular}{ccccc}
-{\normalsize\rm\bfseries Awni Altabaa} & {\normalsize\rm\bfseries Taylor Webb} & {\normalsize\rm\bfseries Jonathan  Cohen} & {\normalsize\rm\bfseries John Lafferty}\\[5pt]
+{\normalsize\rm\bfseries Awni Altabaa}\snote{1} & {\normalsize\rm\bfseries Taylor Webb}\snote{2} & {\normalsize\rm\bfseries Jonathan  Cohen}\snote{3} & {\normalsize\rm\bfseries John Lafferty}\snote{4}\\[5pt]
 \end{tabular}
-\\[10pt]
+\vskip5pt
+\footnotetext{
+\snote{1}Department of Statistics and Data Science, Yale University; awni.altabaa@yale.edu.
+\snote{2}Department of Psychology, UCLA; taylor.w.webb@gmail.com.
+\snote{3}Department of Psychology and Princeton Neuroscience Institute, Princeton University; jdc@princeton.edu.
+\snote{4}Department of Statistics and Data Science, Wu Tsai Institute, Institute for Foundations of Data Science, Yale University; john.lafferty@yale.edu.
+}
 \today
 \vskip10pt
 }
@@ -167,6 +173,7 @@ with relational cross attention mechanisms.
 \input{functions}
 \input{experiments}
 \input{discussion}
+%\input{acknowledge}
 
 %\input{awni_outline}
 

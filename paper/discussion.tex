@@ -11,12 +11,10 @@ naturally support types of relational learning, through cross-attention
 mechanisms that enforce a relational bottleneck, so that only information about relations between encoder states
 are used in transformations of the abstract states.
 % JDC ADDED:
-This builds on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural},
-that exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
-%
-Experiments with sorting and other relational tasks indicate that this framework has the potential to seamlessly combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. Interesting
+Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
+Experiments with sorting and other relational tasks indicate that this framework has the potential to combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. Interesting
 work remains to better understand the potential of this framework, and
-how it may relate to the algorithms with principles of human cognition as implemented in the brain.
+how it may relate to the algorithms of human cognition as implemented in the brain.
 
 Two directions to highlight are the use of external memories and attentional control. The flexibility of transformer attention mechanisms comes with a computational and statistical price. An attention head over 
 $O(\m)$ objects incurs a quadratic $O(\m^2)$ expansion of parameters, limiting the ability to generalize. This is a reason that large language models based on transformers require such a large number of parameters, and consequently so much training data. 
@@ -32,15 +30,10 @@ can be seen as relational cross-attention with weights
     \alpha(x, x_{1:n}) &= \Softmax\left(\left\{-\frac{1}{2h^2}\|x-x_i\|^2\right\}\right) 
     = \Softmax\left(\left\{\frac{1}{h^2}\langle x, x_i\rangle\right\}\right)
 \end{align*}
-and values $y_{1:n}$; The second equality above holds when the vectors $x_i$ are normalized.
-The episodic memory has bindings $\{x_i\| y_i\}$ with values $y_i$ that 
-might be viewed as on the abstract side if they are rewards or labels that are associated with 
-a particular input. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute inner products $\langle W_Q x, W_K \rangle$, leading 
-to a semiparametric model. 
-The number of keys grows unboundedly with the number of ``episodes'' experienced 
-and the number of queries remains of constant size for the current event where predictions are made.
-This allows a regulation of the bias-variance tradeoff through the way that attention is implemented, 
-while limiting the number of parameters that need to be learned.
+and values $y_{1:n}$; the second equality above holds when the vectors $x_i$ are normalized.
+Viewed in terms of episodic memory, this has bindings $\{x_i\| y_i\}$ with values $y_i$ that 
+might be seen as being stored on the abstract side if they are rewards or labels that are associated with 
+a particular episode $x_i$. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute relations as inner products $\langle W_Q x, W_K x_i \rangle$, leading to a semiparametric model. The number of keys grows unboundedly with the number of episodes experienced, while the query remains of constant size. This allows a regulation of the bias-variance tradeoff through the way that attention is implemented, while limiting the number of parameters that need to be learned.
 
 \begin{figure}[t]
     \vspace{-3mm}
@@ -66,9 +59,10 @@ parallel execution of attention heads with serial evaluation as directed by a co
 In standard transformers, attention operations are spread across multiple attention heads,
 each of which is restricted in scope, and that are evaluated in parallel across GPUs by embedding them in matrix
 multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned
-representations to be abstract and attentional operations to be generalizable over those, in ways that are exhibited
+representations to be abstract and attentional operations to be generalizable, in ways that are exhibited
 by the flexiblity of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
-the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingualte cortex, prefrontal cortex and basal ganglia,
+the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingulate cortex, prefrontal cortex and basal ganglia
+\citep{frank2001interactions,evc,braver2000control}
 % JDC:  ADD CITES HERE
 % Miller, E. K., & Cohen, J. D. (2001). An integrative theory of prefrontal cortex function. Annual review of
 %neuroscience, 24(1), 167-202.
@@ -78,18 +72,19 @@ the abstract side and is responsible for selecting attention heads to be evaluat
 %prefrontal cortex and basal ganglia. Neural computation, 18(2), 283-328.
 % Shenhav, A., Botvinick, M. M., & Cohen, J. D. (2013). The expected value of control: an integrative theory of anterior cingulate cortex function. Neuron, 79(2), 217-240.
 and implemented using neural network mechanisms such as LSTMs \citep{lstm} or variations on the transformer
-architecture
+architecture \citep{gamr}.
 % JDC:  ADD CITES HERE:
 % Vaishnav, M., & Serre, T. GAMR: A Guided Attention Model for (visual) Reasoning. In The Eleventh International
 % Conference on Learning Representations
+
 While this more general framework would be designed to provide the flexibility of abstract, relational reasoning that
 can be generalized to novel inputs, it comes at the expense of control-dependent serial encoding and inference, which can be avoided in cases where the stimuli and relationships among them are highly consistent. By allowing
 direct connections $E \Rightarrow D$ from encoder to decoder states to be learned if a task is repeated or replayed
 repeatedly, inferential abstract reasoning---which can be highly data efficient but relatively slow---can gradually
 be replaced by direct transformations between processing modules once a task is learned and repeatedly used, or
 internally replayed, corresponding to the process of automatization in humans that leads to more efficient, parallel
-processing \citep{schneider1977controlled, ravi2020navigating, musslick2021rationalizing}.  Together, the additions of
-episodic memory, attentional control, and automatization suggest the picture shown in Figure~\ref{fig:algo2}. Whether
-this should be tucked into the Procrustean bed of transformers or make use of a more flexible architecture will be part of the exploration.
+processing \citep{schneider1977controlled, ravi2020navigating, musslick2021rationalizing}.  
+
+Taken together, the additions of episodic memory, attentional control, and automatization suggest the picture shown in Figure~\ref{fig:algo2}. Whether this should be tucked into the Procrustean bed of transformers or make use of a more flexible architecture will be part of the exploration.
 
 
