@@ -21,6 +21,7 @@ In a deep learning model, a natural choice is for $\phi^{(1)}, ..., \phi^{(d_r)}
 
 The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when $\phi^{(1)}, ..., \phi^{(d_r)}$ are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
 
+\textcolor{orange}{
 \begin{thm}[Universal approximation of inner product relational neural networks]
 	\label{thm:universal_approx_inner_product_relnn}
 	\hphantom{~}
@@ -30,6 +31,11 @@ The following result characterizes the class of inner product relations computab
 	\end{equation*}
 	Then, $\langle x, y \rangle_{\MLP}$ approximates the relation function $R$ arbitrarily closely in the supremum norm. That is, for all $\epsilon > 0$, there exists $\theta_1, ..., \theta_{d_r}$ such that $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$.
 \end{thm}
+}
+
+\textcolor{red}{NEED TO FIX THEOREM STATEMENT; INCORRECT DESCRIPTION OF MERCER KERNEL}
+
+\textcolor{blue}{maybe replace with this theorem statement: $\langle x, y \rangle_{\MLP}$ is a Mercer kernel across each dimension. Furthermore, for any vector-valued relational function $R$ which is a Mercer kernel in each dimension, there exists a set of MLP s.t. $\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon$}.
 
 \begin{proof}[Proof sketch]
 	\hphantom{~}
