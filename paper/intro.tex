@@ -12,7 +12,8 @@ way of ordering cards in many games. If a sorting algorithm is learned that depe
 only on the relations between objects, it can in principle be applied in a new domain with little 
 or no modification. 
 
-Reasoning in terms of relations and analogies is a hallmark of human intelligence. 
+Reasoning in terms of relations and analogies is a hallmark of human intelligence 
+\citep{snow,holyoak}.
 Indeed, the Wisconsin card sorting task \citep{berg} has been used for decades as an indicator of decision making
 function in prefrontal cortex \citep{monchi}. Recognizing the importance of this type of learning, which is largely
 separate from function approximation for sensory tasks such as image and audio processing, machine learning research
@@ -24,9 +25,9 @@ The success of transformers lies in combining the function approximation capabil
 of attentional mechanisms to support richly context-sensitive processing \citep{transformers,vaswani2017attention,
     kerg2020untangling}. Yet it is clear that transformers are missing core capabilities required for modeling human
 thought \citep{mahowald2023dissociating}.  In particular, they lack mechanisms required to emulate forms of
-flexibility and efficiency exhibited by the human brain, including an ability to support analogy and abstraction
-from limited data. The algorithmic challenge is to provide ways of binding domain-specific information to low
-dimensional, abstract representations that can be used to compute a given function in any setting for which it is relevant.
+flexibility and efficiency exhibited by the human brain, including an ability to support analogy and abstraction.
+While large language models show a suprising ability to complete some analogies \citep{webb}, this ability 
+emerges implicitly after processing vast amounts of data. The algorithmic challenge is to provide ways of binding domain-specific information to low dimensional, abstract representations that can be used to compute a given function in any setting for which it is relevant, with limited data.
 
 Our approach is motivated by a type of inductive bias for relational learning architectures we call the
 ``relational bottleneck," which is motivated by principles of cognitive neuroscience that shed light on the brain
