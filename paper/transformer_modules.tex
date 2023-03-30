@@ -15,13 +15,8 @@ In our extended framework, processing occurs in encoder/decoder modules that han
 separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate
 through cross-attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
-The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder and decoder states are vectors
-that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled
-by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors
-that are learned and processed using similar mechanisms but, critically, without direct exposure to the $E$ and $D$ states.  In particular, the encoder states are separated from the abstract states by a ``relational bottleneck''
-that only allows information about relations (that is, inner-products) between encoder
-states to influence the learning and transformation of abstract states. The Abstractor framework enables domain-specific relations to be modeled in the Encoder, as done by standard transformers, giving the framework more 
-flexitility relative to ESBN.
+The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder states are vectors that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors that are learned and processed using similar mechanisms but, critically, without direct exposure to the encoder states $E$.  In particular, the encoder states are separated from the abstract states by a ``relational bottleneck'' that only allows information about relations (that is, inner-products) between encoder states to influence the learning and transformation of abstract states. The Abstractor framework enables domain-specific relations to be modeled in the Encoder, as done by standard transformers, giving the framework more flexibility relative to ESBN. 
+%If sensory information is required by the decoder, this can be passed to the decoder states $D$ by standard cross-attention mechanisms of transformers.
 
 \begin{figure}[t]
     \vspace{-3mm}
