@@ -20,7 +20,7 @@ The input to this operation is a relation tensor $R = \left[R(o_i, o_j)\right]_{
 % JDC ?OK:
 after considering how the symbols on which it operates can be learned.
 
-The first set of learnable parameters of symbolic message-passing is a set of symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to") a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of those learned input-indpendent symbols is how symbolic message-passing achieves its abstraction.
+The starting point of symbolic message-passing is a set of learnable symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to") a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of those learned input-indpendent symbols is how symbolic message-passing achieves its abstraction.
 
 In relational symbolic message-passing, we perform message-passing on these learned symbolic parameters according to the relation tensor $R$. In general, this message-passing operation can be described as a set-valued function of the form
 \begin{equation}
