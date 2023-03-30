@@ -55,13 +55,7 @@ this inductive bias in terms of an extension of transformers, in which specific 
 the relational bottleneck, and new types of transformer modules use these attention mechanisms to implement a form of
 abstraction and relational reasoning.
 
-Our approach was developed while thinking about the ESBN framework \citep{esbn}, which can be seen as 
-closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as 
-LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN
-framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides,
-with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is
-that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be
-naturally implemented in an extension of transformers. Our proposed \textit{abstractor} framework extends ESBN to
+Our approach was developed while thinking about the Emergent Symbol Binding Network (ESBN) framework \citep{esbn}, which can be seen as closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides, with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be naturally implemented in an extension of transformers. Our proposed \textit{Abstractor} framework extends ESBN to
 enable more complex, higher order forms of relational learning by combining it with both the attentional mechanisms
 and hierarchical structure of transformers. This creates a potentially powerful combination of deep learning and
 relational learning that enables abstraction and generalization from limited data.

@@ -20,7 +20,8 @@ that represent domain-specific information (e.g., sensory or motor), which are o
 by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors
 that are learned and processed using similar mechanisms but, critically, without direct exposure to the $E$ and $D$ states.  In particular, the encoder states are separated from the abstract states by a ``relational bottleneck''
 that only allows information about relations (that is, inner-products) between encoder
-states to influence the learning and transformation of abstract states.
+states to influence the learning and transformation of abstract states. The Abstractor framework enables domain-specific relations to be modeled in the Encoder, as done by standard transformers, giving the framework more 
+flexitility relative to ESBN.
 
 \begin{figure}[t]
     \vspace{-3mm}
