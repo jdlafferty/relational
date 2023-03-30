@@ -116,9 +116,12 @@ Algorithmically, task performance can be described as follows. The visual arrang
 \multicolumn{1}{|c}{\redcard \redcard \redcard} & \multicolumn{1}{|c}{ \redcard\bluecard\greencard} &\multicolumn{1}{|c|}{\redcard\redcard\bluecard} \\
 \hline
 \hline
-$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_2+s_3)$ & $s_3$ \\
-$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_1+s_3)$ & $s_3$ \\
-$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_1+s_2)$ & $\frac{1}{2}(s_1+s_2)$ \\
+%$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_2+s_3)$ & $s_3$ \\
+%$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_1+s_3)$ & $s_3$ \\
+%$\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_1+s_2)$ & $\frac{1}{2}(s_1+s_2)$ \\
+$\frac{1}{3}(s_1+s_2+s_3)$ & $s_1$ & $\frac{1}{2}(s_1+s_2)$ \\
+$\frac{1}{3}(s_1+s_2+s_3)$ & $s_2$ & $\frac{1}{2}(s_1+s_2)$ \\
+$\frac{1}{3}(s_1+s_2+s_3)$ & $s_3$ & $s_3$ \\
 \hline
 \multicolumn{3}{c}{Transformed abstract symbol $A$}
 %\hline
@@ -135,7 +138,7 @@ $\frac{1}{3}(s_1+s_2+s_3)$ & $\frac{1}{2}(s_1+s_2)$ & $\frac{1}{2}(s_1+s_2)$ \\
 %To provide a basic working of example of abstraction in our framework,
 As an example, consider an initial abstract symbol $S = (s_1,s_2,s_3)$ for three cards, and the color attribute.
 %, for concreteness.
-Suppose a relation is learned such that  $\langle W_Q E_i, W_K E_j\rangle$ is large if cards $i$ and $j$ have different color, and is small if they are the same color.  Then relational cross-attention transforms the initial abstract symbol $S$ as shown in the above table. A multilayer perceptron can learn to discriminate between these three cases. Once learned, the symbol $A$ then can be used to represent abstract ``same/different'' relations for sequence of inputs.}
+Suppose a relation is learned such that  $\langle W_Q E_i, W_K E_j\rangle$ is small if cards $i$ and $j$ have different color, and is large if they are the same color.  Then relational cross-attention transforms the initial abstract symbol $S$ as shown in the above table. A multilayer perceptron can learn to discriminate between these three cases. Once learned, the symbol $A$ then can be used to represent abstract ``same/different'' relations for the sequence of inputs.}
 \label{fig_set}
 \end{figure}
 
