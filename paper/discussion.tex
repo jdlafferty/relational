@@ -17,9 +17,8 @@ work remains to better understand the potential of this framework, and
 how it may relate to the algorithms of human cognition as implemented in the brain.
 
 Two directions to highlight are the use of external memories and attentional control. The flexibility of transformer attention mechanisms comes with a computational and statistical price. An attention head over 
-$O(\m)$ objects incurs a quadratic $O(\m^2)$ expansion of parameters, limiting the ability to generalize. This is a reason that large language models based on transformers require such a large number of parameters, and consequently so much training data. 
-
-From a statistical perspective, the use of an external memory effectively allows nonparametric and semiparametric models. To make this explicit, note that the classical kernel regression estimator for the Gaussian kernel,
+$O(\m)$ objects incurs a quadratic $O(\m^2)$ cost to compute attention weights, and increasing $m$ and the number of attention heads results in language models with a large number of parameters, requiring large amounts of data to fit.
+From a statistical perspective, the use of an external memory with relational cross attention effectively allows nonparametric and semiparametric models. To make this explicit, note that the classical kernel regression estimator for the Gaussian kernel,
 given by
 \begin{align*}
   \hat f(x) &= \frac{\sum_{i=1}^n \exp\left(-\frac{1}{2h^2} \|x-x_i\|^2\right) y_i}{\sum_{i=1}^n \exp\left(-\frac{1}{2h^2} \|x-x_i\|^2\right)} 
@@ -42,7 +41,7 @@ a particular episode $x_i$. Under a learned relation, the model associates the r
         \hskip2pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram2-crop} 
     \end{tabular}
     \caption{In a more general architecture, motivated by principles of information processing 
-    in the brain, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. This allows abstract states---e.g., emergent symbols---to be shared and reused across problems and domains. When Encoder/Decoder states appear together repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation and automatization).
+    in the brain, the relational cross attention mechanisms can be regulated by a controller, and bindings between encoder/decoder and abstractor states are maintained in episodic memory. This allows abstract states to be shared and reused across problems and domains. When Encoder/Decoder states appear together repeatedly through experience and replay, the abstract inference circuit can be preempted by a direct connection (gray arrow), leading to computational efficiency and parallelization (i.e., consolidation and automatization).
     }
     \label{fig:algo2}
     \vskip-12pt
@@ -62,7 +61,7 @@ multiplication. This is a powerful, but energy inefficient approach, which also 
 representations to be abstract and attentional operations to be generalizable, in ways that are exhibited
 by the flexiblity of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
 the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingulate cortex, prefrontal cortex and basal ganglia
-\citep{frank2001interactions,evc,braver2000control}
+\citep{frank2001interactions,evc,braver2000control,wmPFC}
 % JDC:  ADD CITES HERE
 % Miller, E. K., & Cohen, J. D. (2001). An integrative theory of prefrontal cortex function. Annual review of
 %neuroscience, 24(1), 167-202.
