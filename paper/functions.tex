@@ -4,7 +4,7 @@
 \section{Function classes}
 \label{sec:function_spaces}
 
-In this section, we will discuss the class of relational functions computable by the symbolic message-passing operation in relational abstractors. We also comment on the robustness of these operations.
+In this section, we will discuss the class of relational functions computable by the symbolic message-passing operation in relational abstractors. We also comment on the robustness of these operations. In the process, we characterize the class of relational functions realizable by inner product relational neural networks, which may be of independent interest.
 
 We start by presenting a universal approximation result for inner product relations. This will be useful when characterizing the class of functions computable by abstractors, but is also of interest more generally for relational machine learning.
 
@@ -21,30 +21,38 @@ In a deep learning model, a natural choice is for \(\phi^{(1)}, \ldots, \phi^{(d
 
 The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
 
-\textcolor{orange}{
+
 \begin{thm}[Universal approximation of inner product relational neural networks]
 	\label{thm:universal_approx_inner_product_relnn}
 	\hphantom{~}
-	Suppose the data lies in a compact Hausdorff space \(\mathcal{X}\) (e.g.: a metric space) with a finite countably additive measure. In particular, \(\mathcal{X}\) can be any compact subset of \(\mathbb{R}^d\). Let \(R: \mathcal{X} \times \mathcal{X} \to \mathbb{R}^{d_r}\) be any relation function mapping pairs in \(\mathcal{X}\) to a \(d_r\)-dimensional relation feature vector. Suppose that \(R\) is continuous, symmetric (\(R(x,y) = R(y,x) \ \forall x,y \in \mathcal{X}\)), and positive semi-definite component-wise (\([R(x,x)]_i \succeq 0 \ \forall x \in \mathcal{X}\)). Consider an inner product relational neural network of the form in equation \eqref{eq:inner_product_relations} with output given by the inner product of MLPs:
+
+	Consider an inner product relational neural network modeling a $d_r$-dimensional relation via inner products of MLPS,
 	\begin{equation*}
 		\langle x, y \rangle_{\MLP} := \begin{bmatrix}\langle \MLP_{\theta_1}(x), \MLP_{\theta_1}(y) \rangle \\ \vdots \\ \langle \MLP_{\theta_{d_r}}(x), \MLP_{\theta_{d_r}}(y) \rangle\end{bmatrix}.
 	\end{equation*}
-	Then, \(\langle x, y \rangle_{\MLP}\) approximates the relation function \(R\) arbitrarily closely in the supremum norm. That is, for all \(\epsilon > 0\), there exists \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
+
+	Suppose the data lies in a compact Hausdorff space \(\mathcal{X}\) (e.g.: a metric space) with a finite countably additive measure. In particular, \(\mathcal{X}\) can be any compact subset of \(\mathbb{R}^d\).
+
+	Then, \(\langle \cdot, \cdot \rangle_{\MLP}\) is a Mercer kernel along each of the \(d_r\) dimensions.
+
+	Furthermore, for any vector-valued relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^d_r\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates $R$ arbitrarily closely in the superemum norm. More precisely, for all \(\epsilon > 0\), there exists MLP parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
 \end{thm}
-}
 
-\textcolor{red}{NEED TO FIX THEOREM STATEMENT; INCORRECT DESCRIPTION OF MERCER KERNEL}
-
-\textcolor{blue}{maybe replace with this theorem statement: \(\langle x, y \rangle_{\MLP}\) is a Mercer kernel across each dimension. Furthermore, for any vector-valued relational function \(R\) which is a Mercer kernel in each dimension, there exists a set of MLP s.t. \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\)}.
-
-\begin{proof}[Proof sketch]
+\begin{proof}
 	\hphantom{~}
 
-	Denote the given relation function \(R\) by its \(d_r\) components: 
+	Denote the given relation function \(R\) by its \(d_r\) components:
 	\begin{equation}
-		R(x,y) = (R_1(x,y), \ldots, R_{d_r}(x,y)). 
+		R(x,y) = (R_1(x,y), \ldots, R_{d_r}(x,y)).
 	\end{equation}
-	By assumption, \(R_i\) is a Mercer kernel for each \(i = 1, \ldots, d_r\). Consider the component \(R_i\). By Mercer's theorem, there exists \((\psi_i)_{i \in \mathbb{N}}\), \(\lambda_i \geq 0\) such that \(R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}\), where \(\psi_i\) and \(\lambda_i\) are eigenfunctions and eigenvalues of the integral operator \(T_R: L_2(\mathcal{X}) \to L_2(\mathcal{X})\), \(T_R(f) = \int_{\mathcal{X}}{R(\cdot, x) f(x) dx}\). Furthermore, the convergence of the series is uniform:
+	By assumption, \(R_i\) is a Mercer kernel for each \(i = 1, \ldots, d_r\). Consider the component \(R_i\). By Mercer's theorem, there exists \((\psi_i)_{i \in \mathbb{N}}\), \(\lambda_i \geq 0\) such that \(R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}\), where \(\psi_i\) and \(\lambda_i\) are eigenfunctions and eigenvalues of the integral operator
+
+	\begin{align*}
+		T_R&: L_2(\mathcal{X}) \to L_2(\mathcal{X}) \\
+		T_R(f) &= \int_{\mathcal{X}}{R(\cdot, x) f(x) dx}.
+	\end{align*}
+
+	Furthermore, the convergence of the series is uniform:
 	\begin{equation}
 		\lim_{n \to \infty} \sup_{x,y \in \mathcal{X}} \lvert R_i(x,y) - \sum_{j=1}^{n}{\lambda_j \psi_j(x) \psi_j(y) \rvert} = 0
 	\end{equation}
@@ -95,7 +103,7 @@ The following result characterizes the class of inner product relations computab
 \end{proof}
 
 \begin{remark}
-	The result also holds for universal approximators other than multi-layer perceptrons, with a nearly identical proof.
+	The result also holds for universal approximators other than feedforward neural networks, with a nearly identical proof.
 \end{remark}
 
 \Cref{thm:universal_approx_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions \(R(\cdot, \cdot)\). We now make a couple of remarks.
@@ -115,6 +123,16 @@ Additionally, we can consider inner products of the form
 \noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{thm:universal_approx_inner_product_relnn}.
 
 This is closely related to the cross-attention operation in transformers (and  abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: \(\langle W_Q x, W_K y \rangle\). A `relation tensor' giving pairwise relations is then computed as \(\Softmax((W_K X)^\top (W_Q X))\), where \(X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}\) are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) in the inner product relational neural network \ref{eq:inner_product_relations}.
+
+\begin{remark}
+	The function class of non-symmetric inner product relational neural networks of the form
+	\[ R(x,y) = \begin{pmatrix}
+		\langle \phi_1(x), \psi_1(y) \\
+		\vdots \\
+		\langle \phi_{d_r}(x), \psi_{d_r}(y)
+	\end{pmatrix}\]
+	can also be characterized.
+\end{remark}
 
 \subsection{Class of relational functions computable by symbolic message-passing}
 \label{ssec:function_class_symbolic_mp}
