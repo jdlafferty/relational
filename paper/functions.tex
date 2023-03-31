@@ -1,5 +1,6 @@
 \def\rdot{\bigcdot}
 \def\F{{\mathfrak{F}}}
+\def\NN{\text{NeurNet}}
 
 \section{Function classes}
 \label{sec:function_spaces}
@@ -8,34 +9,34 @@ In this section, we will discuss the class of relational functions computable by
 
 We start by presenting a universal approximation result for inner product relations. This will be useful when characterizing the class of functions computable by abstractors, but is also of interest more generally for relational machine learning.
 
-\subsection{Universal approximation for inner product relations}
+\subsection{Function class of inner product relations}
 
 A natural way to model relations between objects is through inner products between their vector representations. Consider vectors living in a space \(\mathcal{X}\). We would like to learn a relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which maps pairs of objects in \(\mathcal{X}\) to a \(d_r\)-dimensional vector describing the relation between these objects. We will model this relation function as a vector of inner products between transformations of the objects' representations:
 \begin{equation}
 	\label{eq:inner_product_relations}
-	R(x, y) = \begin{pmatrix}\langle \phi^{(1)}(x), \phi^{(1)}(y) \rangle \\ \vdots \\ \langle \phi^{(d_r)}(x), \phi^{(d_r)}(y) \rangle \end{pmatrix},
+	R(x, y) = \begin{pmatrix}\langle \phi_{1}(x), \phi_{1}(y) \rangle \\ \vdots \\ \langle \phi_{d_r}(x), \phi_{d_r}(y) \rangle \end{pmatrix},
 \end{equation}
-where \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) are learnable transformations corresponding to each dimension of the relation. These transformations can be thought of as \textit{relational filters}. They extract a particular attribute of the objects such that an inner product of the transformed objects indicates the alignment or similarity along this attribute. Having several different filters allows for modeling rich multi-dimensional relations. This is one notable advantage of this formulation over the CoRelNet model \citep{kerg2022neural}, which processes a relation matrix as input to a multi-layer perceptron.
+where \(\phi_{1}, \ldots, \phi_{d_r}\) are learnable transformations corresponding to each dimension of the relation. These transformations can be thought of as \textit{relational filters}. They extract a particular attribute of the objects such that an inner product of the transformed objects indicates the alignment or similarity along this attribute. Having several different filters allows for modeling rich multi-dimensional relations. This is one notable advantage of this formulation over the CoRelNet model \citep{kerg2022neural}, which processes a relation matrix as input to a multi-layer perceptron.
 
-In a deep learning model, a natural choice is for \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) to be \(d_r\) different neural networks (e.g.: MLPs, CNNs, etc. depending on the object space \(\mathcal{X}\)). Hence, the parameters of \(R\) are \(\boldsymbol{\theta} = (\theta^{(1)}, \ldots, \theta^{(d_r)})\), where \(\theta^{(i)}\) are the parameters of \(\phi^{(i)}\).
+In a deep learning model, a natural choice is for \(\phi_{1}, \ldots, \phi_{d_r}\) to be \(d_r\) different neural networks (e.g.: MLPs, CNNs, etc. depending on the object space \(\mathcal{X}\)). Hence, the parameters of \(R\) are \(\boldsymbol{\theta} = (\theta_{1}, \ldots, \theta_{d_r})\), where \(\theta_{i}\) are the parameters of \(\phi_{i}\).
 
-The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
+The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when \(\phi_{1}, \ldots, \phi_{d_r}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
 
 
-\begin{thm}[Universal approximation of inner product relational neural networks]
-	\label{thm:universal_approx_inner_product_relnn}
+\begin{thm}[Function class of inner product relational neural networks]
+	\label{thm:function_class_inner_product_relnn}
 	\hphantom{~}
 
-	Consider an inner product relational neural network modeling a $d_r$-dimensional relation via inner products of MLPS,
+	Consider an inner product relational neural network modeling a $d_r$-dimensional relation via inner products of neural networks,
 	\begin{equation*}
-		\langle x, y \rangle_{\MLP} := \begin{bmatrix}\langle \MLP_{\theta_1}(x), \MLP_{\theta_1}(y) \rangle \\ \vdots \\ \langle \MLP_{\theta_{d_r}}(x), \MLP_{\theta_{d_r}}(y) \rangle\end{bmatrix}.
+		\langle x, y \rangle_{\NN} := \begin{bmatrix}\langle \NN_{\theta_1}(x), \NN_{\theta_1}(y) \rangle \\ \vdots \\ \langle \NN_{\theta_{d_r}}(x), \NN_{\theta_{d_r}}(y) \rangle\end{bmatrix}.
 	\end{equation*}
 
 	Suppose the data lies in a compact Hausdorff space \(\mathcal{X}\) (e.g.: a metric space) with a finite countably additive measure. In particular, \(\mathcal{X}\) can be any compact subset of \(\mathbb{R}^d\).
 
-	Then, \(\langle \cdot, \cdot \rangle_{\MLP}\) is a Mercer kernel along each of the \(d_r\) dimensions.
+	Then, \(\langle \cdot, \cdot \rangle_{\NN}\) is a Mercer kernel along each of the \(d_r\) dimensions.
 
-	Furthermore, for any vector-valued relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^d_r\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates $R$ arbitrarily closely in the superemum norm. More precisely, for all \(\epsilon > 0\), there exists MLP parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
+	Furthermore, for any vector-valued relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^d_r\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates $R$ arbitrarily closely in the superemum norm (i.e.: uniformly over \((x,y) \in \mathcal{X}\times\mathcal{X}\)). More precisely, for all \(\epsilon > 0\), there exists $d_r$ neural networks with parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\NN \rVert_\infty} < \epsilon\).
 \end{thm}
 
 \begin{proof}
@@ -45,7 +46,7 @@ The following result characterizes the class of inner product relations computab
 	\begin{equation}
 		R(x,y) = (R_1(x,y), \ldots, R_{d_r}(x,y)).
 	\end{equation}
-	By assumption, \(R_i\) is a Mercer kernel for each \(i = 1, \ldots, d_r\). Consider the component \(R_i\). By Mercer's theorem, there exists \((\psi_i)_{i \in \mathbb{N}}\), \(\lambda_i \geq 0\) such that \(R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}\), where \(\psi_i\) and \(\lambda_i\) are eigenfunctions and eigenvalues of the integral operator
+	By assumption, \(R_i\) is a Mercer kernel for each \(i = 1, \ldots, d_r\). Consider the component \(R_i\). By Mercer's theorem \citep{mercerFunctionsPositive1909, sunMercerTheorem2005, universal}, there exists \((\psi_i)_{i \in \mathbb{N}}\), \(\lambda_i \geq 0\) such that \(R_i(x,y) = \sum_{i=1}^{\infty}{\lambda_i \psi_i(x) \psi_i(y)}\), where \(\psi_i\) and \(\lambda_i\) are eigenfunctions and eigenvalues of the integral operator
 
 	\begin{align*}
 		T_R&: L_2(\mathcal{X}) \to L_2(\mathcal{X}) \\
@@ -63,52 +64,54 @@ The following result characterizes the class of inner product relations computab
 		\sup_{x,y \in \mathcal{X}} \left\lvert R_i(x,y) - \sum_{j=1}^{n}{\lambda_j \psi_j(x) \psi_j(y)} \right\rvert < \frac{\epsilon}{2}
 	\end{equation}
 
-	Now, for \(j = 1, \ldots, \tilde{n}_i\), let the \(i\)th MLP with parameters \(\theta_i\) be a function from \(\mathcal{X}\) to \(\tilde{n}_i\)-dimensional space. Let \((\sqrt{\lambda_1} \psi_1, \ldots, \sqrt{\lambda_{\tilde{n}_i}} \psi_{\tilde{n}_i})\) be the function to be approximated by the \(i\)th MLP. By the universal approximation property of MLPs, for any \(\epsilon_1\), there exists \(\hat{\theta}_i\) such that
+	Now, for \(j = 1, \ldots, \tilde{n}_i\), let the \(i\)th neural network with parameters \(\theta_i\) be a function from \(\mathcal{X}\) to \(\tilde{n}_i\)-dimensional space. Let \((\sqrt{\lambda_1} \psi_1, \ldots, \sqrt{\lambda_{\tilde{n}_i}} \psi_{\tilde{n}_i})\) be the function to be approximated by the \(i\)th neural network. By the universal approximation property of neural networks, for any \(\epsilon_1\), there exists a neural network with parameters \(\hat{\theta}_i\) such that
 	\begin{equation}
-		\label{eq:proof_MLP_UAP}
-		\sup_{x\in \mathcal{X}}{\left\lvert (\MLP(x))_j - \sqrt{\lambda_j} \psi_j(x) \right\lvert } < \epsilon_1
+		\label{eq:proof_NN_UAP}
+		\sup_{x\in \mathcal{X}}{\left\lvert (\NN(x))_j - \sqrt{\lambda_j} \psi_j(x) \right\lvert } < \epsilon_1
 	\end{equation}
 
-	For ease of notation, we denote \(\MLP_{\hat{\theta}_i}\) simply by \(\MLP\), omitting the dependence on fixed \(i\). Furthermore, \(\MLP(x)_j\) is the \(j\)th component of the output of \(\MLP(x)\). Now note that the approximation error for \(R_i\) is bounded by
+	We refer to \citep{hornikMultilayerFeedforward1989, cybenkoApproximationSuperpositions1989, barronUniversalApproximation1993} for results guaranteeing the existence of neural networks which can approximate any continuous function over a bounded domain.
+
+	For ease of notation, we denote \(\NN_{\hat{\theta}_i}\) simply by \(\NN\), omitting the dependence on fixed \(i\). Furthermore, \(\NN(x)_j\) is the \(j\)th component of the output of \(\NN(x)\). Now note that the approximation error for \(R_i\) is bounded by
 	\begin{equation}
 		\label{eq:proof_approx_bound}
 		\begin{split}
 			\sup_{x, y \in \mathcal{X}}&{
-				\left\lvert R_i(x,y) - \langle \MLP(x), \MLP(y) \rangle \right\rvert}\\
+				\left\lvert R_i(x,y) - \langle \NN(x), \NN(y) \rangle \right\rvert}\\
 			&= \sup_{x, y \in \mathcal{X}}{
-				\left\lvert R_i(x,y) - \sum_{j=1}^{\tilde{n}_i}{\MLP(x)_j \MLP(y)_j} \right\rvert} \\
+				\left\lvert R_i(x,y) - \sum_{j=1}^{\tilde{n}_i}{\NN(x)_j \NN(y)_j} \right\rvert} \\
 			&\leq \sup_{x,y \in \mathcal{X}}{ \left(
 				\left\lvert R_i(x,y) - \sum_{j=1}^{\tilde{n}_i}{\lambda_j \psi_j(x) \psi_j(y)} \right\rvert
-				+ \left\lvert \sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y) - \MLP(x)_j \MLP(y)_j} \right\rvert  \right) }
+				+ \left\lvert \sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y) - \NN(x)_j \NN(y)_j} \right\rvert  \right) }
 		\end{split}
 	\end{equation}
 	The first term is less than \(\frac{\epsilon}{2}\) by \eqref{eq:proof_mercer_thm_unif_abs_cv}. The second term can be bounded uniformly on \(x,y\) by
 	\begin{equation*}
 		\begin{split}
-			&\left\lvert \left(\sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y)}\right) - \langle \MLP(x), \MLP(y) \rangle \right\rvert  \\
-			&\leq \sum_{j=1}^{\tilde{n}_i}{ \left\lvert \lambda_i \psi_j(x) \psi_i(y) - \MLP(x)_j \MLP(y)_j \right\rvert} \\
+			&\left\lvert \left(\sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y)}\right) - \langle \NN(x), \NN(y) \rangle \right\rvert  \\
+			&\leq \sum_{j=1}^{\tilde{n}_i}{ \left\lvert \lambda_i \psi_j(x) \psi_i(y) - \NN(x)_j \NN(y)_j \right\rvert} \\
 			&\leq \sum_{j=1}^{\tilde{n}_i}{\left(
-				\left\lvert \MLP(x)_j \right\rvert \left\lvert \sqrt{\lambda_j} \psi_j(y) - \MLP(y)_j \right\rvert
-				+ \lvert \MLP(y)_j \rvert \left\lvert \sqrt{\lambda_j} \psi_j(x) - \MLP(x)_j \right\rvert
+				\left\lvert \NN(x)_j \right\rvert \left\lvert \sqrt{\lambda_j} \psi_j(y) - \NN(y)_j \right\rvert
+				+ \lvert \NN(y)_j \rvert \left\lvert \sqrt{\lambda_j} \psi_j(x) - \NN(x)_j \right\rvert
 				\right)}
 		\end{split}
 	\end{equation*}
-	Let \(\epsilon_1\) in \eqref{eq:proof_MLP_UAP} be small enough such that the above is smaller than \(\frac{\epsilon}{2}\). 	Then, by \eqref{eq:proof_approx_bound}, we have that
+	Let \(\epsilon_1\) in \eqref{eq:proof_NN_UAP} be small enough such that the above is smaller than \(\frac{\epsilon}{2}\). 	Then, by \eqref{eq:proof_approx_bound}, we have that
 	\begin{equation*}
 		\sup_{x, y \in \mathcal{X}}{
-			\lvert R_i(x,y) - \langle \MLP(x), \MLP(y) \rangle \rvert} \leq \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon
+			\lvert R_i(x,y) - \langle \NN(x), \NN(y) \rangle \rvert} \leq \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon
 	\end{equation*}
 
-	We repeat this for each component of the relation function \(R_i\), \(i=1, \ldots, d_r\), obtaining \(d_r\) MLPs each with parameters \(\hat{\theta}_i\). Thus, \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
+	We repeat this for each component of the relation function \(R_i\), \(i=1, \ldots, d_r\), obtaining \(d_r\) neural networks each with parameters \(\hat{\theta}_i\). Thus, \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\NN \rVert_\infty} < \epsilon\).
 \end{proof}
 
 \begin{remark}
 	The result also holds for universal approximators other than feedforward neural networks, with a nearly identical proof.
 \end{remark}
 
-\Cref{thm:universal_approx_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions \(R(\cdot, \cdot)\). We now make a couple of remarks.
+\Cref{thm:function_class_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions \(R(\cdot, \cdot)\). We now make a couple of remarks.
 
-Learning the relation function in equation \eqref{eq:inner_product_relations} involves learning \(d_r\) different non-linear transformations \(\phi^{(1)}, \ldots, \phi^{(d_r)}\). To enable greater weight-sharing, we can instead have a single non-linear learned function \(\phi: \mathcal{X} \to \mathbb{R}^{\tilde{d}}\) along with \(d_r\) linear projections \(W_k \in \mathbb{R}^{m \times \tilde{d}}\), such that
+Learning the relation function in equation \eqref{eq:inner_product_relations} involves learning \(d_r\) different non-linear transformations \(\phi_{1}, \ldots, \phi_{d_r}\). To enable greater weight-sharing, we can instead have a single non-linear learned function \(\phi: \mathcal{X} \to \mathbb{R}^{\tilde{d}}\) along with \(d_r\) linear projections \(W_k \in \mathbb{R}^{m \times \tilde{d}}\), such that
 \begin{equation}
 	\label{eq:weight_sharing_inner_product_relnn}
 	R(x,y) = \begin{pmatrix}\langle W_1 \phi(x), W_1 \phi(y) \rangle \\ \vdots \\ \langle W_{d_r}\phi(x), W_{d_r}\phi(y) \rangle\end{pmatrix}.
@@ -120,9 +123,9 @@ Additionally, we can consider inner products of the form
 	\label{eq:nonsymmetric_inner_product_relnn}
 	\langle W_k^{(1)} \phi(x_i), W_k^{(2)} \phi(x_j) \rangle,
 \end{equation}
-\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{thm:universal_approx_inner_product_relnn}.
+\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{thm:function_class_inner_product_relnn}.
 
-This is closely related to the cross-attention operation in transformers (and  abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: \(\langle W_Q x, W_K y \rangle\). A `relation tensor' giving pairwise relations is then computed as \(\Softmax((W_K X)^\top (W_Q X))\), where \(X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}\) are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations \(\phi^{(1)}, \ldots, \phi^{(d_r)}\) in the inner product relational neural network \ref{eq:inner_product_relations}.
+This is closely related to the cross-attention operation in transformers (and  abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: \(\langle W_Q x, W_K y \rangle\). A `relation tensor' giving pairwise relations is then computed as \(\Softmax((W_K X)^\top (W_Q X))\), where \(X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}\) are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations \(\phi_{1}, \ldots, \phi_{d_r}\) in the inner product relational neural network \ref{eq:inner_product_relations}.
 
 \begin{remark}
 	The function class of non-symmetric inner product relational neural networks of the form
@@ -174,7 +177,7 @@ Following the linear step in symbolic message-passing, each updated symbolic sta
 \begin{equation*}
 	a_i = \phi\left(S r_i \right),
 \end{equation*}
-where \(\phi\) is a neural network, and \(R_i\) is the vector of object \(i\)'s relations with every other object, \(R_i = \begin{pmatrix}R[i,1] & \cdots & R[i,n]\end{pmatrix}^\top\). Hence, \(a_i\) summarizes all the information about object \(i\)'s relations to all other objects. We summarize this discussion by the following 
+where \(\phi\) is a neural network, and \(R_i\) is the vector of object \(i\)'s relations with every other object, \(R_i = \begin{pmatrix}R[i,1] & \cdots & R[i,n]\end{pmatrix}^\top\). Hence, \(a_i\) summarizes all the information about object \(i\)'s relations to all other objects. We summarize this discussion by the following
 lemma, which follows from universal approximation properties of feed-forward networks.
 
 \begin{lemma}
@@ -233,7 +236,7 @@ We saw in the previous section that a one-layer abstractor is able to compute ar
 	\begin{equation*}
 		\left[(W_K A^{(1)})^\top (W_Q A^{(1)})\right]_{ij} = \langle W_Q \phi^{(1)}(r_j), W_K \phi^{(1)}(r_i) \rangle.
 	\end{equation*}
-	By Theorem \ref{thm:universal_approx_inner_product_relnn}, composing an arbitrary learnable function \(\phi\) with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when \(W_Q \neq W_K\)).
+	By Theorem \ref{thm:function_class_inner_product_relnn}, composing an arbitrary learnable function \(\phi\) with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when \(W_Q \neq W_K\)).
 
 	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, \(\langle W_Q \phi^{(1)}(R_j), W_K \phi^{(1)}(R_i) \rangle\) computes a relation between object \(i\)'s relations and object \(j\)'s relations. Hence, choosing \(s_i^{(2)} = e_i\) and ignoring the Softmax for now, yields
 	\begin{equation*}
