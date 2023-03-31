@@ -29,7 +29,7 @@ better generalization performance) than a Transformer
 
 \subtask{Evaluation of sample efficiency} We evaluate learning curves on this task for each model for training set
 sizes ranging from $
-100$ sequences to $3,000$ sequences in increments of $100$. For each training set size we run 5 trials each. Each trial consists of training a model on a dataset of the corresponding size for 200 epochs. Throughout training, performance metrics are tracked on both the training and validation datasets. The model from the best-performing epoch for that trial according to the validation dataset is restored and evaluated on the testing dataset. For each trial, we evaluate $\text{sequence sorting accuracy} = \frac{\text{\# of sequence sorted correctly}}{\text{Total \# of test set sequences}}$.
+100$ sequences to $3,000$ sequences in increments of $100$. For each training set size we run 10 trials each. Each trial consists of training a model on a dataset of the corresponding size for 200 epochs. Throughout training, performance metrics are tracked on both the training and validation datasets. The model from the best-performing epoch for that trial according to the validation dataset is restored and evaluated on the testing dataset. For each trial, we evaluate $\text{sequence sorting accuracy} = \frac{\text{\# of sequence sorted correctly}}{\text{Total \# of test set sequences}}$.
 
 \subtask{Evaluation of task-generalization ability}
 %One promise of the Abstractor framework is its ability to generalize
@@ -50,7 +50,7 @@ We evaluate whether this results in improved sample efficiency.
 \begin{figure}[t!]
 	\centering
 	\includegraphics[width=.8\textwidth]{figures/random_object_argsort_learning_curves.pdf}
-	\caption{Learning curves of three model configurations: a Transformer, a relational Abstractor, and a relational Abstractor in which the abstractor module is pre-trained on an independent sorting task. The lines indicate the mean sorting accuracy over 5 trials for that training set size, and the shaded region indicates the standard error of mean. Sorting accuracy is evaluated on an independent testing set at the end of a trial.}
+	\caption{Learning curves of three model configurations: a Transformer, a relational Abstractor, and a relational Abstractor in which the abstractor module is pre-trained on an independent sorting task. The lines indicate the mean sorting accuracy over 10 trials for that training set size, and the shaded region indicates two times the standard error of mean. Sorting accuracy is evaluated on an independent testing set at the end of a trial.}
 	\label{fig:random_object_argsort_learning_curves}
 \end{figure}
 
