@@ -1,0 +1,219 @@
+\begin{thebibliography}{}
+
+\bibitem[Barrett et~al., 2018]{barrett:2018}
+Barrett, D.~G., Hill, F., Santoro, A., Morcos, A.~S., and Lillicrap, T. (2018).
+\newblock Measuring abstract reasoning in neural networks.
+\newblock In {\em Proceedings ICML}.
+
+\bibitem[Battaglia et~al., 2018]{battaglia}
+Battaglia, P.~W., Hamrick, J.~B., Bapst, V., Sanchez-Gonzalez, A., Zambaldi,
+  V., Malinowski, M., Tacchetti, A., Raposo, D., Santoro, A., Faulkner, R.,
+  Gulcehre, C., Song, F., Ballard, A., Gilmer, J., Dahl, G., Vaswani, A.,
+  Allen, K., Nash, C., Langston, V., Dyer, C., Heess, N., Wierstra, D., Kohli,
+  P., Botvinick, M., Vinyals, O., Li, Y., and Pascanu, R. (2018).
+\newblock Relational inductive biases, deep learning, and graph networks.
+\newblock arXiv:1806.01261.
+
+\bibitem[Berg, 1948]{berg}
+Berg, E.~A. (1948).
+\newblock A simple objective technique for measuring flexibility in thinking.
+\newblock {\em J. Gen. Psychol.}, 39:15--22.
+
+\bibitem[Braver and Cohen, 2000]{braver2000control}
+Braver, T.~S. and Cohen, J.~D. (2000).
+\newblock {On the Control of Control: The Role of Dopamine in Regulating
+  Prefrontal Function and Working Memory}.
+\newblock In {\em {Control of Cognitive Processes: Attention and Performance
+  XVIII}}. The MIT Press.
+
+\bibitem[Cand\`{e}s and Randall, 2018]{candes_randall}
+Cand\`{e}s, E.~J. and Randall, P.~A. (2018).
+\newblock Highly robust error correction by convex programming.
+\newblock {\em IEEE Transactions on Information Theory}, 54(7):2829--2840.
+
+\bibitem[Cohen, 2017]{cohen2017cognitive}
+Cohen, J.~D. (2017).
+\newblock Cognitive control: Core constructs and current considerations.
+\newblock {\em The Wiley handbook of cognitive control}, pages 1--28.
+
+\bibitem[Frank et~al., 2001]{frank2001interactions}
+Frank, M.~J., Loughry, B., and O’Reilly, R.~C. (2001).
+\newblock Interactions between frontal cortex and basal ganglia in working
+  memory: a computational model.
+\newblock {\em Cognitive, Affective, \& Behavioral Neuroscience},
+  1(2):137--160.
+
+\bibitem[Gao and Lafferty, 2020]{model_repair}
+Gao, C. and Lafferty, J. (2020).
+\newblock Model repair: {R}obust recovery of overparameterized statistical
+  models.
+\newblock arXiv:2005.09912.
+
+\bibitem[Graves et~al., 2014]{NTM}
+Graves, A., Wayne, G., and Danihelka, I. (2014).
+\newblock Neural {T}uring machines.
+\newblock arXiv:1410.5401.
+
+\bibitem[Hand and Voroninski, 2017]{HandV17}
+Hand, P. and Voroninski, V. (2017).
+\newblock Global guarantees for enforcing deep generative priors by empirical
+  risk.
+\newblock {\em arXiv}, abs/1705.07576.
+
+\bibitem[Hochreiter and Schmidhuber, 1997]{lstm}
+Hochreiter, S. and Schmidhuber, J. (1997).
+\newblock Long short-term memory.
+\newblock {\em Neural computation}, 9(8):1735--1780.
+
+\bibitem[Holyoak, 2012]{holyoak}
+Holyoak, K.~J. (2012).
+\newblock Analogy and relational reasoning.
+\newblock In Holyoak, K.~J. and Morrison, R.~G., editors, {\em The Oxford
+  Handbook of Thinking and Reasoning}. New York: Oxford University Press.
+
+\bibitem[Kerg et~al., 2020]{kerg2020untangling}
+Kerg, G., Kanuparthi, B., Goyal, A., Goyette, K., Bengio, Y., and Lajoie, G.
+  (2020).
+\newblock Untangling tradeoffs between recurrence and self-attention in
+  artificial neural networks.
+\newblock {\em Advances in Neural Information Processing Systems},
+  33:19443--19454.
+
+\bibitem[Kerg et~al., 2022]{kerg2022neural}
+Kerg, G., Mittal, S., Rolnick, D., Bengio, Y., Richards, B., and Lajoie, G.
+  (2022).
+\newblock On neural architecture inductive biases for relational tasks.
+\newblock {\em arXiv preprint arXiv:2206.05056}.
+
+\bibitem[Kumaran et~al., 2016]{Kumaran:2016}
+Kumaran, D., Hassabis, D., and McClelland, J.~L. (2016).
+\newblock What {Learning} {Systems} do {Intelligent} {Agents} {Need}?
+  {Complementary} {Learning} {Systems} {Theory} {Updated}.
+\newblock {\em Trends in Cognitive Sciences}, 20(7):512--534.
+
+\bibitem[Mahowald et~al., 2023]{mahowald2023dissociating}
+Mahowald, K., Ivanova, A.~A., Blank, I.~A., Kanwisher, N., Tenenbaum, J.~B.,
+  and Fedorenko, E. (2023).
+\newblock Dissociating language and thought in large language models: {A}
+  cognitive perspective.
+\newblock {\em arXiv preprint arXiv:2301.06627}.
+
+\bibitem[McClelland et~al., 1995]{McClelland:1995}
+McClelland, J.~L., McNaughton, B.~L., and O'Reilly, R.~C. (1995).
+\newblock Why there are complementary learning systems in the hippocampus and
+  neocortex: {Insights} from the successes and failures of connectionist models
+  of learning and memory.
+\newblock {\em Psychological Review}, 102(3):419--457.
+
+\bibitem[Micchelli et~al., 2006]{universal}
+Micchelli, C.~A., Xu, Y., and Zhang, H. (2006).
+\newblock Universal kernels.
+\newblock {\em J. Mach. Learn. Res.}, 7:2651–2667.
+
+\bibitem[Monchi et~al., 2001]{monchi}
+Monchi, O., Petrides, M., Petre, V., Worsley, K., and Dagher, A. (2001).
+\newblock Wisconsin card sorting revisited: {D}istinct neural circuits
+  participating in different stages of the task identified by event-related
+  functional magnetic resonance imaging.
+\newblock {\em Jour. Neuroscience}, 21(19):7733--7741.
+
+\bibitem[Mondal et~al., 2023]{mondal23learned}
+Mondal, S.~S., Webb, T.~W., and Cohen, J. (2023).
+\newblock Learning to reason over visual objects.
+\newblock In {\em International Conference on Learning Representations}.
+
+\bibitem[Musslick and Cohen, 2021]{musslick2021rationalizing}
+Musslick, S. and Cohen, J.~D. (2021).
+\newblock Rationalizing constraints on the capacity for cognitive control.
+\newblock {\em Trends in Cognitive Sciences}, 25(9):757--775.
+
+\bibitem[O'Reilly and Frank, 2006]{wmPFC}
+O'Reilly, R.~C. and Frank, M.~J. (2006).
+\newblock Making working memory work: {A} computational model of learning in
+  the prefrontal cortex and basal ganglia.
+\newblock {\em Neural computation}, 18(2):283--328.
+
+\bibitem[Pritzel et~al., 2017]{episodicControl}
+Pritzel, A., Uria, B., Srinivasan, S., Badia, A.~P., Vinyals, O., Hassabis, D.,
+  Wierstra, D., and Blundell, C. (2017).
+\newblock Neural episodic control.
+\newblock In {\em International conference on machine learning}, pages
+  2827--2836. PMLR.
+
+\bibitem[Ravi et~al., 2020]{ravi2020navigating}
+Ravi, S., Musslick, S., Hamin, M., Willke, T.~L., and Cohen, J.~D. (2020).
+\newblock Navigating the trade-off between multi-task learning and learning to
+  multitask in deep neural networks.
+\newblock {\em arXiv preprint arXiv:2007.10527}.
+
+\bibitem[Santoro et~al., 2017]{santoro1}
+Santoro, A., Raposo, D., Barrett, D.~G., Malinowski, M., Pascanu, R.,
+  Battaglia, P., and Lillicrap, T. (2017).
+\newblock A simple neural network module for relational reasoning.
+\newblock In {\em Advances in neural information processing systems}, pages
+  4967--4976.
+
+\bibitem[Schneider and Shiffrin, 1977]{schneider1977controlled}
+Schneider, W. and Shiffrin, R.~M. (1977).
+\newblock Controlled and automatic human information processing: I. detection,
+  search, and attention.
+\newblock {\em Psychological review}, 84(1):1.
+
+\bibitem[Shenhav et~al., 2013]{evc}
+Shenhav, A., Botvinick, M.~M., and Cohen, J.~D. (2013).
+\newblock The expected value of control:{A}n integrative theory of anterior
+  cingulate cortex function.
+\newblock {\em Neuron}, 79(2):217--240.
+
+\bibitem[Snow et~al., 1984]{snow}
+Snow, R.~E., Kyllonen, P.~C., and Marshalek, B. (1984).
+\newblock The topography of ability and learning correlations.
+\newblock In Sternberg, R.~J., editor, {\em Advances in the psychology of human
+  intelligence}, volume~2, pages 47--103.
+
+\bibitem[Song et~al., 2019]{surfing}
+Song, G., Fan, Z., and Lafferty, J. (2019).
+\newblock Surfing: Iterative optimization over incrementally trained deep
+  networks.
+\newblock In {\em Proceedings of Neural Information Processing Systems
+  (NeurIPS)}.
+\newblock arXiv:1907.08653.
+
+\bibitem[Vaishnav and Serre, 2023]{gamr}
+Vaishnav, M. and Serre, T. (2023).
+\newblock {GAMR}: {A} guided attention model for (visual) reasoning.
+\newblock In {\em The Eleventh International Conference on Learning
+  Representations (ICLR)}.
+
+\bibitem[Vaswani et~al., 2017]{vaswani2017attention}
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.~N.,
+  Kaiser, {\L}., and Polosukhin, I. (2017).
+\newblock Attention is all you need.
+\newblock {\em Advances in neural information processing systems}, 30.
+
+\bibitem[Webb et~al., 2022]{webb}
+Webb, T., Holyoak, K.~J., and Lu, H. (2022).
+\newblock Emergent analogical reasoning in large language models.
+\newblock arXiv:2212.09196.
+
+\bibitem[Webb et~al., 2021]{esbn}
+Webb, T., Sinha, I., and Cohen, J.~D. (2021).
+\newblock Emergent symbols through binding in external memory.
+\newblock In {\em 9th International Conference on Learning Representations,
+  {ICLR} 2021, Virtual Event, Austria, May 3-7, 2021}. OpenReview.net.
+
+\bibitem[Whittington et~al., 2020]{TEM}
+Whittington, J.~C., Muller, T.~H., Mark, S., Chen, G., Barry, C., Burgess, N.,
+  and Behrens, T.~E. (2020).
+\newblock The {T}olman-{E}ichenbaum machine: {U}nifying space and relational
+  memory through generalization in the hippocampal formation.
+\newblock {\em Cell}, 183(5):1249--1263.e23.
+
+\bibitem[Wolf et~al., 2020]{transformers}
+Wolf, T., Debut, L., Sanh, V., Chaumond, J., Delangue, C., Moi, A., Cistac, P.,
+  Rault, T., Louf, R., Funtowicz, M., et~al. (2020).
+\newblock Transformers: State-of-the-art natural language processing.
+\newblock In {\em Proceedings of the 2020 conference on empirical methods in
+  natural language processing: system demonstrations}, pages 38--45.
+
+\end{thebibliography}
