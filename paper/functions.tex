@@ -36,7 +36,7 @@ The following result characterizes the class of inner product relations computab
 
 	Then, \(\langle \cdot, \cdot \rangle_{\MLP}\) is a Mercer kernel along each of the \(d_r\) dimensions.
 
-	Furthermore, for any vector-valued relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates $R$ arbitrarily closely in the superemum norm (i.e.: uniformly over \((x,y) \in \mathcal{X}\times\mathcal{X}\)). More precisely, for all \(\epsilon > 0\), there exists \(d_r\) neural networks with parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
+	Furthermore, for any vector-valued relation function \(R: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates \(R\) arbitrarily closely in the superemum norm (i.e.: uniformly over \((x,y) \in \mathcal{X}\times\mathcal{X}\)). More precisely, for all \(\epsilon > 0\), there exists \(d_r\) neural networks with parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert R(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
 \end{thm}
 
 \begin{proof}
