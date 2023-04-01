@@ -5,6 +5,12 @@ Barrett, D.~G., Hill, F., Santoro, A., Morcos, A.~S., and Lillicrap, T. (2018).
 \newblock Measuring abstract reasoning in neural networks.
 \newblock In {\em Proceedings ICML}.
 
+\bibitem[Barron, 1993]{barronUniversalApproximation1993}
+Barron, A. (1993).
+\newblock Universal approximation bounds for superpositions of a sigmoidal
+  function.
+\newblock {\em IEEE Transactions on Information Theory}, 39(3):930--945.
+
 \bibitem[Battaglia et~al., 2018]{battaglia}
 Battaglia, P.~W., Hamrick, J.~B., Bapst, V., Sanchez-Gonzalez, A., Zambaldi,
   V., Malinowski, M., Tacchetti, A., Raposo, D., Santoro, A., Faulkner, R.,
@@ -35,6 +41,11 @@ Cand\`{e}s, E.~J. and Randall, P.~A. (2018).
 Cohen, J.~D. (2017).
 \newblock Cognitive control: Core constructs and current considerations.
 \newblock {\em The Wiley handbook of cognitive control}, pages 1--28.
+
+\bibitem[Cybenko, 1989]{cybenkoApproximationSuperpositions1989}
+Cybenko, G. (1989).
+\newblock Approximation by superpositions of a sigmoidal function.
+\newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314.
 
 \bibitem[Frank et~al., 2001]{frank2001interactions}
 Frank, M.~J., Loughry, B., and O’Reilly, R.~C. (2001).
@@ -71,6 +82,11 @@ Holyoak, K.~J. (2012).
 \newblock In Holyoak, K.~J. and Morrison, R.~G., editors, {\em The Oxford
   Handbook of Thinking and Reasoning}. New York: Oxford University Press.
 
+\bibitem[Hornik et~al., 1989]{hornikMultilayerFeedforward1989}
+Hornik, K., Stinchcombe, M., and White, H. (1989).
+\newblock Multilayer feedforward networks are universal approximators.
+\newblock {\em Neural Networks}, 2(5):359--366.
+
 \bibitem[Kerg et~al., 2020]{kerg2020untangling}
 Kerg, G., Kanuparthi, B., Goyal, A., Goyette, K., Bengio, Y., and Lajoie, G.
   (2020).
@@ -104,6 +120,15 @@ McClelland, J.~L., McNaughton, B.~L., and O'Reilly, R.~C. (1995).
   neocortex: {Insights} from the successes and failures of connectionist models
   of learning and memory.
 \newblock {\em Psychological Review}, 102(3):419--457.
+
+\bibitem[Mercer, 1909]{mercerFunctionsPositive1909}
+Mercer, J. (1909).
+\newblock Functions of {Positive} and {Negative} {Type}, and their {Connection}
+  with the {Theory} of {Integral} {Equations}.
+\newblock {\em Philosophical Transactions of the Royal Society of London.
+  Series A, Containing Papers of a Mathematical or Physical Character},
+  209:415--446.
+\newblock Publisher: The Royal Society.
 
 \bibitem[Micchelli et~al., 2006]{universal}
 Micchelli, C.~A., Xu, Y., and Zhang, H. (2006).
@@ -178,6 +203,11 @@ Song, G., Fan, Z., and Lafferty, J. (2019).
 \newblock In {\em Proceedings of Neural Information Processing Systems
   (NeurIPS)}.
 \newblock arXiv:1907.08653.
+
+\bibitem[Sun, 2005]{sunMercerTheorem2005}
+Sun, H. (2005).
+\newblock Mercer theorem for {RKHS} on noncompact sets.
+\newblock {\em Journal of Complexity}, 21(3):337--349.
 
 \bibitem[Vaishnav and Serre, 2023]{gamr}
 Vaishnav, M. and Serre, T. (2023).
