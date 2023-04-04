@@ -79,11 +79,12 @@ where $f$ is a pairwise neural network.
 A2--Relational bottleneck: Train embeddings with the model
 \begin{equation}
  \P(\next{j}=k \given j) = \softmax{E_j^T E_{\bigcdot}}_k = \frac{\exp(E_j^T E_k)}{\sum_{k'=1}^N \exp(E_j^T E_{k'})}.
+ \label{eq:a2}
 \end{equation}
 
 
 Intuition: The relational bottleneck will pressure the A2 embeddings to take a canonical form that  
-encodes relations approximately the same way across different problem instances.
+encodes relations approximately the same way across different problem instances. Model \eqref{eq:a2} is like a word2vec model.
 
 
 \vskip10pt
@@ -103,6 +104,12 @@ with a trivial encoder that only uses the embeddings directly, without self-atte
 This will keep the number of parameters comparable to the transformer in B1.
 
 B2p--Pre-trained Abstractor. Train the Abstractor on one set of objects/embeddings, then fix it (or initialize with it) and apply to a new set of objects/embeddings.
+
+
+Intuition: The relational bottleneck in B2 and B2p may result in faster learning curves compared with B1.
+B2p might learn in essentially a one-shot manner. Slower learning curves for B1 might be explained by 
+the additional variance that comes from the A1 embeddings. We could swap in the A2 embeddings in the transformer.
+
 
 
 \end{document}
