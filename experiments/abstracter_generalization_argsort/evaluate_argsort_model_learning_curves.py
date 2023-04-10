@@ -194,6 +194,14 @@ def evaluate_learning_curves(create_model, group_name,
 
             history = model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
 
+            # if fitting pre-trained model, unfreeze all weights and re-train after initial training
+            if 'pretraining' in args.pretraining_mode:
+                fit_kwargs_ = {'epochs': fit_kwargs['epochs'] + max(history.epoch) + 1,
+                'batch_size': fit_kwargs['batch_size'], 'initial_epoch': max(history.epoch) + 1}
+                for layer in model.layers:
+                    layer.trainable = True
+                history = model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs_)
+
             eval_dict = evaluate_seq2seq_model(model, source_test, target_test, labels_test, start_token, print_=False)
             log_to_wandb(model, eval_dict)
             wandb.finish(quiet=True)
