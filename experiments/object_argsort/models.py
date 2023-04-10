@@ -22,7 +22,7 @@ def create_transformer(seqs_length, object_dim, embedding_dim, num_layers, num_h
 
 def create_abstractor(seqs_length, object_dim, embedding_dim, num_layers, num_heads, dff, dropout_rate, output_dim):
 
-    embedder = tf.keras.Sequential([layers.Dense(32, activation='relu'), layers.Dense(16)])
+    embedder = tf.keras.Sequential([layers.Dense(32, activation='relu'), layers.Dense(32, activation='relu'), layers.Dense(embedding_dim)])
     source_embedder = layers.TimeDistributed(embedder, name='source_embedder')
     pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
     encoder = RelationalAbstracter(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate, name='abstractor')
