@@ -1,4 +1,4 @@
-"""Implements cross-attention mechanisms for transformers"""
+"""Implements cross-attention mechanisms for transformers and Abstractors"""
 
 import tensorflow as tf
 
