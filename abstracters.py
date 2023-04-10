@@ -90,7 +90,7 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
         key_dim=d_model,
         dropout=dropout_rate)
 
-    self.episodic_attention = RelationalAttention(
+    self.relational_crossattention = RelationalAttention(
         num_heads=num_heads,
         key_dim=d_model,
         dropout=dropout_rate)
@@ -99,10 +99,96 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
 
   def call(self, x, context):
     x = self.self_attention(x=x)
-    x = self.episodic_attention(x=x, context=context)
+    x = self.relational_crossattention(x=x, context=context)
 
     # Cache the last attention scores for plotting later
-    self.last_attn_scores = self.episodic_attention.last_attn_scores
+    self.last_attn_scores = self.relational_crossattention.last_attn_scores
+
+    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
+    return x
+
+class SimpleAbstractor(tf.keras.layers.Layer):
+    """
+    The 'Simple Abstracter' module.
+
+    A simplified version of the RelationalAbstractor (aka Abstractor, aka Abstracter). 
+    Uses relational cross-attention, but removes self-attention.
+    
+    The 'input' is a sequence of input-independent learnable symbolic vectors.
+    Relational cross-attention with the input object sequence computes a relation tensor 
+    and updates the internal representation of the symbols via 'symbolic message-passing'.
+    """
+    def __init__(self, num_layers, num_heads, dff, use_pos_embedding=True,
+               dropout_rate=0.1, name='relational_abstracter'):
+        super(SimpleAbstractor, self).__init__(name=name)
+
+        self.num_layers = num_layers
+        self.num_heads = num_heads
+        self.dff = dff
+        self.use_pos_embedding = use_pos_embedding
+        self.dropout_rate = dropout_rate
+
+    def build(self, input_shape):
+
+        _, self.sequence_length, self.d_model = input_shape
+
+        # define the input-independent symbolic input vector sequence at the decoder
+        normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
+        self.symbol_sequence = tf.Variable(
+            normal_initializer(shape=(self.sequence_length, self.d_model)),
+            trainable=True)
+
+        # layer which adds positional embedding (to be used on symbol sequence)
+        if self.use_pos_embedding:
+            self.add_pos_embedding = AddPositionalEmbedding()
+
+        self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
+
+        self.abstracter_layers = [
+            SimpleAbstractorLayer(d_model=self.d_model, num_heads=self.num_heads,
+                         dff=self.dff, dropout_rate=self.dropout_rate)
+            for _ in range(self.num_layers)]
+
+        self.last_attn_scores = None
+
+    def call(self, encoder_context):
+        # symbol sequence is input independent, so use the same one for all computations in the given batch
+        symbol_seq = tf.zeros_like(encoder_context) + self.symbol_sequence
+
+        # add positional embedding
+        if self.use_pos_embedding:
+            symbol_seq = self.add_pos_embedding(symbol_seq)
+
+        symbol_seq = self.dropout(symbol_seq)
+
+        for i in range(self.num_layers):
+            symbol_seq = self.abstracter_layers[i](symbol_seq, encoder_context)
+
+#             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
+
+        return symbol_seq
+
+class SimpleAbstractorLayer(tf.keras.layers.Layer):
+  def __init__(self,
+               *,
+               d_model,
+               num_heads,
+               dff,
+               dropout_rate=0.1):
+    super(SimpleAbstractorLayer, self).__init__()
+
+    self.relational_crossattention = RelationalAttention(
+        num_heads=num_heads,
+        key_dim=d_model,
+        dropout=dropout_rate)
+
+    self.ffn = FeedForward(d_model, dff)
+
+  def call(self, x, context):
+    x = self.relational_crossattention(x=x, context=context)
+
+    # Cache the last attention scores for plotting later
+    self.last_attn_scores = self.relational_crossattention.last_attn_scores
 
     x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
     return x
