@@ -78,7 +78,7 @@ def create_callbacks(monitor='loss'):
         ]
 
     if args.early_stopping:
-        callbacks.append(tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, mode='auto', restore_best_weights=True))
+        callbacks.append(tf.keras.callbacks.EarlyStopping(monitor='loss', patience=20, mode='auto', restore_best_weights=True))
 
     return callbacks
 
@@ -187,9 +187,14 @@ def evaluate_learning_curves(create_model, group_name,
 
             # if fitting pre-trained model, unfreeze all weights and re-train after initial training
             if 'pretraining' in args.pretraining_mode:
-                fit_kwargs_ = {'epochs': fit_kwargs['epochs'] + max(history.epoch) + 1,
-                'batch_size': fit_kwargs['batch_size'], 'initial_epoch': max(history.epoch) + 1}
+                stage1_epochs = max(history.epoch)
+                fit_kwargs_ = {'epochs': fit_kwargs['epochs'] + stage1_epochs,
+                'batch_size': fit_kwargs['batch_size'], 'initial_epoch': max(history.epoch)}
+                for layer in model.layers: # unfreeze all layers and continue training
+                    layer.trainable = True
                 history = model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs_)
+                stage2_epochs = max(history.epochs) - stage1_epochs
+                wandb.log({'stage1_epochs': stage1_epochs, 'stage2_epochs': stage2_epochs}) # log # of epochs trained in each stage
 
             eval_dict = evaluate_argsort_model(model, source_test, labels_test, print_=False)
             log_to_wandb(model, eval_dict)
@@ -242,8 +247,52 @@ if args.model == 'transformer':
             return argsort_model
         
         group_name = 'Transformer'
+
+    # pre-training set up for transformer model
+    elif args.pretraining_mode in ['pretraining']:
+        
+        # fit model on pre-training task
+        pretrained_model = models.create_transformer(seqs_length, object_dim, 
+                **transformer_kwargs)
+
+
+        pretrained_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+
+        utils.print_section('Fitting Model on Pre-training Task')
+        run = wandb.init(project=wandb_project_name, name=f'pretraining_mode={args.pretraining_mode}',
+            group='Pre-Training Task; Transformer', 
+            config={
+                'train size': len(source_train_pretraining), 
+                'group': 'Pre-Training Task; Transformer',
+                'pretraining_mode': args.pretraining_mode}
+            )
+        history = pretrained_model.fit(X_train_pretraining, y_train_pretraining, 
+            validation_data=(X_val_pretraining, y_val_pretraining), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
+        eval_dict = evaluate_argsort_model(pretrained_model, source_test_pretraining, labels_test_pretraining,
+            print_=False)
+        log_to_wandb(pretrained_model, eval_dict)
+        wandb.finish(quiet=True)
+
+        if args.pretraining_mode == 'pretraining':
+
+            def create_model():
+                argsort_model = models.create_transformer(seqs_length, object_dim, 
+                    **transformer_kwargs)
+
+                argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+
+                argsort_model.get_layer('encoder').set_weights(pretrained_model.get_layer('encoder').weights)
+                argsort_model.get_layer('encoder').trainable = False
+                argsort_model.get_layer('source_embedder').set_weights(pretrained_model.get_layer('source_embedder').weights)
+                argsort_model.get_layer('source_embedder').trainable = False
+
+                return argsort_model
+
+            group_name = 'Transformer (Pre-Trained)'
+        
     else:
-        raise NotImplementedError('Only pretraining_mode = `none` is supported for transformers')
+        raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
+
 
 # Relational abstracter
 elif args.model == 'rel-abstracter':
