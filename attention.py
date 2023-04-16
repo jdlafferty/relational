@@ -2,27 +2,44 @@
 
 import tensorflow as tf
 
+from multi_head_attention import MultiHeadAttention
+
 class BaseAttention(tf.keras.layers.Layer):
-    def __init__(self, **kwargs):
+    def __init__(self,
+        use_residual=True,
+        use_layer_norm=True,
+        **kwargs):
+
         super().__init__()
-        self.mha = tf.keras.layers.MultiHeadAttention(**kwargs)
-        self.layernorm = tf.keras.layers.LayerNormalization()
-        self.add = tf.keras.layers.Add()
+        self.mha = MultiHeadAttention(**kwargs)
+        self.use_residual = use_residual
+        self.use_layer_norm = use_layer_norm
+        
+        if use_layer_norm: self.layernorm = tf.keras.layers.LayerNormalization()
+        if use_residual: self.add = tf.keras.layers.Add()
 
 
 class GlobalSelfAttention(BaseAttention):
     def call(self, x):
         attn_output = self.mha(query=x, value=x, key=x)
-        x = self.add([x, attn_output])
-        x = self.layernorm(x)
+
+        if self.use_residual:
+            x = self.add([x, attn_output])
+        if self.use_layer_norm:
+            x = self.layernorm(x)
+    
         return x
 
 
 class CausalSelfAttention(BaseAttention):
     def call(self, x):
         attn_output = self.mha(query=x, value=x, key=x, use_causal_mask=True)
-        x = self.add([x, attn_output])
-        x = self.layernorm(x)
+
+        if self.use_residual:
+            x = self.add([x, attn_output])
+        if self.use_layer_norm:
+            x = self.layernorm(x)
+    
         return x
 
 
@@ -35,9 +52,11 @@ class CrossAttention(BaseAttention):
         # Cache the attention scores for plotting later.
         self.last_attn_scores = attn_scores
 
-        x = self.add([x, attn_output])
-        x = self.layernorm(x)
-
+        if self.use_residual:
+            x = self.add([x, attn_output])
+        if self.use_layer_norm:
+            x = self.layernorm(x)
+    
         return x
 
 class SymbolicAttention(BaseAttention):
@@ -51,10 +70,11 @@ class SymbolicAttention(BaseAttention):
         # Cache the attention scores for plotting later.
         self.last_attn_scores = attn_scores
 
-        x = self.add([x, attn_output])
-
-        x = self.layernorm(x)
-
+        if self.use_residual:
+            x = self.add([x, attn_output])
+        if self.use_layer_norm:
+            x = self.layernorm(x)
+    
         return x
 
 class RelationalAttention(BaseAttention):
@@ -68,7 +88,9 @@ class RelationalAttention(BaseAttention):
     # Cache the attention scores for plotting later.
     self.last_attn_scores = attn_scores
 
-    x = self.add([x, attn_output])
-    x = self.layernorm(x)
+    if self.use_residual:
+        x = self.add([x, attn_output])
+    if self.use_layer_norm:
+        x = self.layernorm(x)
 
     return x
