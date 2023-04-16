@@ -26,13 +26,22 @@ class RelationalAbstracter(tf.keras.layers.Layer):
     Implements cross-attention between these symbols and the entities at the encoder.
     Uses the scheme Q=E, K=E, V=A.
     """
-    def __init__(self, num_layers, num_heads, dff, use_pos_embedding=True,
-               dropout_rate=0.1, name='relational_abstracter'):
+    def __init__(
+        self, 
+        num_layers, 
+        num_heads, 
+        dff, 
+        use_pos_embedding=True,
+        mha_activation_type='softmax',
+        dropout_rate=0.1,
+        name='relational_abstracter'):
+
         super(RelationalAbstracter, self).__init__(name=name)
 
         self.num_layers = num_layers
         self.num_heads = num_heads
         self.dff = dff
+        self.mha_activation_type = mha_activation_type
         self.use_pos_embedding = use_pos_embedding
         self.dropout_rate = dropout_rate
 
@@ -54,7 +63,8 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
         self.abstracter_layers = [
             RelationalAbstracterLayer(d_model=self.d_model, num_heads=self.num_heads,
-                         dff=self.dff, dropout_rate=self.dropout_rate)
+                dff=self.dff, mha_activation_type=self.mha_activation_type,
+                dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
 
         self.last_attn_scores = None
@@ -78,21 +88,25 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
 class RelationalAbstracterLayer(tf.keras.layers.Layer):
   def __init__(self,
-               *,
-               d_model,
-               num_heads,
-               dff,
-               dropout_rate=0.1):
+    *,
+    d_model,
+    num_heads,
+    dff,
+    mha_activation_type='softmax',
+    dropout_rate=0.1):
+
     super(RelationalAbstracterLayer, self).__init__()
 
     self.self_attention = GlobalSelfAttention(
         num_heads=num_heads,
         key_dim=d_model,
+        activation_type=mha_activation_type,
         dropout=dropout_rate)
 
     self.relational_crossattention = RelationalAttention(
         num_heads=num_heads,
         key_dim=d_model,
+        activation_type=mha_activation_type,
         dropout=dropout_rate)
 
     self.ffn = FeedForward(d_model, dff)
@@ -107,6 +121,8 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
     x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
     return x
 
+# NOTE: RelationalAttention has a residual connection and layer norm
+# TODO: should this be removed to simplify the SimpleAbstractor?
 class SimpleAbstractor(tf.keras.layers.Layer):
     """
     The 'Simple Abstracter' module.
@@ -118,14 +134,22 @@ class SimpleAbstractor(tf.keras.layers.Layer):
     Relational cross-attention with the input object sequence computes a relation tensor 
     and updates the internal representation of the symbols via 'symbolic message-passing'.
     """
-    def __init__(self, num_layers, num_heads, dff, use_pos_embedding=True,
-               dropout_rate=0.1, name='relational_abstracter'):
+    def __init__(self,
+        num_layers, 
+        num_heads, 
+        dff, 
+        use_pos_embedding=True,
+        mha_activation_type='softmax',
+        dropout_rate=0.1,
+        name='relational_abstracter'):
+
         super(SimpleAbstractor, self).__init__(name=name)
 
         self.num_layers = num_layers
         self.num_heads = num_heads
         self.dff = dff
         self.use_pos_embedding = use_pos_embedding
+        self.mha_activation_type = mha_activation_type
         self.dropout_rate = dropout_rate
 
     def build(self, input_shape):
@@ -146,7 +170,7 @@ class SimpleAbstractor(tf.keras.layers.Layer):
 
         self.abstracter_layers = [
             SimpleAbstractorLayer(d_model=self.d_model, num_heads=self.num_heads,
-                         dff=self.dff, dropout_rate=self.dropout_rate)
+                dff=self.dff, mha_activation_type=self.mha_activation_type, dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
 
         self.last_attn_scores = None
@@ -170,16 +194,21 @@ class SimpleAbstractor(tf.keras.layers.Layer):
 
 class SimpleAbstractorLayer(tf.keras.layers.Layer):
   def __init__(self,
-               *,
-               d_model,
-               num_heads,
-               dff,
-               dropout_rate=0.1):
+    *,
+    d_model,
+    num_heads,
+    dff,
+    mha_activation_type='softmax',
+    dropout_rate=0.1):
+
     super(SimpleAbstractorLayer, self).__init__()
 
+    self.mha_activation_type = mha_activation_type
+    
     self.relational_crossattention = RelationalAttention(
         num_heads=num_heads,
         key_dim=d_model,
+        activation_type=mha_activation_type,
         dropout=dropout_rate)
 
     self.ffn = FeedForward(d_model, dff)
@@ -203,14 +232,23 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
     Uses the scheme Q=A, K=E, V=A.
     """
 
-    def __init__(self, num_layers, num_heads, dff, use_pos_embedding=True,
-               dropout_rate=0.1, name='symbolic_abstracter'):
+    def __init__(
+        self, 
+        num_layers, 
+        num_heads, 
+        dff, 
+        use_pos_embedding=True,
+        mha_activation_type='softmax',
+        dropout_rate=0.1,
+        name='symbolic_abstracter'):
+        
         super(SymbolicAbstracter, self).__init__(name=name)
 
         self.num_layers = num_layers
         self.num_heads = num_heads
         self.dff = dff
         self.use_pos_embedding = use_pos_embedding
+        self.mha_activation_type = mha_activation_type
         self.dropout_rate = dropout_rate
 
     def build(self, input_shape):
@@ -231,7 +269,8 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
 
         self.abstracter_layers = [
             SymbolicAbstracterLayer(d_model=self.d_model, num_heads=self.num_heads,
-                         dff=self.dff, dropout_rate=self.dropout_rate)
+                dff=self.dff, mha_activation_type=self.mha_activation_type, 
+                dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
 
         self.last_attn_scores = None
@@ -256,17 +295,29 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
         return symbol_seq
 
 class SymbolicAbstracterLayer(tf.keras.layers.Layer):
-    def __init__(self, d_model, num_heads, dff, dropout_rate=0.1, name=None):
+    def __init__(
+        self,
+        d_model,
+        num_heads,
+        dff,
+        mha_activation_type='softmax',
+        dropout_rate=0.1,
+        name=None):
+    
         super(SymbolicAbstracterLayer, self).__init__(name=name)
+
+        self.mha_activation_type = mha_activation_type
 
         self.self_attention = GlobalSelfAttention(
             num_heads=num_heads,
             key_dim=d_model,
+            activation_type=mha_activation_type,
             dropout=dropout_rate)
 
         self.symbolic_attention = SymbolicAttention(
             num_heads=num_heads,
             key_dim=d_model,
+            activation_type=mha_activation_type,
             dropout=dropout_rate)
 
         self.ffn = FeedForward(d_model, dff)
