@@ -1,4 +1,4 @@
-# LEARNING CURVES AND ABSTRACTER GENERALIZATION: RANDOM OBJECT SORTING WITH SEQUENCE-TO-SEQUENCE ABSTRACTERS
+# RANDOM OBJECT AUTOREGRESSIVE ARGSORT 
 # We generate random objects (as gaussian vectors) and associate an ordering to them.
 # We train abstracter models to learn how to sort these objects
 # To test the generalization of abstracters, we first train one on another object-sorting task, 
@@ -185,8 +185,9 @@ def evaluate_learning_curves(create_model, group_name,
                             config={'train size': train_size, 'trial': trial, 'group': group_name})
             model = create_model()
 
-            X_train = source_train[:train_size], target_train[:train_size]
-            y_train = labels_train[:train_size]
+            sample_idx = np.random.choice(len(source_train), train_size, replace=False)
+            X_train = source_train[sample_idx], target_train[sample_idx]
+            y_train = labels_train[sample_idx]
             X_val = source_val, target_val
             y_val = labels_val
 
