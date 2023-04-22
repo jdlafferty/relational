@@ -53,7 +53,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
         normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
         self.symbol_sequence = tf.Variable(
             normal_initializer(shape=(self.sequence_length, self.d_model)),
-            trainable=True)
+            name='symbols', trainable=True)
 
         # layer which adds positional embedding (to be used on symbol sequence)
         if self.use_pos_embedding:
@@ -160,7 +160,7 @@ class SimpleAbstractor(tf.keras.layers.Layer):
         normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
         self.symbol_sequence = tf.Variable(
             normal_initializer(shape=(self.sequence_length, self.d_model)),
-            trainable=True)
+            name='symbols', trainable=True)
 
         # layer which adds positional embedding (to be used on symbol sequence)
         if self.use_pos_embedding:
@@ -259,7 +259,7 @@ class SymbolicAbstracter(tf.keras.layers.Layer):
         normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
         self.symbol_sequence = tf.Variable(
             normal_initializer(shape=(self.sequence_length, self.d_model)),
-            trainable=True)
+            name='symbols', trainable=True)
 
         # layer which adds positional embedding (to be used on symbol sequence)
         if self.use_pos_embedding:
