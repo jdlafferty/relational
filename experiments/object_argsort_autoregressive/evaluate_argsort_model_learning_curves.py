@@ -30,8 +30,10 @@ parser.add_argument('--model', type=str, choices=('transformer', 'rel-abstracter
 parser.add_argument('--pretraining_mode', default='none', type=str,
     choices=('none', 'pretraining'),
     help='whether and how to pre-train on pre-training task')
+parser.add_argument('--init_trainable', default=True, type=bool,
+    help='whether or not to make initialized weights trainable when pre-trainign (in first stage)')
 parser.add_argument('--pretraining_task_type', default='independent objects', 
-    type=str, choices=('NA', 'independent objects', 'reshuffled objects'))
+    type=str, choices=('NA', 'independent objects', 'reshuffled objects', 'reshuffled attr'))
 parser.add_argument('--pretraining_task_data_path', default='object_sorting_datasets/task1_object_sort_dataset.npy', 
     type=str, help='path to npy file containing sorting task dataset')
 parser.add_argument('--eval_task_data_path', default='object_sorting_datasets/task2_object_sort_dataset.npy', 
@@ -87,7 +89,7 @@ metrics = [teacher_forcing_acc_metric]
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None, name='sparse_categorical_crossentropy')
 create_opt = lambda : tf.keras.optimizers.Adam()
 
-fit_kwargs = {'epochs': args.n_epochs, 'batch_size': 128}
+fit_kwargs = {'epochs': args.n_epochs, 'batch_size': 512}
 
 #region Dataset
 
@@ -110,11 +112,18 @@ source_train, source_val, source_test = object_seqs_train, object_seqs_val, obje
 #endregion
 
 # region kwargs for all the models
-common_args = dict(
-    num_layers=2, num_heads=2, dff=64, 
+transformer_kwargs = dict(
+    num_layers=4, num_heads=2, dff=64, 
     input_vocab='vector', target_vocab=seqs_length+1,
     output_dim=seqs_length, embedding_dim=64)
-transformer_kwargs = rel_abstracter_kwargs = common_args
+
+rel_abstracter_kwargs = dict(
+    num_layers=2, num_heads=2, dff=64, 
+    input_vocab='vector', target_vocab=seqs_length+1,
+    output_dim=seqs_length, embedding_dim=64,
+    rel_attention_activation='softmax'
+    )
+
 # endregion
 
 # region evaluation code
@@ -194,7 +203,7 @@ def evaluate_learning_curves(create_model, group_name,
             history = model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
 
             # if fitting pre-trained model, unfreeze all weights and re-train after initial training
-            if 'pretraining' in args.pretraining_mode:
+            if 'pretraining' in args.pretraining_mode and not args.init_trainable:
                 stage1_epochs = max(history.epoch)
                 fit_kwargs_ = {'epochs': fit_kwargs['epochs'] + max(history.epoch) + 1,
                 'batch_size': fit_kwargs['batch_size'], 'initial_epoch': max(history.epoch) + 1}
@@ -271,7 +280,7 @@ if args.model == 'transformer':
         run = wandb.init(project=wandb_project_name, name=f'pretraining_mode={args.pretraining_mode}',
             group=f'Pre-training Task ({args.pretraining_task_type}); Transformer', 
             config={
-                'train size': len(source_train_pretraining), 
+                'train size': args.pretraining_train_size, 
                 'group': f'Pre-training Task ({args.pretraining_task_type}); Transformer',
                 'pretraining_mode': args.pretraining_mode}
             )
@@ -294,7 +303,7 @@ if args.model == 'transformer':
                 # argsort_model.encoder.trainable = False
 
                 argsort_model.decoder.set_weights(pretrained_model.decoder.weights)
-                argsort_model.decoder.trainable = False
+                argsort_model.decoder.trainable = args.init_trainable
 
                 return argsort_model
 
@@ -332,7 +341,7 @@ elif args.model == 'rel-abstracter':
         run = wandb.init(project=wandb_project_name, name=f'pretraining_mode={args.pretraining_mode}',
             group=f'Pre-training Task ({args.pretraining_task_type}); Relational Abstractor', 
             config={
-                'train size': len(source_train_pretraining), 
+                'train size': args.pretraining_train_size, 
                 'group': f'Pre-training Task ({args.pretraining_task_type}); Relational Abstractor',
                 'pretraining_mode': args.pretraining_mode}
             )
@@ -351,10 +360,10 @@ elif args.model == 'rel-abstracter':
                 argsort_model((source_train[:32], target_train[:32]));
 
                 argsort_model.abstracter.set_weights(pretrained_model.abstracter.weights)
-                argsort_model.abstracter.trainable = False
+                argsort_model.abstracter.trainable = args.init_trainable
 
                 argsort_model.decoder.set_weights(pretrained_model.decoder.weights)
-                argsort_model.decoder.trainable = False
+                argsort_model.decoder.trainable = args.init_trainable
 
                 return argsort_model
 
@@ -391,7 +400,7 @@ elif args.model == 'sym-abstracter':
         run = wandb.init(project=wandb_project_name, name=f'pretraining_mode={args.pretraining_mode}',
             group=f'Pre-training Task ({args.pretraining_task_type}); Symbolic Abstractor', 
             config={
-                'train size': len(source_train_pretraining), 
+                'train size': args.pretraining_train_size, 
                 'group': f'Pre-training Task ({args.pretraining_task_type}); Symbolic Abstractor',
                 'pretraining_mode': args.pretraining_mode}
             )
@@ -410,10 +419,10 @@ elif args.model == 'sym-abstracter':
                 argsort_model((source_train[:32], target_train[:32]));
 
                 argsort_model.abstracter.set_weights(pretrained_model.abstracter.weights)
-                argsort_model.abstracter.trainable = False
+                argsort_model.abstracter.trainable = args.init_trainable
 
                 argsort_model.decoder.set_weights(pretrained_model.decoder.weights)
-                argsort_model.decoder.trainable = False
+                argsort_model.decoder.trainable = args.init_trainable
 
                 return argsort_model
 
