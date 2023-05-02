@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, Model
 
 from transformer_modules import Encoder, Decoder, AddPositionalEmbedding
-from abstracters import SymbolicAbstracter, RelationalAbstracter
+from abstracters import SymbolicAbstracter, RelationalAbstracter, SimpleAbstractor
 
 
 class Transformer(tf.keras.Model):
@@ -38,8 +38,8 @@ class Transformer(tf.keras.Model):
 
         if isinstance(target_vocab, int):
             self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
-        elif input_vocab == 'vector':
-            self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
+        elif target_vocab == 'vector':
+            self.target_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
         else:
             raise ValueError(
                 "`input_vocab` must be an integer if the input sequence is token-valued or "
@@ -116,8 +116,8 @@ class Seq2SeqRelationalAbstracter(tf.keras.Model):
 
         if isinstance(target_vocab, int):
             self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
-        elif input_vocab == 'vector':
-            self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
+        elif target_vocab == 'vector':
+            self.target_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
         else:
             raise ValueError(
                 "`input_vocab` must be an integer if the input sequence is token-valued or "
@@ -195,8 +195,8 @@ class Seq2SeqSymbolicAbstracter(tf.keras.Model):
 
         if isinstance(target_vocab, int):
             self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
-        elif input_vocab == 'vector':
-            self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
+        elif target_vocab == 'vector':
+            self.target_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
         else:
             raise ValueError(
                 "`input_vocab` must be an integer if the input sequence is token-valued or "
@@ -238,64 +238,90 @@ class Seq2SeqSymbolicAbstracter(tf.keras.Model):
 
         return logits
 
-# TODO: implement and fix!
-# class Seq2SeqSensoryConnectedAbstracter(tf.keras.Model):
-#     def __init__(self, num_layers, num_heads, dff,
-#             input_vocab, target_vocab, embedding_dim, output_dim,
-#             dropout_rate=0.1, name='seq2seq_sensory_connected_abstracter'):
-#         super().__init__(name=name)
+class AutoregressiveSimpleAbstractor(tf.keras.Model):
+    def __init__(self, input_vocab, target_vocab, output_dim, 
+        embedding_dim, abstractor_kwargs, decoder_kwargs, name=None):
+        """create autoregressive SimpleAbstractor model.
 
-#         if isinstance(input_vocab, int):
-#             self.source_embedder = layers.Embedding(input_vocab, embedding_dim, name='source_embedder')
-#         elif input_vocab == 'vector':
-#             self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='source_embedder')
-#         else:
-#             raise ValueError(
-#                 "`input_vocab` must be an integer if the input sequence is token-valued or "
-#                 "'vector' if the input sequence is vector-valued.")
+        (x1, ..., xm) -> embedder -> SimpleAbstractor -> Decoder -> (y1, ..., ym)
 
-#         if isinstance(target_vocab, int):
-#             self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
-#         elif input_vocab == 'vector':
-#             self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
-#         else:
-#             raise ValueError(
-#                 "`input_vocab` must be an integer if the input sequence is token-valued or "
-#                 "'vector' if the input sequence is vector-valued.")
+        Parameters
+        ----------
+        input_vocab : int or str
+            if input is tokens, the size of vocabulary as an int. 
+            if input is vectors, the string 'vector'. used to create embedder.
+        target_vocab : int or str
+            if target is tokens, the size of the vocabulary as an int. 
+            if input is vectors, the string 'vector'. used to create embedder.
+        output_dim : int
+            dimension of final output. e.g.: # of classes.
+        embedding_dim : int
+            embedding dimension to use. this is the model dimension.
+        abstractor_kwargs : dict
+            kwargs for SimpleAbstractor
+        decoder_kwargs : dict
+            kwargs for Decoder
+        name : str, optional
+            name of model, by default None
+        """
 
-#         self.pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
-#         self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
+        super().__init__(name=name)
+
+        self.embedding_dim = embedding_dim
+        self.input_vocab = input_vocab
+        self.target_vocab = target_vocab
+        self.output_dim = output_dim
+        self.abstractor_kwargs = abstractor_kwargs
+        self.decoder_kwargs = decoder_kwargs
+  
+    def build(self, input_shape):
     
-#         self.encoder = Encoder(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate, name='encoder')
-#         self.abstracter = RelationalAbstracter(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate, name='abstracter')
-#         self.decoder = ContextDecoder(num_layers=num_layers, num_heads=num_heads, dff=dff,
-#           dropout_rate=dropout_rate, name='decoder')
-#         self.final_layer = layers.Dense(output_dim, name='final_layer')
+        if isinstance(self.input_vocab, int):
+            self.source_embedder = layers.Embedding(self.input_vocab, self.embedding_dim, name='source_embedder')
+        elif self.input_vocab == 'vector':
+            self.source_embedder = layers.TimeDistributed(layers.Dense(self.embedding_dim), name='source_embedder')
+        else:
+            raise ValueError(
+                "`input_vocab` must be an integer if the input sequence is token-valued or "
+                "'vector' if the input sequence is vector-valued.")
 
+        if isinstance(self.target_vocab, int):
+            self.target_embedder = layers.Embedding(self.target_vocab, self.embedding_dim, name='target_embedder')
+        elif self.target_vocab == 'vector':
+            self.target_embedder = layers.TimeDistributed(layers.Dense(self.embedding_dim), name='target_embedder')
+        else:
+            raise ValueError(
+                "`input_vocab` must be an integer if the input sequence is token-valued or "
+                "'vector' if the input sequence is vector-valued.")
 
-#     def call(self, inputs):
-#         source, target  = inputs
+        self.pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
+        self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
 
-#         x = self.source_embedder(source)
-#         x = self.pos_embedding_adder_input(x)
+        self.abstractor = SimpleAbstractor(**self.abstractor_kwargs)
 
-#         encoder_context = self.encoder(x)
+        self.decoder = Decoder(**self.decoder_kwargs, name='decoder')
+        self.final_layer = layers.Dense(self.output_dim, name='final_layer')
 
-#         abstracted_context = self.abstracter(encoder_context)
+    def call(self, inputs):
+        source, target  = inputs
 
-#         target_embedding = self.target_embedder(target)
-#         target_embedding = self.pos_embedding_adder_target(target_embedding)
+        x = self.source_embedder(source)
+        x = self.pos_embedding_adder_input(x)
 
-#         x = self.decoder(input_seq=target_embedding, query_seq=abstracted_context, key_seq=abstracted_context, value_seq=encoder_context)
+        abstracted_context = self.abstractor(x)
 
-#         # Final linear layer output.
-#         logits = self.final_layer(x)
+        target_embedding = self.target_embedder(target)
+        target_embedding = self.pos_embedding_adder_target(target_embedding)
 
-#         try:
-#           # Drop the keras mask, so it doesn't scale the losses/metrics.
-#           # b/250038731
-#           del logits._keras_mask
-#         except AttributeError:
-#           pass
+        x = self.decoder(x=target_embedding, context=abstracted_context)
 
-#         return logits
+        logits = self.final_layer(x)
+
+        try:
+          # Drop the keras mask, so it doesn't scale the losses/metrics.
+          # b/250038731
+          del logits._keras_mask
+        except AttributeError:
+          pass
+
+        return logits
