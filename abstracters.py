@@ -13,7 +13,7 @@ For Seq2Seq models, it may be followed by a decoder.
 
 import tensorflow as tf
 from transformer_modules import AddPositionalEmbedding, FeedForward
-from attention import GlobalSelfAttention, BaseAttention, RelationalAttention, SymbolicAttention
+from attention import GlobalSelfAttention, BaseAttention, RelationalAttention, SymbolicAttention, CrossAttention
 
 
 
@@ -332,3 +332,115 @@ class SymbolicAbstracterLayer(tf.keras.layers.Layer):
         x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
 
         return x
+
+
+class AblationAbstractor(tf.keras.layers.Layer):
+    """
+    An 'Ablation' Abstractor model. 
+    
+    This model is the same as the RelationalAbstractor, but uses
+    standard cross-attention instead of relational cross-attention.
+    This is used to isolate for the effect of the cross-attention scheme
+    in experiments.
+    """
+    def __init__(
+        self, 
+        num_layers, 
+        num_heads, 
+        dff, 
+        use_self_attn=True,
+        use_pos_embedding=True,
+        mha_activation_type='softmax',
+        dropout_rate=0.1,
+        name='ablation_model'):
+
+        super(AblationAbstractor, self).__init__(name=name)
+
+        self.num_layers = num_layers
+        self.num_heads = num_heads
+        self.dff = dff
+        self.use_self_attn = use_self_attn
+        self.mha_activation_type = mha_activation_type
+        self.use_pos_embedding = use_pos_embedding
+        self.dropout_rate = dropout_rate
+
+    def build(self, input_shape):
+
+        _, self.sequence_length, self.d_model = input_shape
+
+        # define the input-independent symbolic input vector sequence at the decoder
+        normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
+        self.symbol_sequence = tf.Variable(
+            normal_initializer(shape=(self.sequence_length, self.d_model)),
+            name='symbols', trainable=True)
+
+        # layer which adds positional embedding (to be used on symbol sequence)
+        if self.use_pos_embedding:
+            self.add_pos_embedding = AddPositionalEmbedding()
+
+        self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
+
+        self.abstracter_layers = [
+            AblationAbstractorLayer(d_model=self.d_model, num_heads=self.num_heads,
+                dff=self.dff, use_self_attn=self.use_self_attn,
+                mha_activation_type=self.mha_activation_type,
+                dropout_rate=self.dropout_rate)
+            for _ in range(self.num_layers)]
+
+        self.last_attn_scores = None
+
+    def call(self, encoder_context):
+        # symbol sequence is input independent, so use the same one for all computations in the given batch
+        symbol_seq = tf.zeros_like(encoder_context) + self.symbol_sequence
+
+        # add positional embedding
+        if self.use_pos_embedding:
+            symbol_seq = self.add_pos_embedding(symbol_seq)
+
+        symbol_seq = self.dropout(symbol_seq)
+
+        for i in range(self.num_layers):
+            symbol_seq = self.abstracter_layers[i](symbol_seq, encoder_context)
+
+#             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
+
+        return symbol_seq
+
+class AblationAbstractorLayer(tf.keras.layers.Layer):
+  def __init__(self,
+    *,
+    d_model,
+    num_heads,
+    dff,
+    use_self_attn=True,
+    mha_activation_type='softmax',
+    dropout_rate=0.1):
+
+    super(AblationAbstractorLayer, self).__init__()
+
+    self.use_self_attn = use_self_attn
+
+    if use_self_attn:
+        self.self_attention = GlobalSelfAttention(
+            num_heads=num_heads,
+            key_dim=d_model,
+            dropout=dropout_rate)
+
+    self.crossattention = CrossAttention(
+        num_heads=num_heads,
+        key_dim=d_model,
+        activation_type=mha_activation_type,
+        dropout=dropout_rate)
+
+    self.ffn = FeedForward(d_model, dff)
+
+  def call(self, x, context):
+    if self.use_self_attn:
+        x = self.self_attention(x=x)
+    x = self.crossattention(x=x, context=context)
+
+    # Cache the last attention scores for plotting later
+    self.last_attn_scores = self.crossattention.last_attn_scores
+
+    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
+    return x
