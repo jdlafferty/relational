@@ -25,7 +25,8 @@ seed = None
 
 # parse script arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, choices=('transformer', 'rel-abstracter', 'sym-abstracter', 'simple-abstractor'),
+parser.add_argument('--model', type=str,
+    choices=('transformer', 'rel-abstracter', 'sym-abstracter', 'simple-abstractor', 'ablation-abstractor'),
     help='the model to evaluate learning curves on')
 parser.add_argument('--pretraining_mode', default='none', type=str,
     choices=('none', 'pretraining'),
@@ -130,6 +131,14 @@ simple_abstractor_kwargs = dict(
     abstractor_kwargs=dict(num_layers=1, num_heads=4, dff=64,
         use_pos_embedding=False, mha_activation_type='softmax'),
     decoder_kwargs=dict(num_layers=1, num_heads=4, dff=64, dropout_rate=0.1))
+
+ablation_abstractor_kwargs = dict(
+    num_layers=2, num_heads=2, dff=64, 
+    input_vocab='vector', target_vocab=seqs_length+1,
+    output_dim=seqs_length, embedding_dim=64,
+    use_self_attn=True, use_encoder=True,
+    mha_activation_type='softmax'
+    )
 
 # endregion
 
@@ -497,6 +506,23 @@ elif args.model == 'sym-abstracter':
                 return argsort_model
 
             group_name = f'Symbolic Abstractor (Pre-Trained; {args.pretraining_task_type})'
+    else:
+        raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
+
+elif args.model == 'ablation-abstractor':
+    # standard evaluation
+    if args.pretraining_mode == 'none':
+        def create_model():
+            argsort_model = seq2seq_abstracter_models.AutoregressiveAblationAbstractor(
+                **ablation_abstractor_kwargs)
+
+            argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+            argsort_model((source_train[:32], target_train[:32]));
+
+            return argsort_model
+        
+        group_name = 'Ablation Abstractor'
+    
     else:
         raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
 
