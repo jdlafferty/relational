@@ -25,6 +25,9 @@ class GlobalSelfAttention(BaseAttention):
 
         if self.use_residual:
             x = self.add([x, attn_output])
+        else:
+            x = attn_output
+
         if self.use_layer_norm:
             x = self.layernorm(x)
     
@@ -37,8 +40,12 @@ class CausalSelfAttention(BaseAttention):
 
         if self.use_residual:
             x = self.add([x, attn_output])
+        else:
+            x = attn_output
+
         if self.use_layer_norm:
             x = self.layernorm(x)
+
     
         return x
 
@@ -54,8 +61,12 @@ class CrossAttention(BaseAttention):
 
         if self.use_residual:
             x = self.add([x, attn_output])
+        else:
+            x = attn_output
+
         if self.use_layer_norm:
             x = self.layernorm(x)
+
     
         return x
 
@@ -72,8 +83,12 @@ class SymbolicAttention(BaseAttention):
 
         if self.use_residual:
             x = self.add([x, attn_output])
+        else:
+            x = attn_output
+
         if self.use_layer_norm:
             x = self.layernorm(x)
+
     
         return x
 
@@ -90,6 +105,9 @@ class RelationalAttention(BaseAttention):
 
     if self.use_residual:
         x = self.add([x, attn_output])
+    else:
+        x = attn_output
+
     if self.use_layer_norm:
         x = self.layernorm(x)
 
