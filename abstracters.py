@@ -137,7 +137,9 @@ class SimpleAbstractor(tf.keras.layers.Layer):
     def __init__(self,
         num_layers, 
         num_heads, 
-        dff, 
+        dff=None,
+        attn_use_res=False,
+        attn_use_layer_norm=False,
         use_pos_embedding=True,
         mha_activation_type='softmax',
         dropout_rate=0.1,
@@ -148,6 +150,8 @@ class SimpleAbstractor(tf.keras.layers.Layer):
         self.num_layers = num_layers
         self.num_heads = num_heads
         self.dff = dff
+        self.attn_use_res = attn_use_res
+        self.attn_use_layer_norm = attn_use_layer_norm
         self.use_pos_embedding = use_pos_embedding
         self.mha_activation_type = mha_activation_type
         self.dropout_rate = dropout_rate
@@ -170,7 +174,8 @@ class SimpleAbstractor(tf.keras.layers.Layer):
 
         self.abstracter_layers = [
             SimpleAbstractorLayer(d_model=self.d_model, num_heads=self.num_heads,
-                dff=self.dff, mha_activation_type=self.mha_activation_type, dropout_rate=self.dropout_rate)
+                dff=self.dff, attn_use_res=self.attn_use_res, attn_use_layer_norm=self.attn_use_layer_norm,
+                mha_activation_type=self.mha_activation_type, dropout_rate=self.dropout_rate)
             for _ in range(self.num_layers)]
 
         self.last_attn_scores = None
@@ -197,7 +202,9 @@ class SimpleAbstractorLayer(tf.keras.layers.Layer):
     *,
     d_model,
     num_heads,
-    dff,
+    dff=None,
+    attn_use_res=False,
+    attn_use_layer_norm=False,
     mha_activation_type='softmax',
     dropout_rate=0.1):
 
@@ -209,9 +216,13 @@ class SimpleAbstractorLayer(tf.keras.layers.Layer):
         num_heads=num_heads,
         key_dim=d_model,
         activation_type=mha_activation_type,
+        use_residual=attn_use_res,
+        use_layer_norm=attn_use_layer_norm,
         dropout=dropout_rate)
 
-    self.ffn = FeedForward(d_model, dff)
+    self.dff = dff
+    if dff is not None:
+        self.ffn = FeedForward(d_model, dff)
 
   def call(self, x, context):
     x = self.relational_crossattention(x=x, context=context)
@@ -219,9 +230,9 @@ class SimpleAbstractorLayer(tf.keras.layers.Layer):
     # Cache the last attention scores for plotting later
     self.last_attn_scores = self.relational_crossattention.last_attn_scores
 
-    x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
+    if self.dff is not None:
+        x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
     return x
-
 
 class SymbolicAbstracter(tf.keras.layers.Layer):
     """
