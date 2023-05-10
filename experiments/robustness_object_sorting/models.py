@@ -12,8 +12,7 @@ rel_abstracter_kwargs = dict(
     )
     
 simpleabstractor_kwargs = dict(
-    embedding_dim=64, 
-    input_vocab='vector', target_vocab=seqs_length+1, output_dim=seqs_length,
+    embedding_dim=64, input_vocab='vector',
     abstractor_kwargs=dict(num_layers=1, num_heads=8, dff=None,
         use_pos_embedding=False, mha_activation_type='softmax',
         attn_use_res=False, attn_use_layer_norm=True),
