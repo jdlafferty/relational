@@ -15,6 +15,36 @@ class Abstractor(tf.keras.layers.Layer):
         use_self_attn=False,
         dropout_rate=0.,
         name=None):
+        """
+        create an Abstractor layer.
+
+        Models relations between objects via a relation tensor (from MultiHeadRelation),
+        and performs message-passing on a set of input-independent symbolic parameters
+        based on the relation tensor ("(relational) symbolic message-passing").
+
+        Parameters
+        ----------
+        num_layers : int
+            number of Abstractor layers (i.e.: number of symbolic message-passing operations)
+        rel_dim : int
+            dimension of relations. applies to MultiHeadRelation in each layer.
+        symbol_dim : int, optional
+            dimension of symbols, by default None
+        proj_dim : int, optional
+            dimension of projections in MultiHeadRelation layers, by default None
+        symmetric_rels : bool, optional
+            whether to model relations as symmetric or not in MultiHeadRelation layers, by default False
+        encoder_kwargs : dict, optional
+            kwargs of Dense encoders in MultiHeadRelation layers, by default None
+        rel_activation_type : str, optional
+            name of activation function to use on relation tensor, by default 'softmax'
+        use_self_attn : bool, optional
+            whether or not to use self-attention, by default False
+        dropout_rate : float, optional
+            dropout rate, by default 0.
+        name : str, optional
+            name of layer, by default None
+        """
 
         super().__init__(name=None)
 
