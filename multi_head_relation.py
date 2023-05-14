@@ -26,7 +26,7 @@ class MultiHeadRelation(tf.keras.layers.Layer):
             dimension to which encoders will project before inner products
             are computed. by default None
         symmetric : bool, optional
-            whether or not to model the relations as symmetric. 
+            whether to model the relations as symmetric or not. 
             if the relations are symmetric, the left sequence will use the same
             encoders as the right sequence. otherwise, different encoders will
             be used. by default False
