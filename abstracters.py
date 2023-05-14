@@ -71,6 +71,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
     def call(self, encoder_context):
         # symbol sequence is input independent, so use the same one for all computations in the given batch
+        # (this broadcasts the symbol_sequence across all inputs in the batch)
         symbol_seq = tf.zeros_like(encoder_context) + self.symbol_sequence
 
         # add positional embedding
@@ -143,7 +144,7 @@ class SimpleAbstractor(tf.keras.layers.Layer):
         use_pos_embedding=True,
         mha_activation_type='softmax',
         dropout_rate=0.1,
-        name='relational_abstracter'):
+        name='simple_abstractor'):
 
         super(SimpleAbstractor, self).__init__(name=name)
 
