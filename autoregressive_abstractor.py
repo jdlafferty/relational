@@ -1,11 +1,6 @@
-import tensorflow as tf
-from tensorflow.keras import layers, Model
-
-from transformer_modules import Encoder, Decoder, AddPositionalEmbedding
-from abstracters import SymbolicAbstracter, RelationalAbstracter, SimpleAbstractor, AblationAbstractor
-
-
-# this is a general implementation of the autoregressive abstractor which encompasses all others
+from transformer_modules import Encoder, AddPositionalEmbedding, Decoder
+from abstractor import Abstractor
+from abstracters import RelationalAbstracter, SymbolicAbstracter, SimpleAbstractor 
 
 class AutoregressiveAbstractor(tf.keras.Model):
     def __init__(self, 
@@ -16,7 +11,7 @@ class AutoregressiveAbstractor(tf.keras.Model):
             target_vocab,
             embedding_dim,
             output_dim,
-            abstractor_type='relational', # 'simple', 'relational', or 'symbolic'
+            abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic'
             abstractor_on='input', # 'input' or 'encoder'
             decoder_on='abstractor', # 'abstractor' or 'encoder-abstractor'
             name='autoregressive_abstractor'):
@@ -36,11 +31,11 @@ class AutoregressiveAbstractor(tf.keras.Model):
         target_vocab : int or 'vector'
             if input is tokens, the size of vocabulary as an int. 
             if input is vectors, the string 'vector'. used to create embedder.
-        embedding_dim : int
-            dimension of embedding (input will be transformed to this dimension). 
+        embedding_dim : int or tuple[int]
+            dimension of embedding (input will be transformed to this dimension).
         output_dim : int
             dimension of final output. e.g.: # of classes.
-        abstractor_type : 'relational', 'symbolic' or 'simple', optional
+        abstractor_type : 'abstractor', 'relational', 'symbolic' or 'simple', optional
             The type of Abstractor to use, by default 'relational'
         abstractor_on: 'input' or 'encoder'
             what the abstractor should take as input.
@@ -69,7 +64,8 @@ class AutoregressiveAbstractor(tf.keras.Model):
         if isinstance(input_vocab, int):
             self.source_embedder = layers.Embedding(input_vocab, embedding_dim, name='source_embedder')
         elif input_vocab == 'vector':
-            self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='source_embedder')
+            # self.source_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='source_embedder')
+            self.source_embedder = layers.Dense(embedding_dim, name='source_embedder')
         else:
             raise ValueError(
                 "`input_vocab` must be an integer if the input sequence is token-valued or "
@@ -78,7 +74,8 @@ class AutoregressiveAbstractor(tf.keras.Model):
         if isinstance(target_vocab, int):
             self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
         elif target_vocab == 'vector':
-            self.target_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
+            # self.target_embedder = layers.TimeDistributed(layers.Dense(embedding_dim), name='target_embedder')
+            self.target_embedder = layers.Dense(embedding_dim, name='target_embedder')
         else:
             raise ValueError(
                 "`input_vocab` must be an integer if the input sequence is token-valued or "
@@ -92,7 +89,9 @@ class AutoregressiveAbstractor(tf.keras.Model):
             self.encoder = Encoder(**encoder_kwargs, name='encoder')
 
         # initialize the abstractor based on requested type
-        if abstractor_type == 'relational':
+        if abstractor_type == 'abstractor':
+            self.abstractor = Abstractor(**abstractor_kwargs, name='abstractor')
+        elif abstractor_type == 'relational':
             self.abstractor = RelationalAbstracter(**abstractor_kwargs, name='abstractor')
         elif abstractor_type == 'simple':
             self.abstractor = SimpleAbstractor(**abstractor_kwargs, name='abstractor')
@@ -109,7 +108,7 @@ class AutoregressiveAbstractor(tf.keras.Model):
 
 
     def call(self, inputs):
-        source, target  = inputs # get source and target from inputs
+        source, target = inputs # get source and target from inputs
 
         # embed source and add positional embedding
         source = self.source_embedder(source)
