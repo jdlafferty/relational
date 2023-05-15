@@ -13,6 +13,7 @@ class Abstractor(tf.keras.layers.Layer):
         encoder_kwargs=None,
         rel_activation_type='softmax',
         use_self_attn=False,
+        use_layer_norm=False,
         dropout_rate=0.,
         name=None):
         """
@@ -56,6 +57,7 @@ class Abstractor(tf.keras.layers.Layer):
         self.symbol_dim = symbol_dim
         self.rel_activation_type = rel_activation_type
         self.use_self_attn = use_self_attn
+        self.use_layer_norm = use_layer_norm
         self.dropout_rate = dropout_rate
     
     def build(self, input_shape):
@@ -102,6 +104,9 @@ class Abstractor(tf.keras.layers.Layer):
         # TODO: make these configurable
         self.symbol_dense_layers = [layers.Dense(self.symbol_dim) for _ in range(self.num_layers)]
 
+        if self.use_layer_norm:
+            self.layer_norms = [layers.LayerNormalization()]*self.num_layers
+
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
 
@@ -130,6 +135,9 @@ class Abstractor(tf.keras.layers.Layer):
 
             # transform symbol sequence via dense layer to return to its original dimension
             abstract_symbol_seq = self.symbol_dense_layers[i](abstract_symbol_seq) # shape: [b, m, d_s]
+
+            if self.use_layer_norm:
+                abstract_symbol_seq = self.layer_norms[i](abstract_symbol_seq)
 
             # apply self-attention to symbol sequence 
             if self.use_self_attn:
