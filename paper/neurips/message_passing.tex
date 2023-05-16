@@ -6,31 +6,19 @@
 \def\m{m}
 
 
-\section{Relational symbolic message-passing}
-\label{sec:message_passing}
+\section{Symbolic message-passing algorithm}
+\label{sec:message_passing_supplement}
 
-At a high level, the primary function of a relational abstractor is to compute abstract relational features of its
-inputs. That is, given a set of input objects $o_1, \ldots, o_\m$, the relational abstractor computes a function on
-the set of pairwise relations between objects $\{ R(o_i, o_j) \}_{i,j}$, where $R(\cdot, \cdot)$ is a relation between a pair of objects; the relations are learned to carry out a specific prediction task,
-% JDC ADDITION:
-in such a form that they can be generalized to any arbitrarily large set of inputs that are appropriate for the task.
-
-At the core of relational abstractors is an operation we refer to as \textit{relational symbolic message-passing}.
-The input to this operation is a relation tensor $R = \left[R(o_i, o_j)\right]_{i,j=1}^\m$, where $R(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an abstractor computes the relation tensor,
-% JDC ?OK:
-after considering how the symbols on which it operates can be learned.
-
-The starting point of symbolic message-passing is a set of learnable symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to") a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of those learned input-indpendent symbols is how symbolic message-passing achieves its abstraction.
-
-In relational symbolic message-passing, we perform message-passing on these learned symbolic parameters according to the relation tensor $R$. In general, this message-passing operation can be described as a set-valued function of the form
+As described in \Cref{sec:message_passing}, 
+we perform message-passing on these learned symbolic parameters according to the relation tensor $R$. In general, this message-passing operation can be described as a set-valued function of the form
 \begin{equation}
-    \label{eq:symbolic_message_passing}
+    \label{eq:symbolic_message_passing_supp}
     s_i \leftarrow \text{Update}\Big( s_i, \ \left\{ \left(R[i,j], s_j\right)\right\}_{j\in[m]}\Big), \quad i = 1, \ldots, m
 \end{equation}
 That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed
 as values on the nodes of a graph, and the relations $R[i,j]$ are naturally viewed as weights on the edges. A simple but important special case of this is
 \begin{equation}
-    \label{eq:linear_symbolic_mp}
+    \label{eq:linear_symbolic_mp:supp}
     s_i \leftarrow \sum_{j=1}^{m} R[i,j] s_j, \quad i=1, \ldots, m
 \end{equation}
 In the above, suppose that $d_r = 1$. Otherwise, the above operation is done for each dimension of the relation $R$ and the result is concatenated, as in multi-head attention.
@@ -83,12 +71,3 @@ This captures a large class of relation functions. In particular, the theory of 
 \citep{universal}. Multi-dimensional relation functions can be achieved by stacking multiple such inner products.
 In the next section we frame this explicitly in terms of transformer operations.
 
-% NOTE / TODO: need to describe what we mean by `relations', `relation functions', `inner product relations', etc. in more detail somewhere?
-% maybe in intro at high-level
-% JDC: I HAD THE SAME INCLINATION ABOVE (IN RESPONSE "The inner product operation is a natural way to capture...).
-% ONE THOUGHT WE HAVE HAD IS THAT THEY CAN ALSO BE USED TO CAPTURE CONTRASTIVE RELATIONSHIPS, SINCE THE
-% INNER PRODUCT IS SENSITIVE TO THE NORMS OF THE VECTORS (AS LONG AS NO FORM OF NORMALIZATION IS APPLIED, INCLUDING
-% SOFTMAX FOR READOUT) -- SIMON CAN TALK ABOUT THIS ON MONDAY.
-
-% comment this out
-% \end{document}

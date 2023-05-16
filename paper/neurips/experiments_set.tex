@@ -21,20 +21,21 @@ of sensory embeddings. Cards vary along the dimensions of \attr{color}, \attr{nu
 % SO, EITHER NEED TO MAKE MORE EXPLICIT HOW SET CAN BE FRAMED AS AN AAB RULE, OR DEFER MENTION OF THE AAB TASK UNTIL AFTER
 % DESCRIBING SET.  I ALSO THINK IT WOULD HELP TO BE MORE EXPLICIT ABOUT WHETHER THE ABSTRACTOR IS TRAINED TO FULLY
 % PLAY THE SET GAME, OR JUST COMPUTATIONS THAT IT DOING SO WOULD REQUIRE.
-Along each dimension, three cards in a set must either have the same or unique values. As examples, if we denote this function as $f_\mattr{attr}(x_1, x_2, x_3)$
-for an attribute \attr{attr}, then the first three cards in each of the three rows of cards in Figure \ref{fig_set} 
-(reproduced below) have the following values $(f_\mattr{number}, f_\mattr{color}, f_\mattr{pattern}, f_\mattr{shape})$:
-\begin{center}
-	\begin{tabular}{cc}
-	\includegraphics[width=.18\textwidth]{figures/set/set_example2}&\\[-1.05in]
-	& \renewcommand{\arraystretch}{2}
-	\begin{tabular}{c}
-     (1, 0, 0, 0) \\
-	 (1, 0, 0, 0) \\
-	 (0, 0, 0, 1) 
-	\end{tabular}
-	\end{tabular}
-\end{center}
+Along each dimension, three cards in a set must either have the same or unique values. 
+%As examples, if we denote this function as $f_\mattr{attr}(x_1, x_2, x_3)$
+%for an attribute \attr{attr}, then the first three cards in each of the three rows of cards in Figure \ref{fig_set} 
+%(reproduced below) have the following values $(f_\mattr{number}, f_\mattr{color}, f_\mattr{pattern}, f_\mattr{shape})$:
+%\begin{center}
+%	\begin{tabular}{cc}
+%	\includegraphics[width=.18\textwidth]{figures/set/set_example2}&\\[-1.05in]
+%	& \renewcommand{\arraystretch}{2}
+%	\begin{tabular}{c}
+%     (1, 0, 0, 0) \\
+%	 (1, 0, 0, 0) \\
+%	 (0, 0, 0, 1) 
+%	\end{tabular}
+%	\end{tabular}
+%\end{center}
 
 To simulate this task we first train a convolutional neural network to process the color images 
 of the cards (a full deck includes 81 cards). The CNN is trained to predict the attribute of
