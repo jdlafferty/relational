@@ -1,3 +1,5 @@
+import tensorflow as tf
+from tensorflow.keras import layers
 from transformer_modules import Encoder, AddPositionalEmbedding, Decoder
 from abstractor import Abstractor
 from abstracters import RelationalAbstracter, SymbolicAbstracter, SimpleAbstractor 
