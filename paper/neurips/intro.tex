@@ -2,7 +2,6 @@
 \label{sec:intro}
 
 Relational learning refers to the inference of rules that operate in terms of
-% pairwise -- JDC: WOULD DELETE;  THE POINT IS MORE GENERAL, EVEN IF OUR IMPLEMENTATION FOCUSES ON 1ST ORDER RELATIONS
 relationships between objects, independent of how the objects may be represented. Common relations are
 ``less than'' applied to natural numbers, ``same color as'' applied to visual objects, and ``friend of'' applied to
 social relationships. Consider the task of sorting objects. A standard 52-card deck of playing cards has 13 ranks in
@@ -44,18 +43,8 @@ Recently, it has been proposed that episodic memory may also serve to implement 
 by allowing components of semantic memory that represent abstract functions to be separated from those
 responsible for processing domain-specific information, while allowing the two types of components to be coupled
 through rapid binding and similarity-based retrieval of representations \citep{esbn}.
-This
-%In its most basic and simplified form, the
-``relational bottleneck'' imposes an inductive bias that constrains the flow of information from sensory or motor subsystems to reasoning and
-decision making subsystems, by restricting this information to relations, as computed through inner products
-between distributed representations. In this paper we present a framework that
-%casts
-recasts
-this inductive bias in terms of an extension of transformers, in which specific types of attention mechanisms enforce
-the relational bottleneck, and new types of transformer modules use these attention mechanisms to implement a form of
-abstraction and relational reasoning.
-
-Our approach was developed while thinking about the Emergent Symbol Binding Network (ESBN) framework \citep{esbn}, which can be seen as closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides, with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be naturally implemented in an extension of transformers. Our proposed \textit{Abstractor} framework extends ESBN to
-enable more complex, higher order forms of relational learning by combining it with both the attentional mechanisms
-and hierarchical structure of transformers. This creates a potentially powerful combination of deep learning and
+This ``relational bottleneck'' imposes an inductive bias that constrains the flow of information from sensory or motor subsystems to reasoning and decision making subsystems, by restricting this information to relations, as computed through inner products between distributed representations. In this paper we present a framework that
+recasts this inductive bias in terms of an extension of transformers, in which specific types of attention mechanisms enforce the relational bottleneck. This creates a potentially powerful combination of deep learning and
 relational learning that enables abstraction and generalization from limited data.
+
+%Our approach was developed while thinking about the Emergent Symbol Binding Network (ESBN) framework \citep{esbn}, which can be seen as closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides, with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be naturally implemented in an extension of transformers. Our proposed \textit{Abstractor} framework extends ESBN to enable more complex, higher order forms of relational learning by combining it with both the attentional mechanisms and hierarchical structure of transformers. This creates a potentially powerful combination of deep learning and relational learning that enables abstraction and generalization from limited data.

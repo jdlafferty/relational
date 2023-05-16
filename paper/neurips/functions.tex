@@ -24,7 +24,7 @@ The following result characterizes the class of inner product relations computab
 
 
 \begin{thm}[Function class of inner product relational neural networks]
-	\label{thm:function_class_inner_product_relnn}
+	\label{theorem:function_class_inner_product_relnn}
 	\hphantom{~}
 
 	Consider an inner product relational neural network modeling a \(d_r\)-dimensional relation via inner products of neural networks,
@@ -109,7 +109,7 @@ The following result characterizes the class of inner product relations computab
 	The result also holds for universal approximators other than feedforward neural networks, with a nearly identical proof.
 \end{remark}
 
-\Cref{thm:function_class_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions \(R(\cdot, \cdot)\). We now make a couple of remarks.
+Theorem \ref{theorem:function_class_inner_product_relnn} shows that an inner product relational neural network can approximate arbitrary continuous, symmetric, positive semi-definite relation functions \(R(\cdot, \cdot)\). We now make a couple of remarks.
 
 Learning the relation function in equation \eqref{eq:inner_product_relations} involves learning \(d_r\) different non-linear transformations \(\phi_{1}, \ldots, \phi_{d_r}\). To enable greater weight-sharing, we can instead have a single non-linear learned function \(\phi: \mathcal{X} \to \mathbb{R}^{\tilde{d}}\) along with \(d_r\) linear projections \(W_k \in \mathbb{R}^{m \times \tilde{d}}\), such that
 \begin{equation}
@@ -123,7 +123,7 @@ Additionally, we can consider inner products of the form
 	\label{eq:nonsymmetric_inner_product_relnn}
 	\langle W_k^{(1)} \phi(x_i), W_k^{(2)} \phi(x_j) \rangle,
 \end{equation}
-\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{thm:function_class_inner_product_relnn}.
+\noindent where the linear projections for the first and second entities may be different, in order to achieve non-symmetric relation functions. This yields a strictly larger class of relation functions than in Theorem \ref{theorem:function_class_inner_product_relnn}.
 
 This is closely related to the cross-attention operation in transformers (and  abstractors). In cross-attention, the relation between two objects is given by an inner product between the two object vectors transformed by a `query' matrix and a `key' matrix respectively: \(\langle W_Q x, W_K y \rangle\). A `relation tensor' giving pairwise relations is then computed as \(\Softmax((W_K X)^\top (W_Q X))\), where \(X = \begin{bmatrix} x_1 & \cdots & x_\m\end{bmatrix}\) are the object vectors. The multiple heads of multi-head attention similarly correspond to the multi-dimensional relations modeled by the transformations \(\phi_{1}, \ldots, \phi_{d_r}\) in the inner product relational neural network \ref{eq:inner_product_relations}.
 
@@ -236,7 +236,7 @@ We saw in the previous section that a one-layer abstractor is able to compute ar
 	\begin{equation*}
 		\left[(W_K A^{(1)})^\top (W_Q A^{(1)})\right]_{ij} = \langle W_Q \phi^{(1)}(r_j), W_K \phi^{(1)}(r_i) \rangle.
 	\end{equation*}
-	By Theorem \ref{thm:function_class_inner_product_relnn}, composing an arbitrary learnable function \(\phi\) with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when \(W_Q \neq W_K\)).
+	By Theorem \ref{theorem:function_class_inner_product_relnn}, composing an arbitrary learnable function \(\phi\) with inner products enables learning arbitrary relation functions on the input space (i.e.: any continuous, symmetric, positive semi-definite bivariate function. Here, the class of functions is actually larger since it allows for non-symmetric relation functions when \(W_Q \neq W_K\)).
 
 	In the above, the space over which we are computing relations is itself a space of relation vectors. That is, \(\langle W_Q \phi^{(1)}(R_j), W_K \phi^{(1)}(R_i) \rangle\) computes a relation between object \(i\)'s relations and object \(j\)'s relations. Hence, choosing \(s_i^{(2)} = e_i\) and ignoring the Softmax for now, yields
 	\begin{equation*}
@@ -290,7 +290,7 @@ with high probability, where \(s_{i\rdot}\in\reals^m\) is the \(i\)th row of \(S
   \end{eqnarray}
   with high probability.
 
-\begin{thm}\label{thm:main-improved}
+\begin{thm}\label{theorem:main-improved}
   Assume the symbol matrix \(S\) satisfies Condition A and Condition B. Then if
   \begin{equation}
   \frac{\overline{\kappa}\sqrt{\frac{m}{d}\log\left(\frac{e d}{k}\right)}+\epsilon\sigma\sqrt{\frac{m}{d}}}{\underline{\kappa}(1-\epsilon)}
