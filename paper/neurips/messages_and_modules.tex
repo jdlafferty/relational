@@ -111,21 +111,23 @@ In our extended framework, processing occurs in encoder/decoder modules that han
 separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate
 through cross-attention mechanisms that couple abstract states with specific information in encoder/decoder modules to which they refer in a given problem instance.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
+%\begin{figure}[t]
+    \begin{wrapfigure}{L}{0.50\textwidth}
+        \vspace{-3mm}
+        \begin{center}
+        \begin{tabular}{c}
+            \hskip5pt\includegraphics[width=.45\textwidth]{figures/algorithm-diagram3-crop}
+        \end{tabular}
+        \caption{\footnotesize Algorithmic framework integrating transformers and relational learning, 
+        implementing a form of the ``relational bottleneck.''}
+        \label{fig:algo}
+        \end{center}
+        \vskip-.15in
+    \end{wrapfigure}
+    %\end{figure}
 The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder states are vectors that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors that are learned and processed using similar mechanisms but, critically, without direct exposure to the encoder states $E$.  In particular, the encoder states are separated from the abstract states by a ``relational bottleneck'' that only allows information about relations (that is, inner-products) between encoder states to influence the learning and transformation of abstract states. The Abstractor framework enables domain-specific relations to be modeled in the Encoder, as done by standard transformers, giving the framework more flexibility relative to ESBN. 
 %If sensory information is required by the decoder, this can be passed to the decoder states $D$ by standard cross-attention mechanisms of transformers.
 
-\begin{figure}[t]
-    \vspace{-3mm}
-    \begin{center}
-    \begin{tabular}{c}
-        \hskip5pt\includegraphics[width=.60\textwidth]{figures/algorithm-diagram3-crop}
-    \end{tabular}
-    \caption{Algorithmic framework integrating transformers and relational learning, with encoder/decoder layers for
-    sensory/motor processes, and abstractor layers for representing relations between encoder and decoder states. For purely relational reasoning the abstract symbols depend only on relations between encoder states, which is a form of the ``relational bottleneck.''}
-    \label{fig:algo}
-    \vskip-12pt
-    \end{center}
-\end{figure}
 
 
 
@@ -161,6 +163,7 @@ and the cross-attention mechanism between encoder states $E$ and decoder states 
      \qkv{D}{E}{E}
 \end{equation*}
 
+
 Given the context of the encoder states $E$, a sequence of abstractor layers transforms the abstract symbols $A = (a_1,\ldots, a_m)$, using two types of attention: $\selfattention{E}$ and 
 \textit{relational cross-attention}
 \begin{equation*}
@@ -171,7 +174,6 @@ with abstract symbols $s_j$ that are task-dependent but input-indendent, trainab
 backpropagation. The relational cross-attention mechanism learns relations among the encoder states and uses those
 relations to transform the abstract state. Importantly, the relational cross-attention heads
 encode learned relations and attributes, and can be reused across tasks.
-
 
 Only relational information in the encoder states, computed through inner products,
 is used to transform the abstract variables; no information about the encoder states $E$ is directly accessed by the abstract side. For example, an attention head may learn to be directed toward the relevant dimension of an $E$ state (e.g., the color or shape of an object), without being associated with any particular value along that dimension. If the specific representation of $E$ changes, the same abstract relations will hold as long as the transformed inner products are approximately preserved. Thus, an abstractor is constructed to enforce the relational bottleneck 
@@ -238,6 +240,7 @@ no matter which transformations are learned by the attention heads.
 %\label{fig_set}
 %\end{figure}
 %
+
 
 \subsection{Configuring abstractors for different tasks}
 \def\module#1{\mbox{\small\texttt{#1}}}
