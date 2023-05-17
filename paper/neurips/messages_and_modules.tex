@@ -269,6 +269,7 @@ This provides an extension of general sequence-to-sequence models with transform
 
 We note that learning higher order relations is made possible by composing
 abstractors, as in the architecture
-$$\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}.$$
+\begin{equation*}\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}.
+\end{equation*}
 Since a one-layer abstractor is able to compute a large class of functions on relations, chaining together abstractors allows the computation of relations on relations (higher-order relations). We formalize these comments in Section~\ref{sec:function_spaces}.
 
