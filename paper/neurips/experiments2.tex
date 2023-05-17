@@ -16,7 +16,8 @@ several different relational models to learn this order relation. Note that $\pr
 %has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the %embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models.
 We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~(\Cref{fig:exp_order_relation}).
 
-\begin{figure}
+\begin{figure*}
+    \vskip-.75in
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
@@ -59,10 +60,8 @@ We observe that a simple Abstractor model is able to learn the relation while Co
         \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness}
     \end{subfigure}
 
-
-    \vskip10pt
     \caption{Experiments. Shaded regions indicate twice the standard error of mean.}\label{fig:experiments}
-\end{figure}
+\end{figure*}
 
 \subsection{Superior sample-efficiency on relational tasks compared to plain transformers}
 The next experiment extends the idea of learning an order relation $\prec$ on random objects: now, the task is to fully sort sequences of randomly permuted random objects.
