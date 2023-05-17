@@ -1,30 +1,6 @@
 \subsection{Modularity and comparison to purely symbolic representations}
+\label{ssec:set_exp}
 
-%\label{ssec:set_exp}
-%\def\attr#1{{\small\texttt{#1}}}
-%\def\mattr#1{{\mbox{\footnotesize\texttt{#1}}}}
-%
-%\subsection{Modularity and comparison to symbolic computation}
-%
-%\begin{figure}
-%    \centering
-%    \begin{subfigure}[t]{0.45\textwidth}
-%        \centering
-%		\begin{tabular}{c}
-%		\includegraphics[width=.6\textwidth]{figures/set/set_example}\\
-%		\includegraphics[width=.6\textwidth]{figures/set/notset_example}\\[5pt]
-%		\end{tabular}
-%        \caption{The top three cards form a SET; the bottom three do not.}
-%    \end{subfigure} \hspace{\fill}
-%    \begin{subfigure}[t]{0.45\textwidth}
-%        \centering
-%		\includegraphics[width=1\textwidth]{figures/set/set_symbolic_vs_abstractor.pdf}
-%        \caption{Learning curves for classifying three cards as SET. The baseline uses 
-%		purely symbolic representions of the relations between pairs of cards for each of the four attributes. 
-%     	}\label{fig:exp_set}
-%    \end{subfigure}
-%\end{figure}
-%
 
 \begin{wrapfigure}{R}{0.30\textwidth}
 	\begin{tabular}{c}
@@ -36,13 +12,13 @@ SET is a relatively straightforward but challenging cognitive task that engages 
 presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and
 shape) and they must find subsets of three cards which obey a deceptively simple rule: along each dimension, all cards in a SET must either have the same or unique values. For example, in the figure to the right, the cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs form a SET: same color, same number, different patterns, different shapes.
 
-To simulate this task of deciding if a triple forms a SET, we first train a convolutional neural network to process the color images of the cards (a full deck includes 81 cards). The CNN is trained to predict the attribute of
+To simulate the task of deciding if a triple forms a SET, we first train a convolutional neural network to process the color images of the cards (a full deck includes 81 cards). The CNN is trained to predict the attribute of
 each card, as a multi-label classification, and then an embedding of dimension $d=32$ of 
 each card is obtained as a fixed input vector. This embedding layer uses an \MLP{} to map the convolutional feature maps into a distributed representation.
 
 Next, we train Abstractors separately for each of the four attributes to learn same/different 
 relations, where the task is to decide if an input pair of cards is the same or different for that attribute. 
-We then uses the mappings learned for these relations to initialize the relations
+We then uses the query and key mappings $W_Q$ and $W_K$ learned for these relations to initialize the relations
 in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET. 
 
 This is compared to a baseline symbolic model, where instead of images the input is a vector with 12 bits, explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation can be considered as a lower bound on the performance achievable by the Abstractor. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained 
