@@ -93,7 +93,7 @@ representations by applying a random linear transformation. In particular, we ra
 entries of which are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
 $\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]$. We also test robustness to additive noise via $\tilde{o}_i = o_i + \varepsilon_i, \varepsilon_i \in \mathcal{N}(0, \sigma^2 I_d)$.
 
-The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$ (5 trials at each noise level). The results are shown in figures ~\ref{fig:exp_robustness} and\ref{fig:exp_robustness2}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
+The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$ (5 trials at each noise level). The results are shown in figures~\ref{fig:exp_robustness} and~\ref{fig:exp_robustness2}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
 
 This experiment can be interpreted in two lights: the first is robustness to noise. The second is a form of out-of
 -distribution generalization. Note that the objects seen by the models post-corruption lie in a different space than

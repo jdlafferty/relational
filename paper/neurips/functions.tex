@@ -20,7 +20,7 @@ where \(\phi_{1}, \ldots, \phi_{d_r}\) are learnable transformations correspondi
 
 In a deep learning model, a natural choice is for \(\phi_{1}, \ldots, \phi_{d_r}\) to be \(d_r\) different neural networks (e.g.: MLPs, CNNs, etc. depending on the object space \(\mathcal{X}\)). Hence, the parameters of \(R\) are \(\boldsymbol{\theta} = (\theta_{1}, \ldots, \theta_{d_r})\), where \(\theta_{i}\) are the parameters of \(\phi_{i}\).
 
-The following result characterizes the class of inner product relations computable by \eqref{eq:inner_product_relations} when \(\phi_{1}, \ldots, \phi_{d_r}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
+The following result characterizes the class of inner product relations computable by~\eqref{eq:inner_product_relations} when \(\phi_{1}, \ldots, \phi_{d_r}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for inner product relational neural networks.
 
 
 \begin{thm}[Function class of inner product relational neural networks]
@@ -85,7 +85,7 @@ The following result characterizes the class of inner product relations computab
 				+ \left\lvert \sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y) - \MLP(x)_j \MLP(y)_j} \right\rvert  \right) }
 		\end{split}
 	\end{equation}
-	The first term is less than \(\frac{\epsilon}{2}\) by \eqref{eq:proof_mercer_thm_unif_abs_cv}. The second term can be bounded uniformly on \(x,y\) by
+	The first term is less than \(\frac{\epsilon}{2}\) by~\eqref{eq:proof_mercer_thm_unif_abs_cv}. The second term can be bounded uniformly on \(x,y\) by
 	\begin{equation*}
 		\begin{split}
 			&\left\lvert \left(\sum_{j=1}^{\tilde{n}_i}{\lambda_i \psi_j(x) \psi_i(y)}\right) - \langle \MLP(x), \MLP(y) \rangle \right\rvert  \\
