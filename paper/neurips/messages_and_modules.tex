@@ -9,14 +9,14 @@
 \section{The Abstractor Framework}
 \label{sec:abstractor_framework}
 
-At a high level, the primary function of a (relational) abstractor is to compute abstract relational features of its
-inputs\footnote{In this paper, we will tend to use the name 'Abstractor' to refer to both the module, the framework, and models which contain the Abstractor module as a main component.}. That is, given a set of input objects $o_1, \ldots, o_\m$, the relational abstractor learns to model a (pairwise) relation $r(\cdot, \cdot)$ and computes a function on
-the set of pairwise relations between objects $\{ r(o_i, o_j) \}_{i,j}$. The relations and the computations on them are learned to carry out a specific prediction task (often end-to-end, but, crucially, the Abstractor framework naturally supports modular learning).
+At a high level, the primary function of an abstractor is to compute abstract relational features of its
+inputs\footnote{In this paper, we will tend to use the name `Abstractor' to refer to both the module, the framework, and models which contain the Abstractor module as a main component.}. That is, given a set of input objects $o_1, \ldots, o_\m$, the relational abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on
+the set of pairwise relations between objects ${\{ r(o_i, o_j) \}}_{ij}$. The relations and the computations on them are learned to carry out a specific prediction task (often end-to-end, but, crucially, the Abstractor framework naturally supports modular learning).
 \subsection{Relational symbolic message-passing}
 \label{ssec:message_passing}
 
-At the core of relational abstractors is an operation we refer to as \textit{relational symbolic message-passing}.
-The input to this operation is a relation tensor $R = \left[r(o_i, o_j)\right]_{i,j=1}^\m$, where $r(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an abstractor models pairwise relations and computes the relation tensor.
+At the core of abstractors is an operation we refer to as \textit{relational symbolic message-passing}.
+The input to this operation is a relation tensor $R = \left[r(o_i, o_j)\right]_{i,j=1}^\m$, where $r(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an abstractor models pairwise relations and computes the relation tensor in the next subsection.
 
 The starting point of symbolic message-passing is a set of learnable symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to") a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of those learned input-indpendent symbols is how symbolic message-passing achieves its abstraction.
 
