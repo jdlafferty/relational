@@ -69,7 +69,7 @@ The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt
 
 \subsection{Robustness and Out-of-Distribution generalization}
 In this experiment, we evaluate robustness to a particular type of noisy corruption. We train each model on the same object-sorting task in the previous two subsections. We use a fixed training set size of $3,000$ for the same reason---it is large enough that all models are able to learn the task. On the hold out test set, we corrupt the object representations by applying a random linear transformation. In particular, we randomly sample a random matrix whose entries are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
-\[\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]\]
+$\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]$.
 
 The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$. The results are shown in~\Cref{fig:exp_robustness}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
 
