@@ -62,3 +62,5 @@ The models are evaluated on the hold-out test set with objects replaced by their
 This experiment can be interpreted in two lights: the first is robustness to noise. The second is a form of out-of-distribution generalization. Note that the objects seen by the models post-corruption lie in a different space to those seen during training. However, their relations remain the same. Hence, the models need to learn relations that are in some sense independent of representation.
 
 There is a theoretical justification for this behavior.~\cite{zhouCompressedPrivacySensitive2009} shows that $\langle \Phi x, \Phi y \rangle \approx \langle x, y \rangle$ in high dimensions, for a random matrix $\Phi$ with iid Gaussian entries. Hence, this indicates that models whose primary computations are performed via inner products, like Abstractors, may be more robust to this kind of corruption.
+
+\input{experiments_set}

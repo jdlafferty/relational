@@ -253,4 +253,9 @@ Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Clement Delangue,
 \newblock In {\em Proceedings of the 2020 conference on empirical methods in
   natural language processing: system demonstrations}, pages 38--45, 2020.
 
+\bibitem{zhouCompressedPrivacySensitive2009}
+Shuheng Zhou, John Lafferty, and Larry Wasserman.
+\newblock Compressed and {{Privacy-Sensitive Sparse Regression}}.
+\newblock 55(2):846--866.
+
 \end{thebibliography}

@@ -5,6 +5,25 @@
 
 \subsection{Modularity and comparison to symbolic computation}
 
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+		\begin{tabular}{c}
+		\includegraphics[width=.6\textwidth]{figures/set/set_example}\\
+		\includegraphics[width=.6\textwidth]{figures/set/notset_example}\\[5pt]
+		\end{tabular}
+        \caption{The top three cards form a SET; the bottom three do not.}
+    \end{subfigure} \hspace{\fill}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+		\includegraphics[width=1\textwidth]{figures/set/set_symbolic_vs_abstractor.pdf}
+        \caption{Learning curves for classifying three cards as SET. The baseline uses 
+		purely symbolic representions of the relations between pairs of cards for each of the four attributes. 
+     	}\label{fig:exp_set}
+    \end{subfigure}
+\end{figure}
+
 SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative
 , attentionally directed manner, requiring several levels of abstraction over sensory embeddings. Players are
 presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and
