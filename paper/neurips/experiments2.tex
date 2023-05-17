@@ -6,36 +6,51 @@
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics{figures/experiments/pairwise_order_learning_curves.pdf}
-        \caption{The Abstractor model follows~\cref{alg:...} with \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models. The Abstractor learns the transitive $\prec$ relation and generalizes, whereas CorelNet's learning curve is flat at the baseline accuracy of 0.5.}\label{fig:exp_order_relation}
+        \caption{The Abstractor learns the transitive $\prec$ relation and generalizes, whereas CorelNet's learning curve is flat at the baseline accuracy of 0.5.}\label{fig:exp_order_relation}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics{figures/experiments/random_object_sorting.pdf}
-        \caption{...}\label{fig:object_sorting}
+        \caption{Learning curves on sorting sequences of random objects. The abstractor is dramatically more sample-efficient.}\label{fig:exp_object_sorting}
     \end{subfigure}
 
     \bigskip
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics{figures/experiments/random_object_sorting_generalization.pdf}
-        \caption{...}\label{fig:object_sorting_generalization}
+        \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benifits significantly from pre-training whereas the Transformer does not.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics{figures/experiments/multiplicative_robustness.pdf}
-        \caption{...}\label{fig:robustness}
+        \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness}
     \end{subfigure}
-    \caption{Experiments}\label{fig:experiments}
+    \caption{Experiments. Shaded regions indicate twice the standard error of mean, computed over several trials.}\label{fig:experiments}
 \end{figure}
 
 
 \subsection{Warm up: Ability to learn asymetric and multi-dimensional relations}
 One recent work on relational machine learning is~\cite{corelnet}, where the authors argue for a particular type of inductive bias in relational models and propose CorelNet. The architecture is very simple: given a sequence of objects $(x_1, ..., x_m)$, embed them using an MLP $\phi$, then compute the similarity matrix $A = \left[\langle\phi(x_i), \phi(x_j)\rangle\right]_{ij}$. The final output is an MLP applied to the flattened similarity matrix. They demonstrate that this model can solve a series of simple tasks with high sample-efficiency compared to models like [transformers and ESBN]. However, CorelNet has several significant limitations. One is that it is only able to model symmetric relations---$A$ is symmetric by definition. Another limitation is that it can only model single-dimensional relations---for each pair of objects $(i,j)$, their modeled relation is a single-dimensional scalar $A_{ij}$. The Abstractor is able to model a significantly larger class of relations. In particular, it is able to model asymetric and multi-dimensional relations through the $\text{MultiHeadRelation}$ operation. This is demonstrated by the following simple experiment (as well as the experiments proceeding it).
 
-We generate $N = 32$ ``random objects'' represented by iid Gaussian vectors, $o_i \overset{iid}{\sim} \mathcal{N}(0, I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \prec \cdots \prec o_N$. We train several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 35\% are held out as a test set and 15\% are held out as a validation set (for early stopping). We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set. Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation. We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot.
+We generate $N = 32$ ``random objects'' represented by iid Gaussian vectors, $o_i \overset{iid}{\sim} \mathcal{N}(0, I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \prec \cdots \prec o_N$. We train several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 35\% are held out as a test set and 15\% are held out as a validation set (for early stopping). We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set. Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation.
+
+The Abstractor model follows~\cref{alg:...} with \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models. We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~\cref{fig:exp_order_relation}
 
 \subsection{Superior sample-efficiency on relational tasks compared to plain transformers}
+The next experiment extends the idea of learning an order relation $\prec$ on random objects: now, the task is to fully sort sequences of randomly permuted random objects.
+
+We generate random objects in the following way. First, we generate two sets of random attributes $\mathcal{A} = \{a_1, a_2, a_3, a_4\}$, $a_i \overset{iid}{\sim} \mathcal{N}(0, I) \in \mathbb{R}^{4}$ and $\mathcal{B} = \{b_1, \ldots, b_{12}\}$, $b_i \overset{iid}{\sim} \mathcal{N}(0, I) \in \mathbb{R}^{8}$. To each set of attributes, we associate the strict ordering relation $a_1 \prec a_2 \prec a_3 \prec a_4$ and $b_1 \prec b_2 \prec \cdots \prec b_{12}$, respectively. Our random objects are formed by the cartesian product of these two attributes $\mathcal{O} = \mathcal{A} \times \mathcal{B}$, yielding $N = 4 \times 12 = 48$ objects (i.e.: each object in $\mathcal{O}$ is a vector in $\mathbb{R}^{4+8}$ formed by a concatenation of one attribute value in $\mathcal{A}$ and one in $\mathcal{B}$). Then, we associate with $\mathcal{O}$ the strict ordering relation corresponding the order relation $\mathcal{A}$ as the primary key and the order relation of $\mathcal{B}$ as the secondary key. i.e.: $(a_i, b_j) \prec (a_k, b_l)$ if $a_i \prec a_k$ or if $a_i = a_k$ and $b_j \prec b_l$.
+
+Given, a set of objects in $\mathcal{O}$, the task is to sort it according to $\prec$. More precisely, the input sequences are randomly permuted sequences of $10$ objects in $\mathcal{O}$ and the target sequences are the indices of the object sequences in sorted order (i.e., the `argsort'). The training data are sampled uniformly from the set of length-10 sequences in $\mathcal{O}$. We also generate a non-overlapping validation dataset (used during training for early stopping) and a testing dataset (used during evaluation).
+
+We evaluate learning curves on an Abstractor, a Transformer, and an ``Ablation'' model. The Abstractor uses the architecture $\texttt{Encoder} \to \texttt{Abstractor} \to \texttt{Decoder}$. The Encoder-to-Abstractor interface uses relational cross-attention and the Abstractor-to-Decoder interface uses standard cross-attention. The Ablation Model aims to test the effects of the relational cross-attention in the Abstractor model---it is architecturally identical to the Abstractor model with the crucial exception that the Encoder-to-Abstractor interface instead uses standard cross-attention. The hyperparameters of the models are choosen so that the parameter counts are similar. % TODO: add details here? or in supplement?
+
+We find that the Abstractor is dramatically more sample-efficient the Transformer and the Ablation model~\cref{fig:exp_object_sorting}.
 
 \subsection{Modularity and ability to generalize to similar tasks}
+
+Continuing with the object-sorting task and the dataset generated as described above, we test the Abstractor's ability to generalize from similar relational tasks through pre-training. The main task uses the same dataset described above. The pre-training task involves the same object set $\mathcal{O}$ but the order relation is changed. The ordering in attribute $\mathcal{A}$ is randomly permuted, while the ordering in attribute $\mathcal{B}$ is kept the same. A strict ordering relation $\prec$ on $\mathcal{O}$ is obtained in the same way---using the order in $\mathcal{A}$ as the primary key and the order in $\mathcal{B}$ as the secondary key.
+
+The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt{Decoder}$ (i.e.: no Transformer encoder), and the transformer is the same as the previous section. We pre-train both models on the pre-training task then evaluate learning curves on the original task with weights initialized to be those learned on the pre-training task. Since the Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task which is similar. ~\cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-trainign. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benifit from pre-training.
 
 \subsection{Robustness and Out-of-Distribution generalization}
