@@ -1,27 +1,14 @@
 \documentclass[pdftex]{article}
-
-% if you need to pass options to natbib, use, e.g.:
-%     \PassOptionsToPackage{numbers, compress}{natbib}
-% before loading neurips_2023
-
-
-% ready for submission
 \usepackage{neurips_2023}
 
-
-% to compile a preprint version, e.g., for submission to arXiv, add add the
-% [preprint] option:
-%     \usepackage[preprint]{neurips_2023}
-
-
-% to compile a camera-ready version, add the [final] option, e.g.:
-%     \usepackage[final]{neurips_2023}
-
-
-% to avoid loading the natbib package, add option nonatbib:
-%    \usepackage[nonatbib]{neurips_2023}
-
-
+\usepackage{xr}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{amsmath,amsthm,amssymb,bbm}
+\usepackage{url}            % simple URL typesetting
+\usepackage{afterpage}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -71,49 +58,6 @@
 \newtheorem*{con0}{\conditionA}
 \newtheorem*{con1}{\conditionAp}
 \newtheorem*{con2}{\conditionB}
-
-
-\title{Abstractors: Transformer Modules for Symbolic Message Passing and Relational Reasoning}
-
-% The \author macro works with any number of authors. There are two commands
-% used to separate the names and addresses of multiple authors: \And and \AND.
-%
-% Using \And between authors leaves it to LaTeX to determine where to break the
-% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
-% authors names on the first line, and the last on the second line, try using
-% \AND instead of \And before the third author name.
-
-
-\author{%
-  David S.~Hippocampus\thanks{Use footnote for providing further information
-    about author (webpage, alternative address)---\emph{not} for acknowledging
-    funding agencies.} \\
-  Department of Computer Science\\
-  Cranberry-Lemon University\\
-  Pittsburgh, PA 15213 \\
-  \texttt{hippo@cs.cranberry-lemon.edu} \\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-}
 
 \def\given{\,|\,}
 \def\P{\mathbb{P}}
@@ -182,35 +126,27 @@
 \newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
 \makeatother
 
+
+\title{Supplement to Abstractors: Transformer Modules for Symbolic Message Passing and Relational Reasoning}
+
+
+\externaldocument{main}
+
 \begin{document}
-
-
-\maketitle
-
-
-\input{abstract}
-\input{intro}
-%\input{message_passing}
-%\input{transformer_modules}
-\input{messages_and_modules}
-\input{functions_preview}
-\input{experiments2}
-\input{discussion}
-%\input{acknowledge}
-
-
-\medskip
-
-{%\small
-\bibliography{references}
-\bibliographystyle{plain}}
-
-% \end{document} % paper only 
-
-\clearpage
+\begin{nolinenumbers}
+\begin{center}
+\Large
+\bfseries\LARGE Abstractors: Transformer Modules for\\ Symbolic Message Passing and Relational Reasoning\\[10pt]
+\sc\large Supplement
+\end{center}
+\end{nolinenumbers}
 \appendix
 \input{message_passing}
 \input{functions}
 
+{%\small
+\bibliography{references}
+%\bibliographystyle{apalike}}
+\bibliographystyle{plain}}
 
 \end{document}
