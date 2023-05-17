@@ -20,8 +20,9 @@ I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \
 several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 15\% are held out as a validation set (for early stopping) and 35\% are held out as a test set. We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set. Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation.
 
 % JDL commented out undefined alg, for now
-The Abstractor model %follows~\Cref{alg:...} 
-has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models. We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~\Cref{fig:exp_order_relation}
+%The Abstractor model %follows~\Cref{alg:...}
+%has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the %embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models.
+We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~(\Cref{fig:exp_order_relation}).
 
 \begin{figure}
     \centering
@@ -73,7 +74,8 @@ Given, a set of objects in $\mathcal{O}$, the task is to sort it according to $\
 
 We evaluate learning curves on an Abstractor, a Transformer, and an ``Ablation'' model. The Abstractor uses the architecture $\texttt{Encoder} \to \texttt{Abstractor} \to \texttt{Decoder}$. The Encoder-to-Abstractor interface uses relational cross-attention and the Abstractor-to-Decoder interface uses standard cross-attention. The Ablation Model aims to test the effects of the relational cross-attention in the Abstractor model---it is architecturally identical to the Abstractor model with the crucial exception that the Encoder-to-Abstractor interface instead uses standard cross-attention. The hyperparameters of the models are choosen so that the parameter counts are similar. % TODO: add details here? or in supplement?
 
-We find that the Abstractor is dramatically more sample-efficient than the Transformer and the Ablation model~\Cref{fig:exp_object_sorting}.
+We find that the Abstractor is dramatically more sample-efficient than the Transformer and the Ablation model~(\Cref{fig:exp_object_sorting}).
+
 \subsection{Modularity and ability to generalize to similar tasks}
 
 Continuing with the object-sorting task and the dataset generated as described above, we test the Abstractor's ability to generalize from similar relational tasks through pre-training. The main task uses the same dataset described above. The pre-training task involves the same object set $\mathcal{O}$ but the order relation is changed. The ordering in attribute $\mathcal{A}$ is randomly permuted, while the ordering in attribute $\mathcal{B}$ is kept the same. A strict ordering relation $\prec$ on $\mathcal{O}$ is obtained in the same way---using the order in $\mathcal{A}$ as the primary key and the order in $\mathcal{B}$ as the secondary key.
@@ -82,7 +84,7 @@ The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt
 
 \subsection{Robustness and Out-of-Distribution generalization}
 In this experiment, we evaluate robustness to a particular type of noisy corruption. We train each model on the same object-sorting task in the previous two subsections. We use a fixed training set size of $3,000$ for the same reason---it is large enough that all models are able to learn the task. On the hold out test set, we corrupt the object representations by applying a random linear transformation. In particular, we randomly sample a random matrix whose entries are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
-\[\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]\]
+$\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]$.
 
 The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$. The results are shown in~\Cref{fig:exp_robustness}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
 
