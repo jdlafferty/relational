@@ -152,11 +152,6 @@ Shanka~Subhra Mondal, Taylor~Whittington Webb, and Jonathan Cohen.
 \newblock Learning to reason over visual objects.
 \newblock In {\em International Conference on Learning Representations}, 2023.
 
-\bibitem{musslick2021rationalizing}
-Sebastian Musslick and Jonathan~D Cohen.
-\newblock Rationalizing constraints on the capacity for cognitive control.
-\newblock {\em Trends in Cognitive Sciences}, 25(9):757--775, 2021.
-
 \bibitem{wmPFC}
 Randall~C. O'Reilly and Michael~J. Frank.
 \newblock Making working memory work: {A} computational model of learning in
@@ -170,25 +165,12 @@ Alexander Pritzel, Benigno Uria, Sriram Srinivasan, Adria~Puigdomenech Badia,
 \newblock In {\em International conference on machine learning}, pages
   2827--2836. PMLR, 2017.
 
-\bibitem{ravi2020navigating}
-Sachin Ravi, Sebastian Musslick, Maia Hamin, Theodore~L Willke, and Jonathan~D
-  Cohen.
-\newblock Navigating the trade-off between multi-task learning and learning to
-  multitask in deep neural networks.
-\newblock {\em arXiv preprint arXiv:2007.10527}, 2020.
-
 \bibitem{santoro1}
 Adam Santoro, David Raposo, David~G Barrett, Mateusz Malinowski, Razvan
   Pascanu, Peter Battaglia, and Tim Lillicrap.
 \newblock A simple neural network module for relational reasoning.
 \newblock In {\em Advances in neural information processing systems}, pages
   4967--4976, 2017.
-
-\bibitem{schneider1977controlled}
-Walter Schneider and Richard~M Shiffrin.
-\newblock Controlled and automatic human information processing: I. detection,
-  search, and attention.
-\newblock {\em Psychological review}, 84(1):1, 1977.
 
 \bibitem{evc}
 Amitai Shenhav, Matthew~M Botvinick, and Jonathan~D Cohen.
