@@ -53,7 +53,7 @@ We observe that a simple Abstractor model is able to learn the relation while Co
         %\centering
         \hskip-.35in\includegraphics[scale=.95]{figures/experiments/additive_robustness.pdf}
         \vskip-5pt
-        \caption{The Abstractor is more robust to corruption by a additive noise. }\label{fig:exp_robustness}
+        \caption{The Abstractor is more robust to corruption by additive noise. }\label{fig:exp_robustness}
     \end{subfigure}\hspace{\fill}
     \begin{subfigure}[t]{0.40\textwidth}
         %\centering
@@ -83,11 +83,11 @@ Continuing with the object-sorting task and the dataset generated as described a
 The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt{Decoder}$ (i.e.: no Transformer
 encoder), and the transformer is the same as the previous section. We pre-train both models on the pre-training task
 and then, using those learned weights for initialization, evaluate learning curves on the original task. Since the
-Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task.~\Cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-training. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benefit from pre-training.
+Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of 3,000, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task.~\Cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-training. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benefit from pre-training.
 
 \subsection{Robustness and Out-of-Distribution generalization}
 In this experiment, we evaluate robustness to a particular type of noisy corruption. We train each model on the same
-object-sorting task described above. We use a fixed training set size of $3,000$ for the same reason
+object-sorting task described above. We use a fixed training set size of 3,000 for the same reason
 ---it is large enough that all models are able to learn the task. On the hold out test set, we corrupt the object
 representations by applying a random linear transformation. In particular, we randomly sample a random matrix the
 entries of which are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
