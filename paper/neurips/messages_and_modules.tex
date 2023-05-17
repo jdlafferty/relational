@@ -255,8 +255,14 @@ In a ``fully relational'' task, the decoder can only attend to the abstractor, a
 only uses relational information from the input. An example is sorting objects; we give
 experimental details for this example in Section~\ref{sec:experiments}.
 In a ``partially-relational'' task, the decoder will attend to both the abstractor and encoder modules. In such cases, relational information is important to solving the task, but information about input ``values'' is
-also important. This provides an extension of general sequence-to-sequence models with transformers.
-
+also important.
+% JDC: IT MIGHT BE GOOD, IF POSSIBLE TO INCLUDE AN "INLINE SCHEMATIC" FOR THIS CASE AS WELL, WITH A "BYPASS" ARROW
+% (RESNET STYLE) FROM ENCODER TO DECODER (THOUGH I DON'T KNOW HOW TO DO THIS IN TEX!), TO MAKE IT VISIBLY CLEAR THAT
+% THE FRAMEWORK IS FLEXIBLE.
+This provides an extension of general sequence-to-sequence models with transformers.
+% JDC: IF CORRECT, WE MIGHT ADD:
+In this paper, to highlight the capabilities of the framework, we focus on fully relational abstractors.
+however, partially relational abstractors are likely to be necessary for more realistic tasks.
 
 We note that learning higher order relations is made possible by composing
 abstractors, as in the architecture
