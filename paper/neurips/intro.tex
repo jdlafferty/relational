@@ -64,7 +64,7 @@ computed through inner products between distributed representations.
 %removed for lack of space
 In this paper we present a framework that recasts this inductive bias in terms of an extension of transformers, in
 which specific types of attention mechanisms enforce the relational bottleneck. This creates a potentially powerful
-combination of deep learning and relational learning that implements a form of symoblic processing, enabling
+combination of deep learning and relational learning that implements a form of symbolic processing, enabling
 abstraction and generalization from limited data.
 
 %Our approach was developed while thinking about the Emergent Symbol Binding Network (ESBN) framework \citep{esbn}, which can be seen as closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides, with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be naturally implemented in an extension of transformers. Our proposed \textit{Abstractor} framework extends ESBN to enable more complex, higher order forms of relational learning by combining it with both the attentional mechanisms and hierarchical structure of transformers. This creates a potentially powerful combination of deep learning and relational learning that enables abstraction and generalization from limited data.
