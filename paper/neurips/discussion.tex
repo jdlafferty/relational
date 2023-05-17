@@ -12,12 +12,14 @@ mechanisms that enforce a relational bottleneck, so that only information about 
 are used in transformations of the abstract states.
 % JDC ADDED:
 Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
-Experiments with sorting and other relational tasks indicate that this framework has the potential to combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. Interesting
-work remains to better understand the potential of this framework, and
-how it may relate to the algorithms of human cognition as implemented in the brain.
+Experiments with sorting and other relational tasks indicate that this framework has the potential to combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities. Limitations of the current approach suggest interesting
+future directions to better understand the potential of this framework, and
+how it may relate to the algorithms of human cognition as implemented in the brain, opening up possibilities for 
+improved alignment of natural and artificial intelligences.
 
-Two directions to highlight are the use of external memories and attentional control. The flexibility of transformer attention mechanisms comes with a computational and statistical price. An attention head over 
-$O(\m)$ objects incurs a quadratic $O(\m^2)$ cost to compute attention weights, and increasing $m$ and the number of attention heads results in language models with a large number of parameters, requiring large amounts of data to fit.
+Two directions to highlight are the use of external memories and attentional control. 
+%The flexibility of transformer attention mechanisms comes with a computational and statistical price. An attention head over 
+%$O(\m)$ objects incurs a quadratic $O(\m^2)$ cost to compute attention weights, and increasing $m$ and the number of attention heads results in language models with a large number of parameters, requiring large amounts of data to fit.
 From a statistical perspective, the use of an external memory with relational cross attention effectively allows nonparametric and semiparametric models. To make this explicit, note that the classical kernel regression estimator for the Gaussian kernel
 %given by
 %\begin{align*}
@@ -32,7 +34,7 @@ can be seen as relational cross-attention with relations and weights given by th
 %\end{align*}
 and values $y_{1:n}$. Viewed in terms of episodic memory, this has bindings $\{x_i\| y_i\}$ with values $y_i$ that 
 might be seen as being stored on the abstract side if they are rewards or labels that are associated with 
-a particular episode $x_i$. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute relations as inner products $\langle W_Q x, W_K x_i \rangle$, leading to a semiparametric model. The number of keys grows unboundedly with the number of episodes experienced, while the query remains of constant size. This allows a regulation of the bias-variance tradeoff through the way that attention is implemented, while limiting the number of parameters that need to be learned.
+a particular episode $x_i$. Under a learned relation, the model associates the reward with particular features or attributes of the inputs, as the kernel changes to compute relations as inner products $\langle W_Q x, W_K x_i \rangle$, leading to a semiparametric model. The number of keys grows unboundedly with the number of episodes experienced, while the query remains of constant size. Realizing this approach will allow a regulation of the bias-variance tradeoff through the way that attention is implemented, while limiting the number of parameters that need to be learned.
 
 %\begin{figure}[t]
 %    \vspace{-3mm}
