@@ -15,11 +15,13 @@ has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}.
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
         \hskip-.3in\includegraphics{figures/experiments/pairwise_order_learning_curves.pdf}
+        \vskip-5pt
         \caption{The Abstractor learns the transitive $\prec$ relation and generalizes, whereas CorelNet's learning curve is flat at the baseline accuracy of 0.5.}\label{fig:exp_order_relation}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
         \hskip-.3in\includegraphics{figures/experiments/random_object_sorting.pdf}
+        \vskip-5pt
         \caption{Learning curves on sorting sequences of random objects. The abstractor is dramatically more sample-efficient.}\label{fig:exp_object_sorting}
     \end{subfigure}
 
@@ -27,21 +29,26 @@ has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}.
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
         \hskip-.3in\includegraphics{figures/experiments/random_object_sorting_generalization.pdf}
+        \vskip-5pt
         \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benifits significantly from pre-training the relation.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
         \hskip-.3in\includegraphics{figures/experiments/multiplicative_robustness.pdf}
+        \vskip-5pt
         \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness}
     \end{subfigure}
 
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
+        \vskip10pt
         \hskip-.3in\includegraphics{figures/experiments/set_symbolic_vs_abstractor.pdf}
-        \caption{}\label{fig:exp_set}
+        \vskip-5pt
+        \caption{Comparison of Abstractor trained on images of cards and MLP with relations hand-encoded symbolically as bit vectors.}\label{fig:exp_set}
     \end{subfigure}
 
-    \caption{Experiments. Shaded regions indicate twice the standard error of mean, computed over several trials.}\label{fig:experiments}
+    \vskip10pt
+    \caption{Experiments. Shaded regions indicate twice the standard error of mean.}\label{fig:experiments}
 \end{figure}
 
 \subsection{Superior sample-efficiency on relational tasks compared to plain transformers}
