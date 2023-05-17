@@ -73,29 +73,29 @@ Given a set of objects in $\mathcal{O}$, the task is to sort it according to $\p
 We evaluate learning curves on an Abstractor, a Transformer, and an ``Ablation'' model (10 trials for each training set size). The Abstractor uses the architecture $\texttt{Encoder} \to \texttt{Abstractor} \to \texttt{Decoder}$. The Encoder-to-Abstractor interface uses relational cross-attention and the Abstractor-to-Decoder interface uses standard cross-attention. The Ablation Model aims to test the effects of the relational cross-attention in the Abstractor model---it is architecturally identical to the Abstractor model with the crucial exception that the Encoder-to-Abstractor interface instead uses standard cross-attention. The hyperparameters of the models are choosen so that the parameter counts are similar. % TODO: add details here? or in supplement?
 We find that the Abstractor is dramatically more sample-efficient than the Transformer and the Ablation model~(\Cref{fig:exp_object_sorting}).
 
-\subsection{Modularity and ability to generalize to similar tasks}
+\subsection{Ability to generalize to similar tasks}
 
 Continuing with the object-sorting task and the dataset generated as described above, we test the Abstractor's ability to generalize from similar relational tasks through pre-training. The main task uses the same dataset described above. The pre-training task involves the same object set $\mathcal{O}$ but the order relation is changed. The ordering in attribute $\mathcal{A}$ is randomly permuted, while the ordering in attribute $\mathcal{B}$ is kept the same. A strict ordering relation $\prec$ on $\mathcal{O}$ is obtained in the same way---using the order in $\mathcal{A}$ as the primary key and the order in $\mathcal{B}$ as the secondary key.
 
 The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt{Decoder}$ (i.e.: no Transformer
 encoder), and the transformer is the same as the previous section. We pre-train both models on the pre-training task
 and then, using those learned weights for initialization, evaluate learning curves on the original task. Since the
-Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task which is similar. ~\Cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-trainign. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benefit from pre-training.
+Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task.~\Cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-training. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benefit from pre-training.
 
 \subsection{Robustness and Out-of-Distribution generalization}
 In this experiment, we evaluate robustness to a particular type of noisy corruption. We train each model on the same
-object-sorting task in the previous two subsections. We use a fixed training set size of $3,000$ for the same reason
+object-sorting task described above. We use a fixed training set size of $3,000$ for the same reason
 ---it is large enough that all models are able to learn the task. On the hold out test set, we corrupt the object
 representations by applying a random linear transformation. In particular, we randomly sample a random matrix the
 entries of which are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
-$\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]$.
+$\tilde{o}_i = \Phi o_i, \ \text{ for each } i \in [48]$. We also test robustness to additive noise via $\tilde{o}_i = o_i + \varepsilon_i, \varepsilon_i \in \mathcal{N}(0, \sigma^2 I_d)$.
 
-The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$ (5 trials at each noise level). The results are shown in~\Cref{fig:exp_robustness}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
+The models are evaluated on the hold-out test set with objects replaced by their corrupted version. We evaluate the sorting accuracy of each model while varying the noise level $\sigma$ (5 trials at each noise level). The results are shown in figures ~\ref{fig:exp_robustness} and\ref{fig:exp_robustness2}. We emphasize that the models are trained only on the original objects in $\mathcal{O}$, and are not trained on objects corrupted by any kind of noise.
 
 This experiment can be interpreted in two lights: the first is robustness to noise. The second is a form of out-of
 -distribution generalization. Note that the objects seen by the models post-corruption lie in a different space than
-those seen during training. However, their relations remain the same, hence the models need to learn relations that
-are in some sense independent of representation.
+those seen during training. Hence the models need to learn relations that
+are in some sense independent of the value representation.
 As a theoretical justification for this behavior,~\cite{zhouCompressedPrivacySensitive2009} shows that $\langle \Phi x, \Phi y \rangle \approx \langle x, y \rangle$ in high dimensions, for a random matrix $\Phi$ with iid Gaussian entries. This indicates that models whose primary computations are performed via inner products, like Abstractors, may be more robust to this kind of corruption.
 
 \input{experiments_set}
