@@ -55,7 +55,7 @@ In standard transformers, attention operations are spread across multiple attent
 each of which is restricted in scope, and that are evaluated in parallel across GPUs by embedding them in matrix
 multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned
 representations to be abstract and attentional operations to be generalizable, in ways that are exhibited
-by the flexiblity of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
+by the flexibility of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
 the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingulate cortex, prefrontal cortex and basal ganglia
 \citep{frank2001interactions,evc,braver2000control,wmPFC}
 and implemented using neural network mechanisms such as LSTMs \citep{lstm} or variations on the transformer
