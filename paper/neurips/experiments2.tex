@@ -17,50 +17,51 @@ We observe that a simple Abstractor model is able to learn the relation while Co
 
 \begin{figure}[ht]
     \vskip-.2in
-    \begin{subfigure}[t]{0.42\textwidth}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
         \hskip-.35in\includegraphics[scale=.95]{figures/experiments/pairwise_order_learning_curves.pdf}
         \vskip-5pt
         \caption{The Abstractor learns the transitive $\prec$ relation and generalizes, whereas CorelNet's learning curve is flat at the baseline accuracy of 0.5.}\label{fig:exp_order_relation}
     \end{subfigure} \hspace{\fill}
-    \begin{subfigure}[t]{0.42\textwidth}
+    \captionsetup[subfigure]{oneside,margin={-.3in,0in}}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
         % \vskip10pt
-        \hskip-.5in\includegraphics[scale=.95]{figures/experiments/set_symbolic_vs_abstractor.pdf}
+        \hskip-.6in\includegraphics[scale=.95]{figures/experiments/set_symbolic_vs_abstractor.pdf}
         \vskip-5pt
         \caption{Comparison of Abstractor trained on images of cards and MLP with relations hand-encoded symbolically as bit vectors.}% The Abstractor is nearly as sample efficient as symbolic computation.}
         \label{fig:exp_set}
     \end{subfigure}
 
-    \begin{subfigure}[t]{0.42\textwidth}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
         \hskip-.35in\includegraphics[scale=.95]{figures/experiments/random_object_sorting.pdf}
         \vskip-5pt
         \caption{Learning curves on sorting sequences of random objects. The abstractor is dramatically more sample-efficient.}\label{fig:exp_object_sorting}
     \end{subfigure}\hspace{\fill}
-    \begin{subfigure}[t]{0.42\textwidth}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
-        \hskip-.5in\includegraphics[scale=.95]{figures/experiments/random_object_sorting_generalization.pdf}
+        \hskip-.6in\includegraphics[scale=.95]{figures/experiments/random_object_sorting_generalization.pdf}
         \vskip-5pt
         \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benefits significantly from pre-training.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure}
     % \bigskip
 
-    \begin{subfigure}[t]{0.42\textwidth}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
         \hskip-.35in\includegraphics[scale=.95]{figures/experiments/additive_robustness.pdf}
         \vskip-5pt
         \caption{The Abstractor is more robust to corruption by a additive noise. }\label{fig:exp_robustness}
     \end{subfigure}\hspace{\fill}
-    \begin{subfigure}[t]{0.42\textwidth}
+    \begin{subfigure}[t]{0.40\textwidth}
         %\centering
-        \hskip-.5in\includegraphics[scale=.95]{figures/experiments/multiplicative_robustness.pdf}
+        \hskip-.6in\includegraphics[scale=.95]{figures/experiments/multiplicative_robustness.pdf}
         \vskip-5pt
         \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness2}
     \end{subfigure}
 
     \caption{Experiments. Shaded regions indicate twice the standard error of mean.}\label{fig:experiments}
-    \vskip-.20in
+    \vskip-.30in
 \end{figure}
 
 \subsection{Superior sample-efficiency on relational tasks compared to plain transformers}
