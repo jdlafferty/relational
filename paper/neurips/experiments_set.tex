@@ -27,6 +27,7 @@ in a multi-head Abstractor. The Abstractor is then trained on a dataset of tripl
 This is compared to a baseline symbolic model where, instead of images, the input is a vector with 12 bits,
 explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation can be considered as a lower bound on the performance achievable by the Abstractor. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained
 with purely symbolic, noise-free encodings of the relevant relations. We note that this uses a simple Abstractor configuration, without self-attention.
+
 % JDC: I REALIZE WE ARE TIGHT ON SPACE, BUT IF THERE IS ROOM, COULD ADD THE FOLLOWING, OR A SHORTENED FORM OF
 This subtask suggets how Abstractors might be viewed as an intermediate between strong ``nativist'' approaches that assume a pre-existing foundation of symbolic primitives and purely ``empiricist'' approaches that assume
 similar capabilities can emerge simply from processing large amounts of data \cite{howtogrowamind}.
