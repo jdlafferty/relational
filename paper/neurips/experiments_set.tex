@@ -3,8 +3,9 @@
 
 
 \begin{wrapfigure}{R}{0.30\textwidth}
+	\vskip-5pt
 	\begin{tabular}{c}
-		\includegraphics[width=.30\textwidth]{figures/set_example}\\
+		\includegraphics[width=.30\textwidth]{figures/set_example}\\[-20pt]
 	\end{tabular}
 \end{wrapfigure}
 SET is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative
@@ -14,13 +15,13 @@ shape) and they must find subsets of three cards which obey a deceptively simple
 
 To simulate the task of deciding if a triple forms a SET, we first train a convolutional neural network to process the color images of the cards (a full deck includes 81 cards). The CNN is trained to predict the attribute of
 each card, as a multi-label classification, and then an embedding of dimension $d=32$ of 
-each card is obtained as a fixed input vector. This embedding layer uses an \MLP{} to map the convolutional feature maps into a distributed representation.
+each card is obtained. This embedding layer uses an \MLP{} to map the convolutional feature maps into a distributed representation.
 
 Next, we train Abstractors separately for each of the four attributes to learn same/different 
 relations, where the task is to decide if an input pair of cards is the same or different for that attribute. 
 We then uses the query and key mappings $W_Q$ and $W_K$ learned for these relations to initialize the relations
 in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET. 
 
-This is compared to a baseline symbolic model, where instead of images the input is a vector with 12 bits, explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation can be considered as a lower bound on the performance achievable by the Abstractor. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained 
+This is compared to a baseline symbolic model, where instead of images, the input is a vector with 12 bits, explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation can be considered as a lower bound on the performance achievable by the Abstractor. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained 
 with purely symbolic, noise-free encodings of the relevant relations. We note that this uses a simple Abstractor configuration, without self-attention.
 

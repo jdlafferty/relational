@@ -30,7 +30,7 @@ has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}.
         %\centering
         \hskip-.3in\includegraphics[scale=.95]{figures/experiments/random_object_sorting_generalization.pdf}
         \vskip-5pt
-        \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benifits significantly from pre-training the relation.}\label{fig:exp_object_sorting_generalization}
+        \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benefits significantly from pre-training the relation.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
         %\centering
@@ -44,7 +44,7 @@ has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}.
         \vskip10pt
         \hskip-.3in\includegraphics[scale=.95]{figures/experiments/set_symbolic_vs_abstractor.pdf}
         \vskip-5pt
-        \caption{Comparison of Abstractor trained on images of cards and MLP with relations hand-encoded symbolically as bit vectors.}\label{fig:exp_set}
+        \caption{Comparison of Abstractor trained on images of cards and MLP with relations hand-encoded symbolically as bit vectors. The Abstractor is nearly as sample efficient as symbolic computation.}\label{fig:exp_set}
     \end{subfigure}
 
     \vskip10pt
@@ -66,7 +66,7 @@ We find that the Abstractor is dramatically more sample-efficient the Transforme
 
 Continuing with the object-sorting task and the dataset generated as described above, we test the Abstractor's ability to generalize from similar relational tasks through pre-training. The main task uses the same dataset described above. The pre-training task involves the same object set $\mathcal{O}$ but the order relation is changed. The ordering in attribute $\mathcal{A}$ is randomly permuted, while the ordering in attribute $\mathcal{B}$ is kept the same. A strict ordering relation $\prec$ on $\mathcal{O}$ is obtained in the same way---using the order in $\mathcal{A}$ as the primary key and the order in $\mathcal{B}$ as the secondary key.
 
-The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt{Decoder}$ (i.e.: no Transformer encoder), and the transformer is the same as the previous section. We pre-train both models on the pre-training task then evaluate learning curves on the original task with weights initialized to be those learned on the pre-training task. Since the Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task which is similar. ~\cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-trainign. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benifit from pre-training.
+The Abstractor model here uses the architecture $\texttt{Abstractor} \to \texttt{Decoder}$ (i.e.: no Transformer encoder), and the transformer is the same as the previous section. We pre-train both models on the pre-training task then evaluate learning curves on the original task with weights initialized to be those learned on the pre-training task. Since the Transformer requires more training samples to learn the object-sorting task, we use a pre-training set size of $3,000$, chosen based on the results of the previous subsection so that it is large enough for the Transformer to learn the pre-training task. This experiment assesses the models' ability to generalize relations learned on one task to a new task which is similar. ~\cref{fig:exp_object_sorting_generalization} shows the learning curves for each model with and without pre-trainign. We observe that when the Abstractor is pre-trained, its learning curve on the object-sorting task is significantly accelerated. The transformer does not benefit from pre-training.
 
 \subsection{Robustness and Out-of-Distribution generalization}
 In this experiment, we evaluate robustness to a particular type of noisy corruption. We train each model on the same object-sorting task in the previous two subsections. We use a fixed training set size of $3,000$ for the same reason---it is large enough that all models are able to learn the task. On the hold out test set, we corrupt the object representations by applying a random linear transformation. In particular, we randomly sample a random matrix whose entries are iid zero-mean Gaussian with variance $\sigma^2$, $\Phi \in \mathbb{R}^{d \times d}, \Phi_{ij} \sim \mathcal{N}(0, \sigma^2)$. Each object in $\mathcal{O}$ is then corrupted by this random linear transformation,
