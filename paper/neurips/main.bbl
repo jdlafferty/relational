@@ -197,6 +197,11 @@ Hongwei Sun.
 \newblock Mercer theorem for {RKHS} on noncompact sets.
 \newblock {\em J. Complexity}, 21(3):337--349, June 2005.
 
+\bibitem{howtogrowamind}
+Joshua~B. Tenenbaum, Charles Kemp, Thomas~L. Griffiths, and Noah~D. Goodman.
+\newblock How to grow a mind: Statistics, structure, and abstraction.
+\newblock {\em Science}, 331(6022):1279--1285, 2011.
+
 \bibitem{gamr}
 M.~Vaishnav and T~Serre.
 \newblock {GAMR}: {A} guided attention model for (visual) reasoning.
