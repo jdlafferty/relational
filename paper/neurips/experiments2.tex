@@ -11,25 +11,25 @@ The Abstractor model follows~\cref{alg:...} with \texttt{num\_layers=1, rel\_dim
 \begin{figure}
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics{figures/experiments/pairwise_order_learning_curves.pdf}
+        %\centering
+        \hskip-.3in\includegraphics{figures/experiments/pairwise_order_learning_curves.pdf}
         \caption{The Abstractor learns the transitive $\prec$ relation and generalizes, whereas CorelNet's learning curve is flat at the baseline accuracy of 0.5.}\label{fig:exp_order_relation}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics{figures/experiments/random_object_sorting.pdf}
+        %\centering
+        \hskip-.3in\includegraphics{figures/experiments/random_object_sorting.pdf}
         \caption{Learning curves on sorting sequences of random objects. The abstractor is dramatically more sample-efficient.}\label{fig:exp_object_sorting}
     \end{subfigure}
 
     \bigskip
     \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics{figures/experiments/random_object_sorting_generalization.pdf}
-        \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benifits significantly from pre-training whereas the Transformer does not.}\label{fig:exp_object_sorting_generalization}
+        %\centering
+        \hskip-.3in\includegraphics{figures/experiments/random_object_sorting_generalization.pdf}
+        \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benifits significantly from pre-training the relation.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure} \hspace{\fill}
     \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics{figures/experiments/multiplicative_robustness.pdf}
+        %\centering
+        \hskip-.3in\includegraphics{figures/experiments/multiplicative_robustness.pdf}
         \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness}
     \end{subfigure}
     \caption{Experiments. Shaded regions indicate twice the standard error of mean, computed over several trials.}\label{fig:experiments}
@@ -61,3 +61,5 @@ The models are evaluated on the hold-out test set with objects replaced by their
 This experiment can be interpreted in two lights: the first is robustness to noise. The second is a form of out-of-distribution generalization. Note that the objects seen by the models post-corruption lie in a different space to those seen during training. However, their relations remain the same. Hence, the models need to learn relations that are in some sense independent of representation.
 
 There is a theoretical justification for this behavior.~\cite{zhouCompressedPrivacySensitive2009} shows that $\langle \Phi x, \Phi y \rangle \approx \langle x, y \rangle$ in high dimensions, for a random matrix $\Phi$ with iid Gaussian entries. Hence, this indicates that models whose primary computations are performed via inner products, like Abstractors, may be more robust to this kind of corruption.
+
+\input{experiments_set}
