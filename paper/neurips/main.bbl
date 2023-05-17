@@ -6,6 +6,13 @@ David~G.T. Barrett, Felix Hill, Adam Santoro, Ari~S. Morcos, and Timothy
 \newblock Measuring abstract reasoning in neural networks.
 \newblock In {\em Proceedings ICML}, 2018.
 
+\bibitem{barronUniversalApproximation1993}
+A.R. Barron.
+\newblock Universal approximation bounds for superpositions of a sigmoidal
+  function.
+\newblock {\em IEEE Transactions on Information Theory}, 39(3):930--945, May
+  1993.
+
 \bibitem{battaglia}
 Peter~W. Battaglia, Jessica~B. Hamrick, Victor Bapst, Alvaro Sanchez-Gonzalez,
   Vinicius Zambaldi, Mateusz Malinowski, Andrea Tacchetti, David Raposo, Adam
@@ -28,10 +35,22 @@ Todd~S Braver and Jonathan~D Cohen.
 \newblock In {\em {Control of Cognitive Processes: Attention and Performance
   XVIII}}. The MIT Press, 10 2000.
 
+\bibitem{candes_randall}
+Emmanuel~J. Cand\`{e}s and Paige~A. Randall.
+\newblock Highly robust error correction by convex programming.
+\newblock {\em IEEE Transactions on Information Theory}, 54(7):2829--2840, July
+  2018.
+
 \bibitem{cohen2017cognitive}
 Jonathan~D Cohen.
 \newblock Cognitive control: Core constructs and current considerations.
 \newblock {\em The Wiley handbook of cognitive control}, pages 1--28, 2017.
+
+\bibitem{cybenkoApproximationSuperpositions1989}
+G.~Cybenko.
+\newblock Approximation by superpositions of a sigmoidal function.
+\newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314,
+  December 1989.
 
 \bibitem{frank2001interactions}
 Michael~J Frank, Bryan Loughry, and Randall~C O’Reilly.
@@ -51,6 +70,12 @@ Alex Graves, Greg Wayne, and Ivo Danihelka.
 \newblock Neural {T}uring machines, 2014.
 \newblock arXiv:1410.5401.
 
+\bibitem{HandV17}
+Paul Hand and Vladislav Voroninski.
+\newblock Global guarantees for enforcing deep generative priors by empirical
+  risk.
+\newblock {\em arXiv}, abs/1705.07576, 2017.
+
 \bibitem{lstm}
 Sepp Hochreiter and J{\"u}rgen Schmidhuber.
 \newblock Long short-term memory.
@@ -61,6 +86,11 @@ K.~J. Holyoak.
 \newblock Analogy and relational reasoning.
 \newblock In K.~J. Holyoak and R.~G. Morrison, editors, {\em The Oxford
   Handbook of Thinking and Reasoning}. New York: Oxford University Press, 2012.
+
+\bibitem{hornikMultilayerFeedforward1989}
+Kurt Hornik, Maxwell Stinchcombe, and Halbert White.
+\newblock Multilayer feedforward networks are universal approximators.
+\newblock {\em Neural Networks}, 2(5):359--366, January 1989.
 
 \bibitem{kerg2020untangling}
 Giancarlo Kerg, Bhargav Kanuparthi, Anirudh Goyal, Kyle Goyette, Yoshua Bengio,
@@ -95,6 +125,20 @@ J.~L. McClelland, Bruce~L. McNaughton, and Randall~C. O'Reilly.
   neocortex: {Insights} from the successes and failures of connectionist models
   of learning and memory.
 \newblock {\em Psychological Review}, 102(3):419--457, 1995.
+
+\bibitem{mercerFunctionsPositive1909}
+J.~Mercer.
+\newblock Functions of {Positive} and {Negative} {Type}, and their {Connection}
+  with the {Theory} of {Integral} {Equations}.
+\newblock {\em Philosophical Transactions of the Royal Society of London.
+  Series A, Containing Papers of a Mathematical or Physical Character},
+  209:415--446, 1909.
+\newblock Publisher: The Royal Society.
+
+\bibitem{universal}
+Charles~A. Micchelli, Yuesheng Xu, and Haizhang Zhang.
+\newblock Universal kernels.
+\newblock {\em J. Mach. Learn. Res.}, 7:2651–2667, Dec 2006.
 
 \bibitem{monchi}
 O.~Monchi, M.~Petrides, V.~Petre, K.~Worsley, and A.~Dagher.
@@ -139,6 +183,19 @@ R.~E. Snow, P.~C. Kyllonen, and B.~Marshalek.
 \newblock The topography of ability and learning correlations.
 \newblock In R.~J. Sternberg, editor, {\em Advances in the psychology of human
   intelligence}, volume~2, pages 47--103, 1984.
+
+\bibitem{surfing}
+Ganlin Song, Zhou Fan, and John Lafferty.
+\newblock Surfing: Iterative optimization over incrementally trained deep
+  networks.
+\newblock In {\em Proceedings of Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+\newblock arXiv:1907.08653.
+
+\bibitem{sunMercerTheorem2005}
+Hongwei Sun.
+\newblock Mercer theorem for {RKHS} on noncompact sets.
+\newblock {\em J. Complexity}, 21(3):337--349, June 2005.
 
 \bibitem{howtogrowamind}
 Joshua~B. Tenenbaum, Charles Kemp, Thomas~L. Griffiths, and Noah~D. Goodman.
