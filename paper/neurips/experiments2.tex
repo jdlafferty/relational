@@ -10,7 +10,6 @@ Another limitation is that it can only model single-dimensional relations---for 
 We generate $N = 32$ ``random objects'' represented by iid Gaussian vectors, $o_i \overset{iid}{\sim} \mathcal{N}(0,
 I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \prec \cdots \prec o_N$. We train
 several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 15\% are held out as a validation set (for early stopping) and 35\% are held out as a test set. We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set (10 trials for each training set size). Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation.
-
 % JDL commented out undefined alg, for now
 %The Abstractor model %follows~\Cref{alg:...}
 %has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the %embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models.
@@ -72,7 +71,6 @@ We generate random objects in the following way. First, we generate two sets of 
 Given a set of objects in $\mathcal{O}$, the task is to sort it according to $\prec$. More precisely, the input sequences are randomly permuted sequences of $10$ objects in $\mathcal{O}$ and the target sequences are the indices of the object sequences in sorted order (i.e., the `argsort'). The training data are sampled uniformly from the set of length-10 sequences in $\mathcal{O}$. We also generate a non-overlapping validation dataset (used during training for early stopping) and a testing dataset (used during evaluation).
 
 We evaluate learning curves on an Abstractor, a Transformer, and an ``Ablation'' model (10 trials for each training set size). The Abstractor uses the architecture $\texttt{Encoder} \to \texttt{Abstractor} \to \texttt{Decoder}$. The Encoder-to-Abstractor interface uses relational cross-attention and the Abstractor-to-Decoder interface uses standard cross-attention. The Ablation Model aims to test the effects of the relational cross-attention in the Abstractor model---it is architecturally identical to the Abstractor model with the crucial exception that the Encoder-to-Abstractor interface instead uses standard cross-attention. The hyperparameters of the models are choosen so that the parameter counts are similar. % TODO: add details here? or in supplement?
-
 We find that the Abstractor is dramatically more sample-efficient than the Transformer and the Ablation model~(\Cref{fig:exp_object_sorting}).
 
 \subsection{Modularity and ability to generalize to similar tasks}
