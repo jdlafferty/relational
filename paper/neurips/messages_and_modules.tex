@@ -113,7 +113,7 @@ A common choice is to model $(\phi_i, \psi_i)_i$ as linear or affine maps, perha
 
 This then gives a relation tensor $R = \left[r(o_i, o_j)\right]_{i,j} \in \mathbb{R}^{\m \times \m \times d_r}$, which can be the input to the symbolic message-passing operation described in the previous subsection. It may often be useful to apply an activation function to the relation tensor $R$ before it is passed to symbolic message-passing. For instance, it may be useful to normalize the relations $R$ via a softmax so that they are non-negative and sum to one. With this choice, each symbolic message-passing operation~\cref{eq:linear_symbolic_mp}, the updated representation of each symbol involves a convex combination of the other symbols determined by the relations.
 
-This operation is closely related to the multi-head attention operation of transformers. In fact, computing the relation tensor and performing symbolic message-passing can be achieved a multi-head attention operation of the form
+This operation is closely related to the multi-head attention operation of transformers. In fact, computing the relation tensor and performing symbolic message-passing can be achieved via a multi-head attention operation of the form
 \begin{equation}\label{eq:relation_crossattention}
     \text{RelationalCrossAttention}\left(E, S\right) \equiv \text{Attention}\left( Q \gets E, K \gets E, V \gets S \right),
 \end{equation}
@@ -146,7 +146,7 @@ where $E$ are the input objects (or some processed-encoding of them), and $S = (
 % \end{equation*}
 
 The initial abstract state is $S = (s_1,\ldots, s_m)$
-with abstract symbols $s_j$ that are task-dependent but input-indendent, trainable using
+with abstract symbols $s_j$ that are task-dependent but input-independent, trainable using
 backpropagation. The multi-head relation module learns relations among the input objects and uses those
 relations to transform the abstract state. Importantly, each `head' of the multi-head relation module
 encode learned relations and attributes which can be reused across tasks.
