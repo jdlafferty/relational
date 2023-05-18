@@ -14,7 +14,7 @@ class BaseAttention(tf.keras.layers.Layer):
         self.mha = MultiHeadAttention(**kwargs)
         self.use_residual = use_residual
         self.use_layer_norm = use_layer_norm
-        
+
         if use_layer_norm: self.layernorm = tf.keras.layers.LayerNormalization()
         if use_residual: self.add = tf.keras.layers.Add()
 
@@ -30,7 +30,7 @@ class GlobalSelfAttention(BaseAttention):
 
         if self.use_layer_norm:
             x = self.layernorm(x)
-    
+
         return x
 
 
@@ -46,7 +46,7 @@ class CausalSelfAttention(BaseAttention):
         if self.use_layer_norm:
             x = self.layernorm(x)
 
-    
+
         return x
 
 
@@ -67,7 +67,7 @@ class CrossAttention(BaseAttention):
         if self.use_layer_norm:
             x = self.layernorm(x)
 
-    
+
         return x
 
 class SymbolicAttention(BaseAttention):
@@ -89,7 +89,7 @@ class SymbolicAttention(BaseAttention):
         if self.use_layer_norm:
             x = self.layernorm(x)
 
-    
+
         return x
 
 class RelationalAttention(BaseAttention):
