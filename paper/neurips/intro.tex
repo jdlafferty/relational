@@ -1,0 +1,71 @@
+\section{Introduction}
+\label{sec:intro}
+
+Relational learning refers to the inference of rules that operate in terms of
+relationships between objects, independent of how the objects may be represented. Examples of common relations are
+``less than'' applied to natural numbers, ``same color as'' applied to visual objects, and ``friend of'' applied to
+social relationships. Such relations are important for basic computational functions.  For example, consider the task
+of sorting objects. A standard 52-card deck of playing cards has 13 ranks in each of four suits: clubs, diamonds,
+hearts, and spades. The cards might be sorted using the relation that takes the suit as the primary attribute,
+and the rank as the secondary attribute; this would be the typical
+way of ordering cards in many games. If a sorting algorithm is learned that depends 
+only on the relations between objects, it can in principle be applied in a new domain with little 
+or no modification. 
+
+Reasoning in terms of relations and analogies is a hallmark of human intelligence 
+\citep{snow,holyoak}.
+% I'd prefer to keep it as is, since the sorting theme is important in the paper.
+% JDC: I'D BE INCLINED TO REPLACE THIS:
+Indeed, the Wisconsin card sorting task \citep{berg} has been used for decades as an indicator of decision making
+function in prefrontal cortex \citep{monchi}.
+% WITH THIS:
+%-----------
+% Indeed, the Ravens Progressive Matrices [CITE] has been used for decades as an indicator of abstract reasoning and
+% general intelligence.
+% ----------
+% SINCE: A) WCST IS NOT A VERY SOPHISTICATED TEST AND, AS NOTED, HAS BEEN USED MORE FOR EVALUATING PFC FUNCTION THAN
+% TESTING REASONING AND ABSTRACTION ABILITY (IN FACT, IT DOES THIS ONLY IN A RUDIMENTARY WAY, AND IS SENSITIVE TO
+% OTHER FACTORS, SUCH AS REINFORCEMENT LEARNING, ETC.).  ALSO, RAVENS IS NOW PRETTY FAMILIAR TO THE ML COMMUNITY.
+% CITE:  Raven, J. (2003). Raven progressive matrices (pp. 223-237). Springer US. [TAYLOR, FEEL FREE TO REPLACE IF
+% YOU AGREE WITH THE ABOVE BUT HAVE A PREFERRED CITE]
+Recognizing the importance of this capability,
+which is largely separate from function approximation for sensory tasks such as image and audio processing, machine
+learning research has explored several novel frameworks for relational learning \citep{TEM, NTM,episodicControl,esbn,mondal23learned,
+battaglia,barrett:2018,santoro1}.
+
+In this paper we propose a framework that casts relational learning in terms of transformers. 
+The success of transformers lies in combining the function approximation capabilities of deep learning with the use
+of attentional mechanisms to support richly context-sensitive processing \citep{transformers,vaswani2017attention,
+    kerg2020untangling}. However, it is clear that transformers are missing core capabilities required for modeling
+human thought \citep{mahowald2023dissociating}.  In particular, they lack mechanisms required to emulate forms of
+flexibility and efficiency exhibited by the human brain, including an ability to support analogy and abstraction.
+While large language models show a surprising ability to complete some analogies \citep{webb}, this ability
+emerges implicitly after processing vast amounts of data. The algorithmic challenge is to provide ways of binding
+domain-specific information to low dimensional, abstract representations that can be used to compute a given function
+in any setting for which it is relevant, based on limited data.
+
+Our approach is motivated by a type of inductive bias for relational learning architectures we call the
+``relational bottleneck," which is motivated by principles of cognitive neuroscience that shed light on the brain
+subsystems involved when natural intelligence shows an ability to flexibly generalize abstract structure across
+domains of processing. In particular, the framework of complementary learning systems \citep{McClelland:1995,
+    Kumaran:2016} describes two distinct types of neural mechanisms for learning and memory around which the brain
+is organized, implementing a tradeoff between slow, incremental forms of learning required to encode stable statistical
+structure present in the environment (semantic memory), and the ability to rapidly encode and remember novel
+associations (episodic memory).
+
+Recently, it has been proposed that episodic memory may also serve to implement a relational bottleneck,
+by allowing components of semantic memory that represent abstract functions to be separated from those
+responsible for processing domain-specific information, while allowing the two types of components to be coupled
+through rapid binding and similarity-based retrieval of representations \citep{esbn}.
+This ``relational bottleneck'' imposes an inductive bias that constrains the flow of information from sensory or
+motor subsystems to reasoning and decision making subsystems, by restricting this information to relations, as
+computed through inner products between distributed representations.
+%At the same time, it synergitically serves as a mechanism for variable binding, by rapidly associating domain-specific information (e.g., fillers) with abstract representations that can be used as arguments (i.e., roles)
+%to general purpose functions appropriate for performing a task.
+%removed for lack of space
+In this paper we present a framework that recasts this inductive bias in terms of an extension of transformers, in
+which specific types of attention mechanisms enforce the relational bottleneck. This creates a potentially powerful
+combination of deep learning and relational learning that implements a form of symbolic processing, enabling
+abstraction and generalization from limited data.
+
+%Our approach was developed while thinking about the Emergent Symbol Binding Network (ESBN) framework \citep{esbn}, which can be seen as closely related to the neural Turing machine \citep{NTM}. Both frameworks augment traditional controllers such as LSTMs with external stores that can be viewed as computational models of episodic memory. However, the ESBN framework enforces a relational bottleneck by dividing the external memory into ``sensory'' and ``abstract'' sides, with lookups on the sensory side carried out using inner products. The key observation we develop in this paper is that by viewing episodic memory query-key lookups in terms of cross attention operations, the relational bottleneck can be naturally implemented in an extension of transformers. Our proposed \textit{Abstractor} framework extends ESBN to enable more complex, higher order forms of relational learning by combining it with both the attentional mechanisms and hierarchical structure of transformers. This creates a potentially powerful combination of deep learning and relational learning that enables abstraction and generalization from limited data.

@@ -4,7 +4,7 @@
 \usepackage{amsthm,amsbsy,amsmath,amsfonts,natbib,mathtools,amssymb}
 \usepackage{mathrsfs}
 \RequirePackage{hypernat}
-\usepackage[ruled, vlined, lined, commentsnumbered]{algorithm2e}
+%\usepackage[ruled, vlined, lined, commentsnumbered]{algorithm2e}
 %\usepackage[ruled,section]{algorithm}
 %\usepackage{algorithmic}
 \usepackage{graphicx}
@@ -19,7 +19,20 @@
 \usepackage{fullpage}
 \usepackage[margin=1in,footskip=.40in]{geometry}
 \usepackage{dsfont}
+%\usepackage{wrapfig}
 
+
+\usepackage{amsmath, amssymb}
+\usepackage{cleveref}
+\usepackage{algorithm2e}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\RestyleAlgo{ruled}
+
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
 
 \renewcommand{\d}{\mathrm{d}}
 \newcommand{\E}{\operatorname{\mathbb E}}
@@ -96,37 +109,77 @@
 \newcommand{\blue}{\color{blue}}
 \newcommand{\nb}[1]{\texttt{\blue[#1]}}
 
+\def\bra#1{\langle #1 \vert}
+\def\ket#1{\vert #1 \rangle}
+\def\braket#1#2{\langle #1 \vert #2 \rangle}
+%\def\bind#1#2{\ket{#1}\bra{#2}}
+\def\bind#1#2{\ket{#1}|\ket{#2}}
+\def\bind#1#2{#1 \| #2}
+\let\tilde\widetilde
+\def\softmax#1{\mbox{Softmax}\left(#1\right)}
+\def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
+\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\def\selfattention#1{\mbox{SelfAttention}(#1)}
+\def\crossattention#1#2#3{\qkv{#1}{#2}{#3}}
+\def\crossattend#1#2#3#4{\mbox{CrossAttention}_{#4}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+
 \renewcommand{\baselinestretch}{1.05}
 
-\begin{document}
+\usepackage{cleveref}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
 
+\newcommand{\MLP}{\text{\sc mlp}}
+\newcommand{\FeedForward}{\text{FeedForward}}
+\newcommand{\Softmax}{\text{Softmax}}
+
+
+\begin{document}
+\def\snote#1{${}^{#1}$}
 \setlength{\parskip}{0.5em}
 \begin{frontmatter}
-{\bf\Large Relational Abstracters and Symbolic Message Passing: \\[7pt] Transformer Modules for Relational Reasoning}
-\vskip10pt
-{\bf\Large Abstracters: Transformer Modules for \\[7pt] Relational Reasoning Using Symbolic Message Passing}
+{\bf\Large Abstractors: Transformer Modules for \\[7pt] Symbolic Message Passing and Relational Reasoning}
 %\affil[**]{Department of Statistics and Data Science, Yale University}
 \begin{aug}
 \vskip15pt
 \address{
 \begin{tabular}{ccccc}
-{\normalsize\rm\bfseries Awni Altabaa} & {\normalsize\rm\bfseries Taylor Webb} & {\normalsize\rm\bfseries Jonathan  Cohen} & {\normalsize\rm\bfseries John Lafferty}\\[5pt]
+{\normalsize\rm\bfseries Awni Altabaa}\snote{1} & {\normalsize\rm\bfseries Taylor Webb}\snote{2} & {\normalsize\rm\bfseries Jonathan  Cohen}\snote{3} & {\normalsize\rm\bfseries John Lafferty}\snote{4}\\[5pt]
 \end{tabular}
-\\[10pt]
+\vskip5pt
+\footnotetext{
+\snote{1}Department of Statistics and Data Science, Yale University; awni.altabaa@yale.edu.
+\snote{2}Department of Psychology, UCLA; taylor.w.webb@gmail.com.
+\snote{3}Department of Psychology and Princeton Neuroscience Institute, Princeton University; jdc@princeton.edu.
+\snote{4}Department of Statistics and Data Science, Wu Tsai Institute, Institute for Foundations of Data Science, Yale University; john.lafferty@yale.edu.
+}
 \today
 \vskip10pt
 }
 \end{aug}
+% OLD ABSTRACT FROM ARXIV SUBMISSION
+% \begin{abstract}
+% A framework is proposed that casts relational learning in terms of transformers,
+% implementing binding between sensory states and abstract states
+% with relational cross attention mechanisms.
+% \end{abstract}
+
+% CURRENT DRAFT OF ABSTRACT
 \begin{abstract}
-    Abstracter, Abstractest
+    In recent years, a stream of research efforts has appeared in machine learning focusing on \textit{relational models}. Relational models are sequence models which are designed to learn and model \textit{relations} between objects more explicitly, enabling more sample-efficient learning for ``relational tasks''. Transformers are very powerful sequence models characterized by `attention' mechanisms. In this paper we propose the \textit{Abstractor} framework and module, which augments relational processing in transformer-based models. We theoretically analyze the class of relation functions Abstractors can compute and empirically demonstrate superior sample-efficiency on relational tasks compared to standard Transformer models.
 \end{abstract}
 \end{frontmatter}
 
-\input{outline}
-\input{awni_outline}
+\input{intro}
+\input{message_passing}
+\input{transformer_modules}
+\input{functions}
+\input{experiments}
+\input{discussion}
+\input{acknowledge}
 
 \setlength{\bibsep}{8pt plus 0.3ex}
 \bibliographystyle{apalike}
-%\bibliography{abstracters}
+\bibliography{references}
 
 \end{document}

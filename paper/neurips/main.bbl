@@ -1,0 +1,248 @@
+\begin{thebibliography}{10}
+
+\bibitem{barrett:2018}
+David~G.T. Barrett, Felix Hill, Adam Santoro, Ari~S. Morcos, and Timothy
+  Lillicrap.
+\newblock Measuring abstract reasoning in neural networks.
+\newblock In {\em Proceedings ICML}, 2018.
+
+\bibitem{barronUniversalApproximation1993}
+A.R. Barron.
+\newblock Universal approximation bounds for superpositions of a sigmoidal
+  function.
+\newblock {\em IEEE Transactions on Information Theory}, 39(3):930--945, May
+  1993.
+
+\bibitem{battaglia}
+Peter~W. Battaglia, Jessica~B. Hamrick, Victor Bapst, Alvaro Sanchez-Gonzalez,
+  Vinicius Zambaldi, Mateusz Malinowski, Andrea Tacchetti, David Raposo, Adam
+  Santoro, Ryan Faulkner, Caglar Gulcehre, Francis Song, Andrew Ballard, Justin
+  Gilmer, George Dahl, Ashish Vaswani, Kelsey Allen, Charles Nash, Victoria
+  Langston, Chris Dyer, Nicolas Heess, Daan Wierstra, Pushmeet Kohli, Matt
+  Botvinick, Oriol Vinyals, Yujia Li, and Razvan Pascanu.
+\newblock Relational inductive biases, deep learning, and graph networks, 2018.
+\newblock arXiv:1806.01261.
+
+\bibitem{berg}
+E.~A. Berg.
+\newblock A simple objective technique for measuring flexibility in thinking.
+\newblock {\em J. Gen. Psychol.}, 39:15--22, 1948.
+
+\bibitem{braver2000control}
+Todd~S Braver and Jonathan~D Cohen.
+\newblock {On the Control of Control: The Role of Dopamine in Regulating
+  Prefrontal Function and Working Memory}.
+\newblock In {\em {Control of Cognitive Processes: Attention and Performance
+  XVIII}}. The MIT Press, 10 2000.
+
+\bibitem{candes_randall}
+Emmanuel~J. Cand\`{e}s and Paige~A. Randall.
+\newblock Highly robust error correction by convex programming.
+\newblock {\em IEEE Transactions on Information Theory}, 54(7):2829--2840, July
+  2018.
+
+\bibitem{cohen2017cognitive}
+Jonathan~D Cohen.
+\newblock Cognitive control: Core constructs and current considerations.
+\newblock {\em The Wiley handbook of cognitive control}, pages 1--28, 2017.
+
+\bibitem{cybenkoApproximationSuperpositions1989}
+G.~Cybenko.
+\newblock Approximation by superpositions of a sigmoidal function.
+\newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314,
+  December 1989.
+
+\bibitem{frank2001interactions}
+Michael~J Frank, Bryan Loughry, and Randall~C O’Reilly.
+\newblock Interactions between frontal cortex and basal ganglia in working
+  memory: a computational model.
+\newblock {\em Cognitive, Affective, \& Behavioral Neuroscience},
+  1(2):137--160, 2001.
+
+\bibitem{model_repair}
+Chao Gao and John Lafferty.
+\newblock Model repair: {R}obust recovery of overparameterized statistical
+  models, May 2020.
+\newblock arXiv:2005.09912.
+
+\bibitem{NTM}
+Alex Graves, Greg Wayne, and Ivo Danihelka.
+\newblock Neural {T}uring machines, 2014.
+\newblock arXiv:1410.5401.
+
+\bibitem{HandV17}
+Paul Hand and Vladislav Voroninski.
+\newblock Global guarantees for enforcing deep generative priors by empirical
+  risk.
+\newblock {\em arXiv}, abs/1705.07576, 2017.
+
+\bibitem{lstm}
+Sepp Hochreiter and J{\"u}rgen Schmidhuber.
+\newblock Long short-term memory.
+\newblock {\em Neural computation}, 9(8):1735--1780, 1997.
+
+\bibitem{holyoak}
+K.~J. Holyoak.
+\newblock Analogy and relational reasoning.
+\newblock In K.~J. Holyoak and R.~G. Morrison, editors, {\em The Oxford
+  Handbook of Thinking and Reasoning}. New York: Oxford University Press, 2012.
+
+\bibitem{hornikMultilayerFeedforward1989}
+Kurt Hornik, Maxwell Stinchcombe, and Halbert White.
+\newblock Multilayer feedforward networks are universal approximators.
+\newblock {\em Neural Networks}, 2(5):359--366, January 1989.
+
+\bibitem{kerg2020untangling}
+Giancarlo Kerg, Bhargav Kanuparthi, Anirudh Goyal, Kyle Goyette, Yoshua Bengio,
+  and Guillaume Lajoie.
+\newblock Untangling tradeoffs between recurrence and self-attention in
+  artificial neural networks.
+\newblock {\em Advances in Neural Information Processing Systems},
+  33:19443--19454, 2020.
+
+\bibitem{kerg2022neural}
+Giancarlo Kerg, Sarthak Mittal, David Rolnick, Yoshua Bengio, Blake Richards,
+  and Guillaume Lajoie.
+\newblock On neural architecture inductive biases for relational tasks.
+\newblock {\em arXiv preprint arXiv:2206.05056}, 2022.
+
+\bibitem{Kumaran:2016}
+Dharshan Kumaran, Demis Hassabis, and James~L. McClelland.
+\newblock What {Learning} {Systems} do {Intelligent} {Agents} {Need}?
+  {Complementary} {Learning} {Systems} {Theory} {Updated}.
+\newblock {\em Trends in Cognitive Sciences}, 20(7):512--534, July 2016.
+
+\bibitem{mahowald2023dissociating}
+Kyle Mahowald, Anna~A Ivanova, Idan~A Blank, Nancy Kanwisher, Joshua~B
+  Tenenbaum, and Evelina Fedorenko.
+\newblock Dissociating language and thought in large language models: {A}
+  cognitive perspective.
+\newblock {\em arXiv preprint arXiv:2301.06627}, 2023.
+
+\bibitem{McClelland:1995}
+J.~L. McClelland, Bruce~L. McNaughton, and Randall~C. O'Reilly.
+\newblock Why there are complementary learning systems in the hippocampus and
+  neocortex: {Insights} from the successes and failures of connectionist models
+  of learning and memory.
+\newblock {\em Psychological Review}, 102(3):419--457, 1995.
+
+\bibitem{mercerFunctionsPositive1909}
+J.~Mercer.
+\newblock Functions of {Positive} and {Negative} {Type}, and their {Connection}
+  with the {Theory} of {Integral} {Equations}.
+\newblock {\em Philosophical Transactions of the Royal Society of London.
+  Series A, Containing Papers of a Mathematical or Physical Character},
+  209:415--446, 1909.
+\newblock Publisher: The Royal Society.
+
+\bibitem{universal}
+Charles~A. Micchelli, Yuesheng Xu, and Haizhang Zhang.
+\newblock Universal kernels.
+\newblock {\em J. Mach. Learn. Res.}, 7:2651–2667, Dec 2006.
+
+\bibitem{monchi}
+O.~Monchi, M.~Petrides, V.~Petre, K.~Worsley, and A.~Dagher.
+\newblock Wisconsin card sorting revisited: {D}istinct neural circuits
+  participating in different stages of the task identified by event-related
+  functional magnetic resonance imaging.
+\newblock {\em Jour. Neuroscience}, 21(19):7733--7741, 2001.
+
+\bibitem{mondal23learned}
+Shanka~Subhra Mondal, Taylor~Whittington Webb, and Jonathan Cohen.
+\newblock Learning to reason over visual objects.
+\newblock In {\em International Conference on Learning Representations}, 2023.
+
+\bibitem{wmPFC}
+Randall~C. O'Reilly and Michael~J. Frank.
+\newblock Making working memory work: {A} computational model of learning in
+  the prefrontal cortex and basal ganglia.
+\newblock {\em Neural computation}, 18(2):283--328, 2006.
+
+\bibitem{episodicControl}
+Alexander Pritzel, Benigno Uria, Sriram Srinivasan, Adria~Puigdomenech Badia,
+  Oriol Vinyals, Demis Hassabis, Daan Wierstra, and Charles Blundell.
+\newblock Neural episodic control.
+\newblock In {\em International conference on machine learning}, pages
+  2827--2836. PMLR, 2017.
+
+\bibitem{santoro1}
+Adam Santoro, David Raposo, David~G Barrett, Mateusz Malinowski, Razvan
+  Pascanu, Peter Battaglia, and Tim Lillicrap.
+\newblock A simple neural network module for relational reasoning.
+\newblock In {\em Advances in neural information processing systems}, pages
+  4967--4976, 2017.
+
+\bibitem{evc}
+Amitai Shenhav, Matthew~M Botvinick, and Jonathan~D Cohen.
+\newblock The expected value of control: {A}n integrative theory of anterior
+  cingulate cortex function.
+\newblock {\em Neuron}, 79(2):217--240, 2013.
+
+\bibitem{snow}
+R.~E. Snow, P.~C. Kyllonen, and B.~Marshalek.
+\newblock The topography of ability and learning correlations.
+\newblock In R.~J. Sternberg, editor, {\em Advances in the psychology of human
+  intelligence}, volume~2, pages 47--103, 1984.
+
+\bibitem{surfing}
+Ganlin Song, Zhou Fan, and John Lafferty.
+\newblock Surfing: Iterative optimization over incrementally trained deep
+  networks.
+\newblock In {\em Proceedings of Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+\newblock arXiv:1907.08653.
+
+\bibitem{sunMercerTheorem2005}
+Hongwei Sun.
+\newblock Mercer theorem for {RKHS} on noncompact sets.
+\newblock {\em J. Complexity}, 21(3):337--349, June 2005.
+
+\bibitem{howtogrowamind}
+Joshua~B. Tenenbaum, Charles Kemp, Thomas~L. Griffiths, and Noah~D. Goodman.
+\newblock How to grow a mind: Statistics, structure, and abstraction.
+\newblock {\em Science}, 331(6022):1279--1285, 2011.
+
+\bibitem{gamr}
+M.~Vaishnav and T~Serre.
+\newblock {GAMR}: {A} guided attention model for (visual) reasoning.
+\newblock In {\em The Eleventh International Conference on Learning
+  Representations (ICLR)}, 2023.
+
+\bibitem{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, {\L}ukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock {\em Advances in neural information processing systems}, 30, 2017.
+
+\bibitem{webb}
+T.~Webb, K.~J. Holyoak, and H.~Lu.
+\newblock Emergent analogical reasoning in large language models, 2022.
+\newblock arXiv:2212.09196.
+
+\bibitem{esbn}
+Taylor Webb, Ishan Sinha, and Jonathan~D. Cohen.
+\newblock Emergent symbols through binding in external memory.
+\newblock In {\em 9th International Conference on Learning Representations,
+  {ICLR} 2021, Virtual Event, Austria, May 3-7, 2021}. OpenReview.net, 2021.
+
+\bibitem{TEM}
+James~C.R. Whittington, Timothy~H. Muller, Shirley Mark, Guifen Chen, Caswell
+  Barry, Neil Burgess, and Timothy~E.J. Behrens.
+\newblock The {T}olman-{E}ichenbaum machine: {U}nifying space and relational
+  memory through generalization in the hippocampal formation.
+\newblock {\em Cell}, 183(5):1249--1263.e23, 2020.
+
+\bibitem{transformers}
+Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Clement Delangue,
+  Anthony Moi, Pierric Cistac, Tim Rault, R{\'e}mi Louf, Morgan Funtowicz,
+  et~al.
+\newblock Transformers: State-of-the-art natural language processing.
+\newblock In {\em Proceedings of the 2020 conference on empirical methods in
+  natural language processing: system demonstrations}, pages 38--45, 2020.
+
+\bibitem{zhouCompressedPrivacySensitive2009}
+Shuheng Zhou, John Lafferty, and Larry Wasserman.
+\newblock Compressed and privacy-sensitive sparse regression.
+\newblock {\em IEEE Trans. Information Theory}, 55(2):846--866, 2009.
+
+\end{thebibliography}
