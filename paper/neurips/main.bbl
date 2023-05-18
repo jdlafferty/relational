@@ -112,6 +112,11 @@ Dharshan Kumaran, Demis Hassabis, and James~L. McClelland.
   {Complementary} {Learning} {Systems} {Theory} {Updated}.
 \newblock {\em Trends in Cognitive Sciences}, 20(7):512--534, July 2016.
 
+\bibitem{lake2015}
+Brenden~M. Lake, Ruslan Salakhutdinov, and Joshua~B. Tenenbaum.
+\newblock Human-level concept learning through probabilistic program induction.
+\newblock {\em Science}, 350(6266):1332--1338, 2015.
+
 \bibitem{mahowald2023dissociating}
 Kyle Mahowald, Anna~A Ivanova, Idan~A Blank, Nancy Kanwisher, Joshua~B
   Tenenbaum, and Evelina Fedorenko.
@@ -196,11 +201,6 @@ Ganlin Song, Zhou Fan, and John Lafferty.
 Hongwei Sun.
 \newblock Mercer theorem for {RKHS} on noncompact sets.
 \newblock {\em J. Complexity}, 21(3):337--349, June 2005.
-
-\bibitem{howtogrowamind}
-Joshua~B. Tenenbaum, Charles Kemp, Thomas~L. Griffiths, and Noah~D. Goodman.
-\newblock How to grow a mind: Statistics, structure, and abstraction.
-\newblock {\em Science}, 331(6022):1279--1285, 2011.
 
 \bibitem{gamr}
 M.~Vaishnav and T~Serre.
