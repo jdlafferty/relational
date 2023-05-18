@@ -21,3 +21,5 @@ Steps to reproduce results in paper:
     ```
 
 3) Run `robustness_evaluation.ipyb` to evaluate the three types of robustness described above.
+
+The logs for step 2 are available to view at: [[W&B link. Temporarily hidden for anonymization]].
