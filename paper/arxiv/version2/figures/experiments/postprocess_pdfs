@@ -1,0 +1,2 @@
+#bash
+for fn in *.pdf; do prefix=$(echo $fn | sed 's/\..*//'); echo "processing $prefix" pdf2ps "$prefix.pdf"; ps2pdf "$prefix.ps"; done
