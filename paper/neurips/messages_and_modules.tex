@@ -103,7 +103,7 @@ In Section~\ref{sec:function_spaces} of the supplementary material we characteri
 
 
 
-\subsection{Multi-head relations and relational cross-attention}
+\subsection{Multi-head relations and relational cross-attention}\label{ssec:multiheadrelations}
 
 Next, we turn our attention to how the Abstractor models pairwise relations and computes the relation tensor $R \in \mathbb{R}^{\m \times \m \times d_r}$. We model pairwise relations as inner products between appropriately encoded (or `filtered') object representations. In particular, we model the pairwise relation function $r(\cdot, \cdot) \in \mathbb{R}^{d_r}$ in terms $d_r$ learnable `left encoders' $\phi_1, \ldots, \phi_{d_r}$, and $d_r$ `right encoders' $\psi_1, \ldots, \psi_{d_r}$,
 \begin{equation}\label{eq:multi_head_rel}
