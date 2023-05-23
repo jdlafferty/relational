@@ -5,69 +5,151 @@
 %\newcommand{\reals}{\mathbb{R}}
 \def\m{m}
 
+% note renamed section from: "Symbolic message-passing algorithm"
+\section{Full description of the Abstractor}\label{sec:message_passing_supplement} % TODO: rename label?
 
-\section{Symbolic message-passing algorithm}
-\label{sec:message_passing_supplement}
+\subsection{Relational Symbolic Message-passing}
 
-As described in \Cref{sec:abstractor_framework}, 
-we perform message-passing on these learned symbolic parameters according to the relation tensor $R$. In general, this message-passing operation can be described as a set-valued function of the form
+As described in~\Cref{sec:abstractor_framework}, a core operation in of the Abstractor is performing message-passing on learned symbolic parameters according to the relation tensor $R$. In general, the symbolic message-passing operation can be described as a set-valued function of the form
 \begin{equation}
     \label{eq:symbolic_message_passing_supp}
     s_i \leftarrow \text{Update}\Big( s_i, \ \left\{ \left(R[i,j], s_j\right)\right\}_{j\in[m]}\Big), \quad i = 1, \ldots, m
 \end{equation}
-That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed
-as values on the nodes of a graph, and the relations $R[i,j]$ are naturally viewed as weights on the edges. A simple but important special case of this is
+
+That is, the value of the $i$th symbol is updated as a function of the set of tuples $(R[i,j], s_j)$ of the relations with all other objects and the symbols of these objects. The symbols $s_j$ are naturally viewed as values on the nodes of a graph, and the relations $R[i,j]$ are naturally viewed as weights on the edges. A simple but important special case of this is linear message-passing
 \begin{equation}
     \label{eq:linear_symbolic_mp:supp}
     s_i \leftarrow \sum_{j=1}^{m} R[i,j] s_j, \quad i=1, \ldots, m
 \end{equation}
-In the above, suppose that $d_r = 1$. Otherwise, the above operation is done for each dimension of the relation $R$ and the result is concatenated, as in multi-head attention.
 
-Following message-passing, each updated symbol $s_i$, can be passed through a feedforward neural network $f:\reals^{d_s}\rightarrow \reals^{d_s}$ to compute a non-linear function of the output. %Empirically, a residual connection and layer normalization may be useful, as in a transformer.
-This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors.  The output of relational symbolic message-passing is the set of symbols $A$ at the end of this sequence of message-passing operations. The overall procedure is summarized in Algorithm~\ref{alg:relational_abstractor}. In Section~\ref{sec:function_spaces} we characterize the class of functions on relations that this operation can compute.
+In the above, if $d_r > 1$, the operation should be read as
+\begin{equation*}
+    R[i,j] s_j = \left( R[i,j,1] s_j, \ldots, R[i,j, d_r] s_j \right) \in \reals^{d_s \times d_r},
+\end{equation*}
 
-% JDC: Shouldn't $d_s$ be included in the list of hyperparameters below?
+where $d_r$ is the dimension of the relation. That is, the result is concatenated.
+
+Following message-passing, each updated symbol $s_i$ can be passed through a feedforward neural network $\phi: \reals^{d_s \times d_r} \rightarrow \reals^{d_a}$ to compute a non-linear function of the output. This also controls the dimension of the symbols so that it doesn't grow by a factor of $H$ with each layer (e.g.: take $d_a = d_s$). Empirically, a residual connection and layer normalization may be useful.
+
+This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors.  The output of relational symbolic message-passing is the set of symbols $\bm{A}$ at the end of this sequence of message-passing operations. This is summarized in~\Cref{alg:symbolic_mp}.
+
+\begin{algorithm}[ht!]
+	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
+	\SetKwInOut{HyperParams}{Hyperparameters}
+
+	\Input{Relation tensor: \(R \in \mathbb{R}^{\m \times \m \times d_r}\)}
+	\HyperParams{\(L,\ d_s, d_a\), hyperparameters of feedforward networks}
+	\LearnableParams{symbols \(\bm{S} = (s_1, \ldots, s_\m) \in \reals^{d_s \times \m}\), feedforward networks \(\phi^{(1)}, \ldots, \phi^{(L)}\)}
+	\Output{Abstracted sequence: \(\bm{A} = (a_1, \ldots, a _\m) \in \reals^{d_a \times \m}\)}
+	\vspace{1em}
+
+	\((a_1, \ldots, a_\m) \gets (s_1, \ldots, s_\m)\)
+
+	\For{\(l \gets 1\) \KwTo \(L\)}{
+		\(a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, \ldots, \m\)
+
+		\(a_i \gets \phi^{(l)}(a_i), \quad i = 1, \ldots, \m\)
+	}
+\end{algorithm}
+
+\subsection{The multi-head relation module}
+
+In~\Cref{ssec:multiheadrelations}, we descirbed how Abstractors model relations through the Multi-Head Relation module. The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space, inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
+
+As described in the main paper, we can formulate inner product relations as inner products between a pair of transformed object vectors,
+\begin{equation*}
+    r(x,y) = \begin{pmatrix}\langle \phi_1(x), \psi_1(y) \rangle \\ \vdots \\ \langle \phi_{d_r}(x), \psi_{d_r}(y) \rangle \end{pmatrix} \in \mathbb{R}^{d_r}.
+\end{equation*}
+
+In general, $\phi_i, \psi_j$ can be any learnable maps. This captures a large class of relation functions. We formalize this in the next section.
+
+In order to promote weight sharing, we focus our attention to inner product relations of the form
+
+\begin{equation*}
+    r(x,y) = \begin{pmatrix} \left\langle W_1^{(1)}\phi(x), W_2^{(1)} \phi(y) \right\rangle \\  \vdots \\ \left\langle W_1^{(d_r)}\phi(x), W_2^{(d_r)} \phi(y) \right\rangle \end{pmatrix} \in \mathbb{R}^{d_r},
+\end{equation*}
+
+where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g.: take $\phi$ to be the concatention of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
+
+\begin{algorithm}[ht!]
+	\caption{Multi-Head Relation (MHR) module}\label{alg:multiheadrelation}
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
+	\SetKwInOut{HyperParams}{Hyperparameters}
+
+	\Input{sequence of objects: $\bm{X} = (x_1, \ldots, x_\m) \in \reals^{d}$ }
+	\HyperParams{Dimension of relation $d_r$, Projection dimension $d_p$, dimension of embedding $d_e$}
+	\LearnableParams{projection matrices $W_1^{(i)}, W_2^{(i)} \in \reals^{d_p \times d_e}, \ i=1, \ldots, d_r$, embedder network $\phi: \reals^d \to \reals^{d_e}$}
+	\Output{Relation tensor $R \in \reals^{\m \times \m \times d_r}$}
+	\vspace{1em}
+
+	\For{\(i,j \gets 1\) \KwTo \(\m\)}{
+        \For{$k \gets 1 $ \KwTo $d_r$}{
+            $R[i, j, k] \gets \langle W_1^{(k)} \phi(x_i), W_2^{(k)} \phi(x_j)\rangle$
+        }
+	}
+\end{algorithm}
+
+\Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or assymetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g.: see the discussion in~\cite{kerg2022neural}).
+
+\subsection{The Abstractor module: putting it all together}
+
+The above two sections provide a complete description of relational symbolic message-passing and computing relations via multi-head relation modules. These are the two main components of the Abstractor module.~\Cref{alg:abstractor} provides an algorithmic description of the archetypical abstractor.
+
+\begin{algorithm}[ht!]
+	\caption{Abstractor}\label{alg:abstractor}
+	\SetKwInOut{Input}{Input}
+	\SetKwInOut{Output}{Output}
+	\SetKwInOut{LearnableParams}{Learnable parameters}
+	\SetKwInOut{HyperParams}{Hyperparameters}
+
+	\Input{sequence of objects: $\bm{X} = (x_1, \ldots, x_\m) \in \reals^{d}$ }
+	\HyperParams{\# of layers \(L\), dim of symbols \(d_s\), dim of abstract objects \(d_a\), hyperparameters of MHR modules, activation function for relation tensor \(\sigma_{\mathrm{rel}}\), hyperparameters of feedforward networks.}
+	\LearnableParams{symbols \(\bm{S} = (s_1, \ldots, s_\m) \in \reals^{d_s \times \m}\), feedforward networks \(\phi^{(1)}, \ldots, \phi^{(L)}\), parameters of MHR modules.}
+	\Output{Abstracted sequence: \(\bm{A} = (a_1, \ldots, a _\m) \in \reals^{d_a \times \m}\)}
+	\vspace{1em}
+
+	\((a_1, \ldots, a_\m) \gets (s_1, \ldots, s_\m)\)
+
+	\For{\(l \gets 1\) \KwTo \(L\)}{
+        \(R \gets \text{MultiHeadRelation}^{(l)}(\bm{X}) \)
+
+        \(R \gets \sigma_{\mathrm{rel}}(R)\)
+
+		\(a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, \ldots, \m\)
+
+		\(a_i \gets \phi^{(l)}(a_i), \quad i = 1, \ldots, \m\)
+	}
+\end{algorithm}
+
+Note that the relation tensor output by the multi-head relation module is processed with an activation function $\sigma_{\mathrm{rel}}$. As described in~\Cref{sec:abstractor_framework}, depending on the task, one good choice for this is the softmax activation function. This normalizes the message-passing operation such that each abstract symbol is updated as a \textit{convex combination} of the other symbols based on the relation tensor. It is important to note that this causes the computed relation between two objects to depend also on the relations with other objects (i.e.: $R[i,j]$ depends not only on $x_i, x_j$, but on the full object sequence). Thus, softmax computes the relation between two objects \textit{relative} to the relations with all objects. Depending on the application, this may be a very useful inductive bias or a harmful one. Alternatively, we may apply an activation function $\sigma_{\mathrm{rel}}$ elementwise (e.g.: linear, relu, sigmoid, tanh, etc.)
+
+Finally, as discussed in~\Cref{sec:abstractor_framework}, the Abstractor module can be cast in terms of transformer-based attention mechanisms, and \textit{relational attention}. For completeness, this is described in~\Cref{alg:relational_abstractor}. Note that we have added a self-attention operation performed on the abstract symbols. This is merely to show this as an option. It may be useful for some tasks, but, unlike the rest of Abstractor, it not intuitive what this might be computing.
+
 \begin{algorithm}[th!]
-    \caption{Relational Abstractor}\label{alg:relational_abstractor}
+    \caption{Abstractor (cast in terms of transformer operations)}\label{alg:relational_abstractor}
     \SetKwFor{For}{for}{do}{end}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
     \SetKwInOut{LearnableParams}{Learnable parameters{\ }}
     \SetKwInOut{HyperParams}{Hyperparameters}
 
-    \Input{Encoder entities: $E = (o_1, \ldots, o_\m) \in \mathbb{R}^{d_e \times m}$}
-    \HyperParams{$L$ (number of layers), $H$ (number of heads), feedforward network structure}
-    \LearnableParams{Symbols $S \in \reals^{d_s \times m}$, parameters $\{\theta_l\}$ of attention heads and feedforward models}
-    \Output{Abstracted sequence: $A = (a_1, \ldots, a_\m) \in \reals^{d_a \times m}$}
+    \Input{sequence of objects: $\bm{X} = (x_1, \ldots, x_\m) \in \reals^{d}$ }
+	\HyperParams{\# of layers \(L\), dim of symbols \(d_s\), dim of abstract objects \(d_a\), hyperparameters of attention modules, hyperparameters of feedforward networks.}
+	\LearnableParams{symbols \(\bm{S} = (s_1, \ldots, s_\m) \in \reals^{d_s \times \m}\), feedforward networks \(\phi^{(1)}, \ldots, \phi^{(L)}\), parameters of attention modules.}
+	\Output{Abstracted sequence: \(\bm{A} = (a_1, \ldots, a _\m) \in \reals^{d_a \times \m}\)}
+
     \vspace{1em}
 
-    $A \gets S$
+    $\bm{A} \gets \bm{S}$
 
     \For{$l \gets 1$ \KwTo $L$}{
-        $A \gets \text{SelfAttention}_{\theta_l}(A)$\;
-        $A \gets \crossattend{E}{E}{A}{\theta_l}$\;
-        $A \gets\FeedForward_{\theta_l}(A)$\;
+        $\bm{A} \gets \text{SelfAttention}^{(l)}(\bm{A})$\;
+        $\bm{A} \gets \text{RelationalAttention}^{(l)}(\bm{X}, \bm{S})$\;
+        $\bm{A} \gets \phi^{(l)}(\bm{A})$\;
         }
 \end{algorithm}
-
-\subsection{Computing the relation tensor with relational cross-attention}
-
-Symbolic message passing is the first of the two main
-%ingredients
-components
-of abstractors. What remains is to describe how the abstractor computes the relation tensor $R$. This is
-done through a variant of transformer cross-attention that we refer to as \textit{relational cross-attention}.
-To motivate this, we first describe how we can compute relations between pairs of objects through inner products.
-The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space,
-inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations,
-inner products between these vector representations can capture relations between these objects.
-
-In general, we can formulate inner product relations as the standard Euclidean inner product between a pair of transformed object vectors. That is, 
-\begin{equation}
-    R(o_i, o_j) = \langle \phi(o_i), \psi(o_j) \rangle
-    \label{eq:relation_innerproduct}
-\end{equation}
-This captures a large class of relation functions. In particular, the theory of reproducing kernel Hilbert spaces implies that any continuous, symmetric function on pairs of objects can be approximated with such functions
-\citep{universal}. Multi-dimensional relation functions can be achieved by stacking multiple such inner products.
-In the next section we frame this explicitly in terms of transformer operations.
-
