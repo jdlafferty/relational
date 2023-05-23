@@ -141,27 +141,27 @@ This is closely related to the cross-attention operation in transformers (and  a
 \label{ssec:function_class_symbolic_mp}
 For the purposes of this analysis, the algorithmic description of symbolic message-passing is presented in \Cref{alg:symbolic_mp}. It is slightly simpler than the algorithmic description of the full relational  abstractor in \Cref{alg:relational_abstractor}---the primary difference is that we omit self-attention between symbolic states.
 
-\begin{algorithm}[ht!]
-	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
-	\SetKwInOut{Input}{Input}
-	\SetKwInOut{Output}{Output}
-	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
-	\SetKwInOut{HyperParams}{Hyperparameters}
+% \begin{algorithm}[ht!]
+% 	\caption{Symbolic Message-Passing}\label{alg:symbolic_mp}
+% 	\SetKwInOut{Input}{Input}
+% 	\SetKwInOut{Output}{Output}
+% 	\SetKwInOut{LearnableParams}{Learnable parameters{\ }}
+% 	\SetKwInOut{HyperParams}{Hyperparameters}
 
-	\Input{Relation tensor: \(R \in \mathbb{R}^{n \times \m \times d_r}\)}
-	\HyperParams{\(L\) (number of steps/layers), hyperparameters of feedforward networks}
-	\LearnableParams{symbols \(\boldsymbol{s} = (s_1, \ldots, s_\m) \in \reals^{d_s \times \m}\), feedforward neural networks \(\phi^{(1)}, \ldots, \phi^{(L)}\)}
-	\Output{Abstracted sequence: \(\boldsymbol{a} = (a_1, \ldots, a _\m) \in \reals^{d_a \times \m}\)}
-	\vspace{1em}
+% 	\Input{Relation tensor: \(R \in \mathbb{R}^{n \times \m \times d_r}\)}
+% 	\HyperParams{\(L\) (number of steps/layers), hyperparameters of feedforward networks}
+% 	\LearnableParams{symbols \(\boldsymbol{s} = (s_1, \ldots, s_\m) \in \reals^{d_s \times \m}\), feedforward neural networks \(\phi^{(1)}, \ldots, \phi^{(L)}\)}
+% 	\Output{Abstracted sequence: \(\boldsymbol{a} = (a_1, \ldots, a _\m) \in \reals^{d_a \times \m}\)}
+% 	\vspace{1em}
 
-	\(A \gets S\)
+% 	\(A \gets S\)
 
-	\For{\(l \gets 1\) \KwTo \(L\)}{
-		\(a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, \ldots, n\)
+% 	\For{\(l \gets 1\) \KwTo \(L\)}{
+% 		\(a_i \gets \sum_{j=1}^{n} R[i,j] a_j, \quad i = 1, \ldots, n\)
 
-		\(a_i \gets \phi^{(l)}(a_i), \quad i = 1, \ldots, n\)
-	}
-\end{algorithm}
+% 		\(a_i \gets \phi^{(l)}(a_i), \quad i = 1, \ldots, n\)
+% 	}
+% \end{algorithm}
 
 
 
