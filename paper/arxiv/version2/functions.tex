@@ -10,7 +10,7 @@ We start by presenting a universal approximation result for ``inner product neur
 
 \subsection{Function class of inner product relations}
 
-This section analyzes the class of functions which can be modeled by ``inner product relations'' and the multi-head relation module. Consider vectors living in a space \(\mathcal{X}\). We would like to learn a relation function \(r: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which maps pairs of objects in \(\mathcal{X}\) to a \(d_r\)-dimensional vector describing the relation between these objects. We specialize~\Cref{eq:inner_prod_rel_supp} to the symmetric form, $\phi_i = \psi_i$:
+This section analyzes the class of functions which can be modeled by ``inner product relations'' and the multi-head relation module. Consider vectors living in a space \(\mathcal{X}\). We would like to learn a relation function \(r: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which maps pairs of objects in \(\mathcal{X}\) to a \(d_r\)-dimensional vector describing the relation between these objects. We specialize~\Cref{eq:multi_head_rel} to the symmetric form, $\phi_i = \psi_i$:
 \begin{equation}
 	\label{eq:symmetric_inner_product_relations}
 	R(x, y) = \begin{pmatrix}\langle \phi_{1}(x), \phi_{1}(y) \rangle \\ \vdots \\ \langle \phi_{d_r}(x), \phi_{d_r}(y) \rangle \end{pmatrix},
