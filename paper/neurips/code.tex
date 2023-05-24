@@ -1,0 +1,16 @@
+\section{Code for experiments}
+\label{sec:code}
+
+The supplementary material includes code for the experiments reported in \Cref{sec:experiments} of the paper. This code includes Python (Jupyter) notebooks for individual experiments as well as scripts that were run on a GPU cluster to parallelize across multiple experimental designs.
+
+
+\subsection{SET experiments}
+
+This is a standalone implementation of an Abstractor that learns to classify triples of images of cards according 
+to whether or not they form a SET, in an end-to-end fashion. First a convolutional neural network is trained to process the color images of the cards. The CNN is trained to predict the attribute of
+each card, as a multi-label classification, and then an embedding of dimension $d=32$ of 
+each card is obtained using an \MLP{}. Next, Abstractors are trained separately for each of the four attributes (number, color, pattern, shape) to learn same/different relations, where the task is to decide if an input pair of cards is the same or different for that attribute. The cards are encoded using the feature map generated from the CNN. We then use the query and key mappings $W_Q$ and $W_K$ learned for these relations to initialize the relations in a multi-head Abstractor. This Abstractor is then trained on a dataset of triples of cards, half of which form a SET, again representing the cards using the CNN feature maps.
+
+The Abstractor is compared to a baseline model where the relations are hand-coded symbolically 
+as vectors of 12 bits. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation can be considered as a lower bound on the performance achievable by the Abstractor. 
+We note that the simple Abstractor makes no use of self-attention or any of the other ``enhancements'' such as skip-connections commonly used in Transformers.
