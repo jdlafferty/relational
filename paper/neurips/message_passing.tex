@@ -57,7 +57,7 @@ This message-passing operation can be repeated multiple times to iteratively upd
 
 \subsection{The multi-head relation module}
 
-In~\Cref{ssec:multiheadrelations}, we descirbed how Abstractors model relations through the Multi-Head Relation module. The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space, inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
+In~\Cref{ssec:multiheadrelations}, we described how Abstractors model relations through the Multi-Head Relation module. The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space, inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
 
 As described in the main paper, we can formulate inner product relations as inner products between a pair of transformed object vectors,
 \begin{equation}\label{eq:inner_prod_rel_supp}
@@ -72,7 +72,7 @@ In order to promote weight sharing, we focus our attention to inner product rela
     r(x,y) = \begin{pmatrix} \left\langle W_1^{(1)}\phi(x), W_2^{(1)} \phi(y) \right\rangle \\  \vdots \\ \left\langle W_1^{(d_r)}\phi(x), W_2^{(d_r)} \phi(y) \right\rangle \end{pmatrix} \in \mathbb{R}^{d_r},
 \end{equation}
 
-where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g.: take $\phi$ to be the concatention of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
+where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g.: take $\phi$ to be the concatenation of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
 
 \begin{algorithm}[ht!]
 	\caption{Multi-Head Relation (MHR) module}\label{alg:multiheadrelation}
@@ -94,7 +94,7 @@ where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projecti
 	}
 \end{algorithm}
 
-\Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or assymetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g.: see the discussion in~\cite{kerg2022neural}).
+\Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with Einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or asymmetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g.: see the discussion in~\cite{kerg2022neural}).
 
 \subsection{The Abstractor module: Putting it all together}
 
