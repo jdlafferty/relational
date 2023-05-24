@@ -164,12 +164,11 @@ We saw in the previous section that a one-layer Abstractor is able to compute ar
 % TODO: formalize or refine presentation of result
 \begin{lemma}[Function class for compositions of Abstractors]\label{lemma:function_class_composed_abstractors}
 	\hphantom{~}
-
-	Consider a chain of \(k\) single-layer Abstractors each given by~\Cref{alg:abstractor},
-	\[\bm{X} \to \module{Abstractor} \to \cdots \to \module{Abstractor} \to \bm{A}.\]
-
-	A chain of \(k\) single-layer  Abstractors is able to compute arbitrary ``\(k\)th order relational functions'' in the sense of the proof below.
+	A chain of \(k\) single-layer Abstractors 
+	\[\bm{X} \to \module{Abstractor} \to \cdots \to \module{Abstractor} \to \bm{A},\]
+	each given by~\Cref{alg:abstractor}, is able to compute arbitrary \(k\)th order relational functions.
 \end{lemma}
+The precise meaning of a ``\(k\)th order relational function'' will be made clear in the proof below.
 \begin{proof}[Proof sketch]
 	In \Cref{ssec:function_class_symbolic_mp} we characterized the output of a 1-layer Abstractor as
 	\begin{equation*}
