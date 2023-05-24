@@ -1,10 +1,24 @@
 \section{Code for experiments}
 \label{sec:code}
 
-The supplementary material includes code for the experiments reported in \Cref{sec:experiments} of the paper. This code includes Python (Jupyter) notebooks for individual experiments as well as scripts that were run on a GPU cluster to parallelize across multiple experimental designs.
+The supplementary material includes code for the experiments reported in \Cref{sec:experiments} of the paper. This code includes Python (Jupyter) notebooks for individual experiments as well as scripts that were run on a GPU cluster to parallelize across multiple experimental designs. Here, we give additional details on each experiment.
 
+\subsection{Pairwise order relation}
+The set up of the experiment is fully described in~\Cref{sec:experiments}. Here, we give details on the architecture we used.
 
-\setcounter{subsection}{4}
+The Abstractor model uses the implementation in \texttt{abstractor.py} which closely follows~\Cref{alg:abstractor}. The object pair are transformed by a linear embedder of dimension $64$ independently, then passed to an Abstractor module. The abstract objects output by the Abstractor are flattened to a single vector which is processed by a 32-unit dense layer with a relu activation. Finally, a 1-unit dense layer with sigmoid activation outputs the classification. The Abstractor module has 1 layer, a relation dimension of 4, a symbol dimension of 64, a projection dimension of 16, and a softmax relation activation function.
+
+The Abstractor model is compared to CoRelNet. The same 64-dimensional linear embedder is used. This is used to compute the similarity matrix which is then flattened to form a single vector. The same 32-unit hidden layer and 1-unit classification layer are used.
+
+We compute learning curves for each model by varying the training set size and evaluating the hold-out test set.
+
+\subsection{Sorting random objects}
+
+\subsection{Generalization to new object-sorting tasks}
+
+\subsection{Robustness to noise and out-of-distribution generalization}
+
+% \setcounter{subsection}{4}
 \subsection{SET experiments}
 
 This is a standalone implementation of an Abstractor that learns to classify triples of images of cards according 
