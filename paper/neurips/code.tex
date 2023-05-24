@@ -14,6 +14,10 @@ We compute learning curves for each model by varying the training set size and e
 
 \subsection{Sorting random objects}
 
+The dataset is described in~\Cref{sec:experiments}. We compare an Abstractor model, a Transformer model, and an Ablation model. The Abstractor model is of the form in~\Cref{alg:relational_abstractor}. The full autoregressive model uses the architecture $\module{Encoder} \to \module{Abstractor} \to \module{Decoder}$. For each of the Encoder, Abstractor, and Decoder modules, we use 2 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding dimension of 64. The number of trainable parameters is $386,954$. The Ablation model uses an identical architecture except that the relational attention is replaced with standard cross attention at the Encoder-Abstractor interface (with $Q \gets A, K \gets E, V \gets E$). It has the same number of parameters.
+
+The Transformer model is standard and uses the $\module{Encoder} \to \module{Decoder}$ architecture. For both the Encoder and Decoder modules, we use 4 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding dimension of 64. The number of trainable parameters is $469,898$. We increased the number of layers compared to the Abstractor in order to make it a comparable size in terms of parameter count. Previously, we experimented with identical hyperparameters (where the Transformer would have fewer parameters due to not having an Abstractor module).
+
 \subsection{Generalization to new object-sorting tasks}
 
 \subsection{Robustness to noise and out-of-distribution generalization}
