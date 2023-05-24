@@ -110,7 +110,7 @@ The following result characterizes the class of relation functions computable by
 
 Theorem~\ref{theorem:function_class_inner_product_relnn} shows that inner products of neural networks (of the form in the multi-head relation module) can approximate arbitrary continuous, symmetric, positive semi-definite relation functions.
 
-This theorem characterizes the class of functions that the \textit{symmetric} multi-head relation module can model. The class of functions in~\Cref{eq:inner_prod_rel_supp} is strictly larger. As mentioned in the previous section, one way to model multi-dimensional asymmetric relations is through a single `embedder' network $\phi$, and $d_r$ pairs of projection matrices $W_1^{(i)}, W_2^{(i)}, i = 1, \ldots, d_r$ (\Cref{eq:inner_prod_rel_weight_sharing}). This has the same function class as~\Cref{eq:inner_prod_rel_supp} but enables greater weight sharing. The function class of non-symmetric inner product relations can also be characterized.
+This theorem characterizes the class of functions that the \textit{symmetric} multi-head relation module can model. The class of functions in~\Cref{eq:multi_head_rel} is strictly larger. As mentioned in the previous section, one way to model multi-dimensional asymmetric relations is through a single `embedder' network $\phi$, and $d_r$ pairs of projection matrices $W_1^{(i)}, W_2^{(i)}, i = 1, \ldots, d_r$ (\Cref{eq:inner_prod_rel_weight_sharing}). This has the same function class as~\Cref{eq:multi_head_rel} but enables greater weight sharing. The function class of non-symmetric inner product relations can also be characterized.
 
 \subsection{Class of relational functions computable by symbolic message-passing}\label{ssec:function_class_symbolic_mp}
 
