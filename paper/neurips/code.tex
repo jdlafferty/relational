@@ -1,9 +1,9 @@
-\section{Code for experiments}
+\section{Code and further experimental details}
 \label{sec:code}
 
 The supplementary material includes code for the experiments reported in \Cref{sec:experiments} of the paper. This code includes Python (Jupyter) notebooks for individual experiments as well as scripts that were run on a GPU cluster to parallelize across multiple experimental designs. Here, we give additional details on each experiment.
 
-\subsection{Pairwise order relation}
+\subsection{Pairwise order relation}\label{ssec:supp_exp_pairwise_order}
 The set up of the experiment is fully described in~\Cref{sec:experiments}. Here, we give details on the architecture we used.
 
 The Abstractor model uses the implementation in \texttt{abstractor.py} which closely follows~\Cref{alg:abstractor}. The object pair are transformed by a linear embedder of dimension $64$ independently, then passed to an Abstractor module. The abstract objects output by the Abstractor are flattened to a single vector which is processed by a 32-unit dense layer with a relu activation. Finally, a 1-unit dense layer with sigmoid activation outputs the classification. The Abstractor module has 1 layer, a relation dimension of 4, a symbol dimension of 64, a projection dimension of 16, and a softmax relation activation function.
@@ -12,17 +12,22 @@ The Abstractor model is compared to CoRelNet. The same 64-dimensional linear emb
 
 We compute learning curves for each model by varying the training set size and evaluating the hold-out test set.
 
-\subsection{Sorting random objects}
+\subsection{Sorting random objects}\label{ssec:supp_exp_object_sorting}
 
 The dataset is described in~\Cref{sec:experiments}. We compare an Abstractor model, a Transformer model, and an Ablation model. The Abstractor model is of the form in~\Cref{alg:relational_abstractor}. The full autoregressive model uses the architecture $\module{Encoder} \to \module{Abstractor} \to \module{Decoder}$. For each of the Encoder, Abstractor, and Decoder modules, we use 2 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding dimension of 64. The number of trainable parameters is $386,954$. The Ablation model uses an identical architecture except that the relational attention is replaced with standard cross attention at the Encoder-Abstractor interface (with $Q \gets A, K \gets E, V \gets E$). It has the same number of parameters.
 
 The Transformer model is standard and uses the $\module{Encoder} \to \module{Decoder}$ architecture. For both the Encoder and Decoder modules, we use 4 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding dimension of 64. The number of trainable parameters is $469,898$. We increased the number of layers compared to the Abstractor in order to make it a comparable size in terms of parameter count. Previously, we experimented with identical hyperparameters (where the Transformer would have fewer parameters due to not having an Abstractor module).
 
-\subsection{Generalization to new object-sorting tasks}
+\subsection{Generalization to new object-sorting tasks}\label{ssec:supp_exp_object_sorting_generalization}
+This experiment uses the same data generation process as the previous. Two object-sorting datasets are created based on an ``attribute-product structure''---an primary dataset and a pre-training dataset. As described in~\Cref{sec:experiments}, the pre-training dataset uses the same random objects as the primary dataset but with the order relation of the primary attribute reshuffled.
+
+We compare an Abstractor model and a Transformer model. The Transformer model is identical to the previous section. The Abstractor model is different. It uses the architecture $\module{Abstractor} \to \module{Decoder}$ (i.e.: no Encoder). The Abstractor module here follows the description in~\Cref{alg:abstractor}. The Abstractor has 1 layer, a symbol dimension of 64, a relation dimension of 4, a softmax relation activation, and a 64-unit feedforward network. The decoder also has 1 layer with 4-head MHA and a 64-unit feedforward network.
+
+The models are trained on $3,000$ labeled sequences of the pre-training task and the weights are used to initialize training on the primary task. Learning curves are evaluated with and without pre-training for each model.
 
 \subsection{Robustness to noise and out-of-distribution generalization}
+This experiment explores the Abstractor's robustness to noise and out-of-distribution generalization as compared to a standard Transformer. We consider the models in~\Cref{ssec:supp_exp_object_sorting} and the corresponding object-sorting task. We train each model on this task using $3,000$ labeled sequences. Then, we corrupt the objects with noise and evaluate performance on sequences in the hold-out test set where objects are replaced by their corrupted versions. We evaluate robustness to a random linear map as well as to additive noise, while varying the noise level. We evaluate over several trials, averaging over the realizations of the random noise.
 
-% \setcounter{subsection}{4}
 \subsection{SET experiments}
 
 This is a standalone implementation of an Abstractor that learns to classify triples of images of cards according 
