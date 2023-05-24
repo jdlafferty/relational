@@ -17,7 +17,7 @@ This section analyzes the class of functions which can be modeled by ``inner pro
 \end{equation}
 where \(\phi_{1}, \ldots, \phi_{d_r}\) are learnable transformations corresponding to each dimension of the relation.
 
-In a deep learning model, a natural choice is for \(\phi_{1}, \ldots, \phi_{d_r}\) to be \(d_r\) different neural networks (e.g.: MLPs, CNNs, etc. depending on the object space \(\mathcal{X}\)). Hence, the parameters of \(R\) are \(\boldsymbol{\theta} = (\theta_{1}, \ldots, \theta_{d_r})\), where \(\theta_{i}\) are the parameters of \(\phi_{i}\).
+In a deep learning model, a natural choice is for \(\phi_{1}, \ldots, \phi_{d_r}\) to be \(d_r\) different neural networks (e.g., MLPs, CNNs, etc. depending on the object space \(\mathcal{X}\)). Hence, the parameters of \(R\) are \(\boldsymbol{\theta} = (\theta_{1}, \ldots, \theta_{d_r})\), where \(\theta_{i}\) are the parameters of \(\phi_{i}\).
 
 The following result characterizes the class of relation functions computable by~\eqref{eq:symmetric_inner_product_relations} when \(\phi_{1}, \ldots, \phi_{d_r}\) are feedforward networks. We make use of Mercer's theorem and universal approximation properties of feedforward networks to obtain a universal approximation result for (symmetric) inner product relational neural networks.
 
@@ -31,7 +31,7 @@ The following result characterizes the class of relation functions computable by
 		\langle x, y \rangle_{\MLP} := \begin{bmatrix}\langle \MLP_{\theta_1}(x), \MLP_{\theta_1}(y) \rangle \\ \vdots \\ \langle \MLP_{\theta_{d_r}}(x), \MLP_{\theta_{d_r}}(y) \rangle\end{bmatrix}.
 	\end{equation*}
 
-	Suppose the data lies in a compact Hausdorff space \(\mathcal{X}\) (e.g.: a metric space) with a finite countably additive measure. In particular, \(\mathcal{X}\) can be any compact subset of \(\mathbb{R}^d\).
+	Suppose the data lies in a compact Hausdorff space \(\mathcal{X}\) (e.g., a metric space) with a finite countably additive measure. In particular, \(\mathcal{X}\) can be any compact subset of \(\mathbb{R}^d\).
 
 	Then, \(\langle \cdot, \cdot \rangle_{\MLP}\) is a Mercer kernel along each of the \(d_r\) dimensions.
 
