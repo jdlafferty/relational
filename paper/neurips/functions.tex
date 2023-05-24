@@ -35,7 +35,7 @@ The following result characterizes the class of relation functions computable by
 
 	Then, \(\langle \cdot, \cdot \rangle_{\MLP}\) is a Mercer kernel along each of the \(d_r\) dimensions.
 
-	Furthermore, for any vector-valued relation function \(r: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates \(r\) arbitrarily closely in the superemum norm (i.e.: uniformly over \((x,y) \in \mathcal{X}\times\mathcal{X}\)). More precisely, for all \(\epsilon > 0\), there exists \(d_r\) neural networks with parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert r(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
+	Furthermore, for any vector-valued relation function \(r: \mathcal{X} \times \mathcal{X} \to \reals^{d_r}\) which is a Mercer kernel in each dimension, there exists an inner product relational neural network which approximates \(r\) arbitrarily closely in the supremum norm (i.e.: uniformly over \((x,y) \in \mathcal{X}\times\mathcal{X}\)). More precisely, for all \(\epsilon > 0\), there exists \(d_r\) neural networks with parameters \(\theta_1, \ldots, \theta_{d_r}\) such that \(\sup_{x,y \in \mathcal{X}}{\lVert r(x,y) - \langle x, y \rangle_\MLP \rVert_\infty} < \epsilon\).
 \end{thm}
 
 \begin{proof}
@@ -114,7 +114,7 @@ This theorem characterizes the class of functions that the \textit{symmetric} mu
 
 \subsection{Class of relational functions computable by symbolic message-passing}\label{ssec:function_class_symbolic_mp}
 
-In this section, we analyze the class of functions computable by symbolic message-passing as described in~\Cref{alg:symbolic_mp}. We view this operation as processing relations, mapping a relation tensor to a sequence of objets.
+In this section, we analyze the class of functions computable by symbolic message-passing as described in~\Cref{alg:symbolic_mp}. We view this operation as processing relations, mapping a relation tensor to a sequence of objects.
 
 From equation~\eqref{eq:linear_symbolic_mp}, the symbolic message-passing operation is clearly bijective as a function on the input relation tensor \(R\), for an appropriate choice of the symbol parameters \(\bm{S} = (s_1,\ldots, s_\m)\). For example, choosing \(\bm{S} = I_{\m \times \m}\) (i.e.: the \(i\)th symbolic vector is the indicator \(\m\)-vector with a \(1\) in the \(i\)th position, \(s_i = e_i\)) reproduces the relation tensor after one message-passing operation:
 \begin{equation*}
