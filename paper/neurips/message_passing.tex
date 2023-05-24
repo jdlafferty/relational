@@ -29,7 +29,7 @@ In the above, if $d_r > 1$, the operation should be read as
 
 where $d_r$ is the dimension of the relation. That is, the result is concatenated.
 
-Following message-passing, each updated symbol $s_i$ can be passed through a feedforward neural network $\phi: \reals^{d_s \times d_r} \rightarrow \reals^{d_a}$ to compute a non-linear function of the output. This also controls the dimension of the symbols so that it doesn't grow by a factor of $H$ with each layer (e.g.: take $d_a = d_s$). Empirically, a residual connection and layer normalization may be useful.
+Following message-passing, each updated symbol $s_i$ can be passed through a feedforward neural network $\phi: \reals^{d_s \times d_r} \rightarrow \reals^{d_a}$ to compute a non-linear function of the output. This also controls the dimension of the symbols so that it doesn't grow by a factor of $H$ with each layer (e.g., take $d_a = d_s$). Empirically, a residual connection and layer normalization may be useful.
 
 This message-passing operation can be repeated multiple times to iteratively update the symbolic vectors.  The output of relational symbolic message-passing is the set of symbols $\bm{A}$ at the end of this sequence of message-passing operations. This is summarized in~\Cref{alg:symbolic_mp}.
 
@@ -72,7 +72,7 @@ In order to promote weight sharing, we focus our attention to inner product rela
     r(x,y) = \begin{pmatrix} \left\langle W_1^{(1)}\phi(x), W_2^{(1)} \phi(y) \right\rangle \\  \vdots \\ \left\langle W_1^{(d_r)}\phi(x), W_2^{(d_r)} \phi(y) \right\rangle \end{pmatrix} \in \mathbb{R}^{d_r},
 \end{equation}
 
-where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g.: take $\phi$ to be the concatenation of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
+where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g., take $\phi$ to be the concatenation of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
 
 \begin{algorithm}[ht!]
 	\caption{Multi-Head Relation (MHR) module}\label{alg:multiheadrelation}
@@ -94,7 +94,7 @@ where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projecti
 	}
 \end{algorithm}
 
-\Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with Einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or asymmetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g.: see the discussion in~\cite{kerg2022neural}).
+\Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with Einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or asymmetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g., see the discussion in~\cite{kerg2022neural}).
 
 \subsection{The Abstractor module: Putting it all together}
 
@@ -126,7 +126,7 @@ The above two sections provide a complete description of relational symbolic mes
 	}
 \end{algorithm}
 
-Note that the relation tensor output by the multi-head relation module is processed with an activation function $\sigma_{\mathrm{rel}}$. As described in~\Cref{sec:abstractor_framework}, depending on the task, one good choice for this is the softmax activation function. This normalizes the message-passing operation such that each abstract symbol is updated as a \textit{convex combination} of the other symbols based on the relation tensor. It is important to note that this causes the computed relation between two objects to depend also on the relations with other objects (i.e.: $R[i,j]$ depends not only on $x_i, x_j$, but on the full object sequence). Thus, softmax computes the relation between two objects \textit{relative} to the relations with all objects. Depending on the application, this may be a very useful inductive bias or a harmful one. Alternatively, we may apply an activation function $\sigma_{\mathrm{rel}}$ elementwise (e.g.: linear, relu, sigmoid, tanh, etc.)
+Note that the relation tensor output by the multi-head relation module is processed with an activation function $\sigma_{\mathrm{rel}}$. As described in~\Cref{sec:abstractor_framework}, depending on the task, one good choice for this is the softmax activation function. This normalizes the message-passing operation such that each abstract symbol is updated as a \textit{convex combination} of the other symbols based on the relation tensor. It is important to note that this causes the computed relation between two objects to depend also on the relations with other objects (i.e., $R[i,j]$ depends not only on $x_i, x_j$, but on the full object sequence). Thus, softmax computes the relation between two objects \textit{relative} to the relations with all objects. Depending on the application, this may be a very useful inductive bias or a harmful one. Alternatively, we may apply an activation function $\sigma_{\mathrm{rel}}$ elementwise (e.g., linear, relu, sigmoid, tanh, etc.)
 
 Finally, as discussed in~\Cref{sec:abstractor_framework}, the Abstractor module can be cast in terms of transformer-based attention mechanisms, and \textit{relational attention}. For completeness, this is described in~\Cref{alg:relational_abstractor}. Note that we have added a self-attention operation performed on the abstract symbols. This is merely to show this as an option. It may be useful for some tasks, but, unlike the rest of Abstractor, it not intuitive what this might be computing.
 
