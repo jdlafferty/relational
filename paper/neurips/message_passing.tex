@@ -96,7 +96,7 @@ where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projecti
 
 \Cref{alg:multiheadrelation} provides an algorithmic description of the Multi-Head Relation module. In our implementation, computation of the inner product is done efficiently with einstein summation. Also, we add a hyperparameter to control whether the relations are modeled as symmetric or assymetric (as in the description above). If the relations are to be modeled as symmetric, we set $W_1^{(i)} = W_2^{(i)}$. For certain tasks where relations may be naturally symmetric, this may be a useful inductive bias which improves sample-efficiency (e.g.: see the discussion in~\cite{kerg2022neural}).
 
-\subsection{The Abstractor module: putting it all together}
+\subsection{The Abstractor module: Putting it all together}
 
 The above two sections provide a complete description of relational symbolic message-passing and computing relations via multi-head relation modules. These are the two main components of the Abstractor module.~\Cref{alg:abstractor} provides an algorithmic description of the archetypical abstractor.
 
