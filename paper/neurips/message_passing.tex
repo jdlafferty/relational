@@ -60,17 +60,17 @@ This message-passing operation can be repeated multiple times to iteratively upd
 In~\Cref{ssec:multiheadrelations}, we descirbed how Abstractors model relations through the Multi-Head Relation module. The inner product operation is a natural way to capture notions of relations and similarity. In Euclidean space, inner products capture the geometric alignment between vectors. Similarly, for objects with vector representations, inner products between these vector representations can capture relations between these objects.
 
 As described in the main paper, we can formulate inner product relations as inner products between a pair of transformed object vectors,
-\begin{equation*}
+\begin{equation}\label{eq:inner_prod_rel_supp}
     r(x,y) = \begin{pmatrix}\langle \phi_1(x), \psi_1(y) \rangle \\ \vdots \\ \langle \phi_{d_r}(x), \psi_{d_r}(y) \rangle \end{pmatrix} \in \mathbb{R}^{d_r}.
-\end{equation*}
+\end{equation}
 
-In general, $\phi_i, \psi_j$ can be any learnable maps. This captures a large class of relation functions. We formalize this in the next section.
+In general, $\phi_i, \psi_j$ can be any learnable maps. These transformations can be thought of as \textit{relational filters}. They extract a particular attribute of the objects such that an inner product of the transformed objects indicates the alignment or similarity along this attribute. Having several different filters allows for modeling rich multi-dimensional relations. This is one notable advantage of this formulation over the CoRelNet model \citep{kerg2022neural}, which processes a \textit{1-dimensional} similarity matrix as input to a multi-layer perceptron. In the next section, we analyze the class of functions that the multi-head relation module can model.
 
 In order to promote weight sharing, we focus our attention to inner product relations of the form
 
-\begin{equation*}
+\begin{equation}\label{eq:inner_prod_rel_weight_sharing}
     r(x,y) = \begin{pmatrix} \left\langle W_1^{(1)}\phi(x), W_2^{(1)} \phi(y) \right\rangle \\  \vdots \\ \left\langle W_1^{(d_r)}\phi(x), W_2^{(d_r)} \phi(y) \right\rangle \end{pmatrix} \in \mathbb{R}^{d_r},
-\end{equation*}
+\end{equation}
 
 where $\phi$ is a common non-linear map, and $W_1^{(i)}, W_2^{(i)}$ are projection matrices for each dimension of the relation. For general functions $\phi$, this class of functions is no smaller than the one above (e.g.: take $\phi$ to be the concatention of $\phi_1, \ldots, \phi_{d_r}, \psi_1, \ldots, \psi_{d_r}$ and $W_1^{(i)}, W_2^{(i)}$ to be the projection matrices which extract the appropriate components), but does enable greater weight sharing.
 
