@@ -152,16 +152,16 @@ Only relational information, computed through inner products, is used to transfo
 
 Note that the relation tensor output by the multi-head relation module is processed with an activation function $\sigma_{\mathrm{rel}}$. Depending on the task, one good choice for this is the softmax activation function. This normalizes the message-passing operation such that each abstract symbol is updated as a \textit{convex combination} of the other symbols based on the relation tensor. It is important to note that this causes the computed relation between two objects to depend also on the relations with other objects (i.e., $R[i,j]$ depends not only on $x_i, x_j$, but on the full object sequence). Thus, softmax computes the relation between two objects \textit{relative} to the relations with all objects. Depending on the application, this may be a very useful inductive bias or a harmful one. Alternatively, we may apply an activation function $\sigma_{\mathrm{rel}}$ independently for each entry in the relation tensor (e.g., linear, relu, sigmoid, tanh, etc.)
 
-Finally, we remark that this operation is closely related to the multi-head attention operation of transformers. In fact, computing the relation tensor and performing symbolic message-passing can be achieved via a multi-head attention operation of the form
+Finally, we remark that this operation is closely related to the multi-head attention operation of Transformers. In fact, computing the relation tensor and performing symbolic message-passing can be achieved via a multi-head attention operation of the form
 \begin{equation}\label{eq:relation_crossattention}
     \text{RelationalCrossAttention}\left(E, S\right) \equiv \text{Attention}\left( Q \gets E, K \gets E, V \gets S \right),
 \end{equation}
 where $E$ are the input objects (or some processed-encoding of them), and $S = (s_1, \ldots, s_\m)$ are the symbolic variables. We refer to this operation as \textit{relational cross-attention}. This is in contrast to standard (encoder-decoder) cross-attention, which takes the form $\text{Attention}\left( Q \gets D, K \gets E, V \gets E \right)$.
 
-For completeness, ~\Cref{alg:relational_abstractor} gives an algorithmic description of the Abstractor module, cast in terms of transformer-based attention mechanisms. Note that we have added a self-attention operation performed on the abstract symbols. This is merely to show this as an option. It may be useful for some tasks, but, unlike the rest of Abstractor, it not intuitive what this might be computing.
+For completeness, ~\Cref{alg:relational_abstractor} gives an algorithmic description of the Abstractor module, cast in terms of Transformer-based attention mechanisms. Note that we have added a self-attention operation performed on the abstract symbols. This is merely to show this as an option. It may be useful for some tasks, but, unlike the rest of Abstractor, it not intuitive what this might be computing.
 
 \begin{algorithm}[th!]
-    \caption{Abstractor (cast in terms of transformer operations)}\label{alg:relational_abstractor}
+    \caption{Abstractor (cast in terms of Transformer operations)}\label{alg:relational_abstractor}
     \SetKwFor{For}{for}{do}{end}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}
@@ -184,7 +184,7 @@ For completeness, ~\Cref{alg:relational_abstractor} gives an algorithmic descrip
         }
 \end{algorithm}
 
-\subsection{Relational learning using transformers}
+\subsection{Relational learning using Transformers}
 
 The Abstractor module fits naturally into Transformer models. Hence, we position the Abstractor framework as an extension of Transformers. In particular, combining an Abstractor with Transformer Encoder and Decoder modules forms a powerful sequence model with enhanced abilities for relational reasoning and abstraction.
 
@@ -199,17 +199,17 @@ through cross-attention mechanisms that couple abstract states with specific inf
         \begin{tabular}{c}
             \hskip5pt\includegraphics[width=.45\textwidth]{figures/algorithm-diagram3-crop}
         \end{tabular}
-        \caption{\footnotesize Algorithmic framework integrating transformers and relational learning, 
+        \caption{\footnotesize Algorithmic framework integrating Transformers and relational learning, 
         implementing a form of the ``relational bottleneck.''}
         \label{fig:algo}
         \end{center}
         \vskip-.15in
     \end{wrapfigure}
     %\end{figure}
-The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder states are vectors that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled by standard deep learning frameworks, including standard transformers. The abstract states $A$ are vectors that are learned and processed using symbolic message-passing based on the relations between the encoder states. In particular, the encoder states are separated from the abstract states by a ``relational bottleneck'' that only allows information about relations (that is, inner-products) between encoder states to influence the learning and transformation of abstract states.
+The architecture has three types of states: encoder states $E$, decoder states $D$, and abstract states $A$. The encoder states are vectors that represent domain-specific information (e.g., sensory or motor), which are often successfully modeled by standard deep learning frameworks, including standard Transformers. The abstract states $A$ are vectors that are learned and processed using symbolic message-passing based on the relations between the encoder states. In particular, the encoder states are separated from the abstract states by a ``relational bottleneck'' that only allows information about relations (that is, inner-products) between encoder states to influence the learning and transformation of abstract states.
 
-This ability to integrate with transformers and process domain-specific information modeled by an Encoder gives the Abstractor framework greater flexibility compared to existing relational models like ESBN.
-%If sensory information is required by the decoder, this can be passed to the decoder states $D$ by standard cross-attention mechanisms of transformers.
+This ability to integrate with Transformers and process domain-specific information modeled by an Encoder gives the Abstractor framework greater flexibility compared to existing relational models like ESBN.
+%If sensory information is required by the decoder, this can be passed to the decoder states $D$ by standard cross-attention mechanisms of Transformers.
 
 
 %
@@ -291,7 +291,7 @@ In a ``partially-relational'' task, the relational information is crucial, but i
 % JDC: IT MIGHT BE GOOD, IF POSSIBLE TO INCLUDE AN "INLINE SCHEMATIC" FOR THIS CASE AS WELL, WITH A "BYPASS" ARROW
 % (RESNET STYLE) FROM ENCODER TO DECODER (THOUGH I DON'T KNOW HOW TO DO THIS IN TEX!), TO MAKE IT VISIBLY CLEAR THAT
 % THE FRAMEWORK IS FLEXIBLE.
-This provides an extension of general sequence-to-sequence models with transformers. In this paper, to highlight the capabilities of the framework, we focus our experiments on fully relational Abstractors. However, partially relational Abstractors are likely to be necessary for more realistic tasks. We hypothesize that a sensory-connected Abstractor model would yield benefits on language tasks.
+This provides an extension of general sequence-to-sequence models with Transformers. In this paper, to highlight the capabilities of the framework, we focus our experiments on fully relational Abstractors. However, partially relational Abstractors are likely to be necessary for more realistic tasks. We hypothesize that a sensory-connected Abstractor model would yield benefits on language tasks.
 
 We note that learning higher order relations is made possible by composing
 abstractors, as in the architecture

@@ -4,7 +4,7 @@ In this work we have proposed a framework which extends Transformer models to
 naturally support types of relational learning, through cross-attention
 mechanisms that enforce a relational bottleneck, so that only information about relations between encoder states
 are used in transformations of the abstract states.
-Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
+Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the Transformer architecture to identify relevant relationships.
 Experiments with sorting and other relational tasks indicate that this framework has the potential to combine the
 benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities supported by symbolic processing.
 Limitations of the current approach suggest interesting
@@ -13,7 +13,7 @@ how it may relate to the algorithms of human cognition as implemented in the bra
 improved alignment of natural and artificial intelligences.
 
 Two directions to highlight are the use of external memories and attentional control. 
-%The flexibility of transformer attention mechanisms comes with a computational and statistical price. An attention head over 
+%The flexibility of Transformer attention mechanisms comes with a computational and statistical price. An attention head over 
 %$O(\m)$ objects incurs a quadratic $O(\m^2)$ cost to compute attention weights, and increasing $m$ and the number of attention heads results in language models with a large number of parameters, requiring large amounts of data to fit.
 From a statistical perspective, the use of an external memory with relational cross attention effectively allows nonparametric and semiparametric models. To make this explicit, note that the classical kernel regression estimator for the Gaussian kernel
 %given by
@@ -47,14 +47,14 @@ a particular episode $x_i$. Under a learned relation, the model associates the r
 
 A second direction, also motivated from cognitive neuroscience principles, is to replace 
 parallel execution of attention heads with serial evaluation as directed by a controller. 
-In standard transformers, attention operations are spread across multiple attention heads,
+In standard Transformers, attention operations are spread across multiple attention heads,
 each of which is restricted in scope, and that are evaluated in parallel across GPUs by embedding them in matrix
 multiplication. This is a powerful, but energy inefficient approach, which also reduces the pressure for learned
 representations to be abstract and attentional operations to be generalizable, in ways that are exhibited
 by the flexibility of human cognition.  It will be important to add a ``cognitive control'' mechanism that resides on
 the abstract side and is responsible for selecting attention heads to be evaluated in each step in a serial fashion \citep{cohen2017cognitive}.  This could be seen as analogous to evaluative, gating and updating functions in anterior cingulate cortex, prefrontal cortex and basal ganglia
 \citep{frank2001interactions,evc,braver2000control,wmPFC}
-and implemented using neural network mechanisms such as LSTMs \citep{lstm} or variations on the transformer
+and implemented using neural network mechanisms such as LSTMs \citep{lstm} or variations on the Transformer
 architecture \citep{gamr}.
 
 
