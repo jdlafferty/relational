@@ -190,7 +190,7 @@ The precise meaning of a ``\(k\)th order relational function'' will be made clea
 
 	where $i,j \in [m]$ indexes the relation pair, $k$ indexes the dimension of the relation, $W_1, W_2$ are projection matrices, $\phi_r$ is the relational filter/embedder, and $\sigma_{\mathrm{rel}}$ is the relation activation function.
 
-	$R^{(2)}$ is a relation tensor which computes the relations between the abstract object output \textit{by the previous abstractor}, $\bm{A}^{(1)} = (a_1^{(1)}, \ldots, a_\m^{(1)})$. The space over which $R^{(2)}$ computes relations is itself a space of relation vectors. Recall that $a_i = \phi^{(1)}(\bm{S}^{(1)} R_i^{(1)})$ summarizes object $i$'s relations. Hence, $R^{(2)}[i,j]$ models the relation between object \(i\)'s relations and object \(j\)'s relations. Hence, the abstract objects at the second abstractor can be written as
+	$R^{(2)}$ is a relation tensor which computes the relations between the abstract object output \textit{by the previous Abstractor}, $\bm{A}^{(1)} = (a_1^{(1)}, \ldots, a_\m^{(1)})$. The space over which $R^{(2)}$ computes relations is itself a space of relation vectors. Recall that $a_i = \phi^{(1)}(\bm{S}^{(1)} R_i^{(1)})$ summarizes object $i$'s relations. Hence, $R^{(2)}[i,j]$ models the relation between object \(i\)'s relations and object \(j\)'s relations. Hence, the abstract objects at the second Abstractor can be written as
 
 	\begin{equation*}
 		a_i^{(2)} = \tilde{\phi}^{(2)}\left( \begin{bmatrix}

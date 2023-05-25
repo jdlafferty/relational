@@ -9,14 +9,14 @@
 \section{The Abstractor Framework}
 \label{sec:abstractor_framework}
 
-At a high level, the primary function of an abstractor is to compute abstract relational features of its
-inputs.\footnote{In this paper, we will tend to use the name `Abstractor' to refer to both the module, the framework, and models which contain the Abstractor module as a main component.} That is, given a set or sequence of input objects $o_1, \ldots, o_\m$, the relational abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on
+At a high level, the primary function of an Abstractor is to compute abstract relational features of its
+inputs.\footnote{In this paper, we will tend to use the name `Abstractor' to refer to both the module, the framework, and models which contain the Abstractor module as a main component.} That is, given a set or sequence of input objects $o_1, \ldots, o_\m$, the relational Abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on
 the set of pairwise relations between objects ${\{ r(o_i, o_j) \}}_{ij}$. The relations and the computations on them are learned to carry out a specific prediction task. This learning is often end-to-end, but, crucially, the Abstractor framework naturally supports modular learning.
 \subsection{Relational symbolic message-passing}
 \label{ssec:message_passing}
 
-At the core of abstractors is an operation we refer to as \textit{relational symbolic message-passing}.
-The input to this operation is a relation tensor $R = \left[r(o_i, o_j)\right]_{i,j=1}^\m$, where $r(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an abstractor models pairwise relations and computes the relation tensor in the next subsection.
+At the core of Abstractors is an operation we refer to as \textit{relational symbolic message-passing}.
+The input to this operation is a relation tensor $R = \left[r(o_i, o_j)\right]_{i,j=1}^\m$, where $r(o_i, o_j) \in \mathbb{R}^{d_r}$ is a vector describing the relation between object $o_i$ and object $o_j$. We will come back to how an Abstractor models pairwise relations and computes the relation tensor in the next subsection.
 
 The starting point of symbolic message-passing is a set of learnable symbols $s_1, \ldots, s_\m \in \mathbb{R}^{d_s}$, where the hyperparameter $d_s$ is the dimension of the symbolic vectors. We call these parameters \textit{symbols} because each of them references (or ``is bound to'') a particular object, but they are independent of the values of these objects. That is, the $i$th symbol references the $i$th object, but the value of $s_i$ is independent of the value of $o_i$. The use of these learned, input-independent symbols is how symbolic message-passing achieves its abstraction.
 
@@ -122,7 +122,7 @@ The initial abstract state is $\bm{S} = (s_1, \ldots, s_\m)$ with abstract symbo
 
 Only relational information, computed through inner products, is used to transform the abstract variables; no information about the individual object representations themselves is directly accessed by the abstract side. This enables greater out-of-distribution generalization ability since it allows for the representations of the objects to change as long as the transformed inner products are approximately preserved (see~\Cref{sec:experiments} for experiments exploring this). This is a crucial component of the idea of the relational bottleneck.
 
-\Cref{alg:abstractor} provides an algorithmic description of the archetypical abstractor.
+\Cref{alg:abstractor} provides an algorithmic description of the archetypical Abstractor.
 
 \begin{algorithm}[ht!]
 	\caption{Abstractor}\label{alg:abstractor}
@@ -189,7 +189,7 @@ For completeness, ~\Cref{alg:relational_abstractor} gives an algorithmic descrip
 The Abstractor module fits naturally into Transformer models. Hence, we position the Abstractor framework as an extension of Transformers. In particular, combining an Abstractor with Transformer Encoder and Decoder modules forms a powerful sequence model with enhanced abilities for relational reasoning and abstraction.
 
 In our extended framework, processing occurs in encoder/decoder modules that handle particular types of information,
-separated from modules for ``abstract inference.'' The encoders/decoders and the abstractor modules communicate
+separated from modules for ``abstract inference.'' The encoders/decoders and the Abstractor modules communicate
 through cross-attention mechanisms that couple abstract states with specific information in encoder/decoder modules.  The abstract layers are composable to include a hierarchy of abstract modules in which higher order relations are learned from lower level relations, analogous to how convolutional layers are composed in deep neural networks.
 
 %\begin{figure}[t]
@@ -223,7 +223,7 @@ This ability to integrate with transformers and process domain-specific informat
 %presented with 12 cards, each of which contains figures that vary along four dimensions (color, number, pattern, and
 %shape; see Figure \ref{fig_set}a) and they must find subsets of three cards which obey a deceptively simple rule: along each dimension, all cards in a set must either have the same or unique values (e.g., in Figure \ref{fig_set}, cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs: same color, same number, different patterns, different shapes).
 %
-%Algorithmically, task performance can be described as follows. The visual arrangement of cards is processed into a set of encoder states $E$ by standard deep learning mechanisms. The abstractor, starting in some initial abstract state $A$, transforms the state by the evaluation of attention heads that extract relations between the cards, each head giving a relation between them in a learned attribute.
+%Algorithmically, task performance can be described as follows. The visual arrangement of cards is processed into a set of encoder states $E$ by standard deep learning mechanisms. The Abstractor, starting in some initial abstract state $A$, transforms the state by the evaluation of attention heads that extract relations between the cards, each head giving a relation between them in a learned attribute.
 %
 %\def\redcard{\colorbox{red!30}{R}\hskip.2em}
 %\def\bluecard{\colorbox{blue!30}{B}\hskip.2em}
@@ -264,7 +264,7 @@ This ability to integrate with transformers and process domain-specific informat
 %\end{tabular}
 %\vspace{-1mm}
 %\end{center}
-%\caption{Illustration of mechanism used in abstractor layers with relational cross attention using the game of SET (see text for description).
+%\caption{Illustration of mechanism used in Abstractor layers with relational cross attention using the game of SET (see text for description).
 %%To provide a basic working of example of abstraction in our framework,
 %As an example, consider an initial abstract symbol $S = (s_1,s_2,s_3)$ for three cards, and the color attribute.
 %%, for concreteness.
@@ -274,7 +274,7 @@ This ability to integrate with transformers and process domain-specific informat
 %
 
 
-\subsection{Configuring abstractors for different tasks}
+\subsection{Configuring Abstractors for different tasks}
 \def\module#1{\mbox{\small\texttt{#1}}}
 
 Abstractors can be used to approach a variety of relational learning tasks. In the case of classification
@@ -284,18 +284,18 @@ and the discriminant or regression function is computed as $f(A)$, where $A$ is 
 For relational sequence-to-sequence tasks, the default architecture is
 $$\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}$$
 
-In a ``fully relational'' task, the decoder only attends to the abstractor, and therefore only uses relational information from the input. Fully relational tasks are those which can be solved using only relational information, without any information about the individual objects. An example of a fully relational task is sorting objects; we give experimental details for this example in Section~\ref{sec:experiments}.
+In a ``fully relational'' task, the decoder only attends to the Abstractor, and therefore only uses relational information from the input. Fully relational tasks are those which can be solved using only relational information, without any information about the individual objects. An example of a fully relational task is sorting objects; we give experimental details for this example in Section~\ref{sec:experiments}.
 
-In a ``partially-relational'' task, the relational information is crucial, but information about individual objects is also important. Here, we propose an architecture in which the decoder attends to both the abstractor and encoder modules. This can be done by either concatenating the encoder and abstractor states (i.e.: attend to $\text{concat}(E, A)$) or to iteratively cross-attend to the Encoder and Abstractor. We call this a ``sensory-connected'' Abstractor.
+In a ``partially-relational'' task, the relational information is crucial, but information about individual objects is also important. Here, we propose an architecture in which the decoder attends to both the Abstractor and encoder modules. This can be done by either concatenating the encoder and Abstractor states (i.e.: attend to $\text{concat}(E, A)$) or to iteratively cross-attend to the Encoder and Abstractor. We call this a ``sensory-connected'' Abstractor.
 
 % JDC: IT MIGHT BE GOOD, IF POSSIBLE TO INCLUDE AN "INLINE SCHEMATIC" FOR THIS CASE AS WELL, WITH A "BYPASS" ARROW
 % (RESNET STYLE) FROM ENCODER TO DECODER (THOUGH I DON'T KNOW HOW TO DO THIS IN TEX!), TO MAKE IT VISIBLY CLEAR THAT
 % THE FRAMEWORK IS FLEXIBLE.
-This provides an extension of general sequence-to-sequence models with transformers. In this paper, to highlight the capabilities of the framework, we focus our experiments on fully relational abstractors. However, partially relational abstractors are likely to be necessary for more realistic tasks. We hypothesize that a sensory-connected Abstractor model would yield benefits on language tasks.
+This provides an extension of general sequence-to-sequence models with transformers. In this paper, to highlight the capabilities of the framework, we focus our experiments on fully relational Abstractors. However, partially relational Abstractors are likely to be necessary for more realistic tasks. We hypothesize that a sensory-connected Abstractor model would yield benefits on language tasks.
 
 We note that learning higher order relations is made possible by composing
 abstractors, as in the architecture
 \begin{equation*}\module{Encoder} \rightarrow \module{Abstractor} \rightarrow \module{Abstractor} \rightarrow \module{Decoder}.
 \end{equation*}
-Since a one-layer abstractor is able to compute a large class of functions on relations, chaining together abstractors allows the computation of relations on relations (higher-order relations). We formalize these comments in Section~\ref{sec:function_spaces}.
+Since a one-layer Abstractor is able to compute a large class of functions on relations, chaining together Abstractors allows the computation of relations on relations (higher-order relations). We formalize these comments in Section~\ref{sec:function_spaces}.
 
