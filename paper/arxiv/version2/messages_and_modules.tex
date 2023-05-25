@@ -179,7 +179,7 @@ For completeness, ~\Cref{alg:relational_abstractor} gives an algorithmic descrip
 
     \For{$l \gets 1$ \KwTo $L$}{
         $\bm{A} \gets \text{SelfAttention}^{(l)}(\bm{A})$\;
-        $\bm{A} \gets \text{RelationalAttention}^{(l)}(\bm{X}, \bm{S})$\;
+        $\bm{A} \gets \text{RelationalCrossAttention}^{(l)}(\bm{X}, \bm{S})$\;
         $\bm{A} \gets \phi^{(l)}(\bm{A})$\;
         }
 \end{algorithm}
