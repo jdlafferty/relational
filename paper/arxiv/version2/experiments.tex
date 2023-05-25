@@ -11,11 +11,9 @@ Another limitation is that it can only model single-dimensional relations---for 
 
 We generate $N = 32$ ``random objects'' represented by iid Gaussian vectors, $o_i \overset{iid}{\sim} \mathcal{N}(0,
 I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \prec \cdots \prec o_N$. We train
-several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 15\% are held out as a validation set (for early stopping) and 35\% as a test set. We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set (10 trials for each training set size). Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation.
-% JDL commented out undefined alg, for now
-%The Abstractor model %follows~\Cref{alg:...}
-%has parameters \texttt{num\_layers=1, rel\_dim=4, symbol\_dim=64, proj\_dim=16}. CorelNet uses a dense layer as the %embedder $\phi$. The same two-layer MLP is used as the final classification layer in both models.
-We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~(\Cref{fig:exp_order_relation}).
+several different relational models to learn this order relation. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 15\% are held out as a validation set (for early stopping) and 35\% as a test set. We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set (10 trials for each training set size). Note that under this set up, we are evaluating the models on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation. We observe that a simple Abstractor model is able to learn the relation while CorelNet cannot~(\Cref{fig:exp_order_relation}).
+
+For completeness, we also compare to a standard Transformer model. The transformer model performs slightly better than the Abstractor on this simple task. We include this to highlight that an Abstractor will not necessarily be superior to a Transformer uniformly on all tasks, but rather that it can realize significant gains on tasks with complex relational structure (see the following experiments).
 
 \begin{figure*}
     \vskip-.2in
