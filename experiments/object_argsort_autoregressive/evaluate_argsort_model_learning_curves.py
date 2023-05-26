@@ -1,8 +1,8 @@
 # RANDOM OBJECT AUTOREGRESSIVE ARGSORT 
 # We generate random objects (as gaussian vectors) and associate an ordering to them.
-# We train abstracter models to learn how to sort these objects
+# We train abstractor models to learn how to sort these objects
 # To test the generalization of abstracters, we first train one on another object-sorting task, 
-# then fix the abstracter module's weights and train the encoder/decoder
+# then initialize w those weights and train on the primary task
 # The models do 'argsorting', meaning they predict the argsort of the sequnce.
 
 import numpy as np
@@ -17,7 +17,9 @@ from sklearn.model_selection import train_test_split
 
 import sys; sys.path.append('../'); sys.path.append('../..')
 import seq2seq_abstracter_models
+import autoregressive_abstractor
 import utils
+from eval_utils import evaluate_seq2seq_model, log_to_wandb
 
 # region SETUP
 
@@ -26,7 +28,7 @@ seed = None
 # parse script arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str,
-    choices=('transformer', 'rel-abstracter', 'sym-abstracter', 'simple-abstractor', 'ablation-abstractor'),
+    choices=('transformer', 'abstractor', 'rel-abstracter', 'sym-abstracter', 'simple-abstractor', 'ablation-abstractor'),
     help='the model to evaluate learning curves on')
 parser.add_argument('--pretraining_mode', default='none', type=str,
     choices=('none', 'pretraining'),
@@ -41,7 +43,7 @@ parser.add_argument('--eval_task_data_path', default='object_sorting_datasets/ta
     type=str, help='path to npy file containing sorting task dataset')
 parser.add_argument('--pretraining_train_size', default=1_000, type=int,
     help='training set size for pre-training (only used for pre-training tasks)')
-parser.add_argument('--n_epochs', default=200, type=int, help='number of epochs to train each model for')
+parser.add_argument('--n_epochs', default=500, type=int, help='number of epochs to train each model for')
 parser.add_argument('--early_stopping', default=True, type=bool, help='whether to use early stopping')
 parser.add_argument('--min_train_size', default=500, type=int, help='minimum training set size')
 parser.add_argument('--max_train_size', default=5000, type=int, help='maximum training set size')
@@ -71,14 +73,14 @@ logger.setLevel(logging.ERROR)
 wandb_project_name = args.wandb_project_name
 
 
-def create_callbacks(monitor='loss'):
+def create_callbacks(monitor='val_teacher_forcing_accuracy'):
     callbacks = [
 #         tf.keras.callbacks.ReduceLROnPlateau( monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='auto'),
         wandb.keras.WandbMetricsLogger(log_freq='epoch'),
         ]
 
     if args.early_stopping:
-        callbacks.append(tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, mode='auto', restore_best_weights=True))
+        callbacks.append(tf.keras.callbacks.EarlyStopping(monitor=monitor, patience=50, mode='max', restore_best_weights=True))
 
     return callbacks
 
@@ -140,51 +142,74 @@ ablation_abstractor_kwargs = dict(
     mha_activation_type='softmax'
     )
 
+autoreg_abstractor_kwargs = dict(
+        encoder_kwargs=dict(num_layers=2, num_heads=4, dff=64, dropout_rate=0.1),
+        abstractor_kwargs=dict(
+            num_layers=2,
+            rel_dim=4,
+            symbol_dim=64,
+            proj_dim=8,
+            symmetric_rels=False,
+            encoder_kwargs=dict(use_bias=True),
+            rel_activation_type='softmax',
+            use_self_attn=False,
+            use_layer_norm=False,
+            dropout_rate=0.2),
+        decoder_kwargs=dict(num_layers=1, num_heads=4, dff=64, dropout_rate=0.1),
+        input_vocab='vector',
+        target_vocab=seqs_length+1,
+        embedding_dim=64,
+        output_dim=seqs_length,
+        abstractor_type='abstractor',
+        abstractor_on='encoder',
+        decoder_on='abstractor',
+        name='autoregressive_abstractor')
+
 # endregion
 
-# region evaluation code
-def evaluate_seq2seq_model(model, source_test, target_test, labels_test, start_token, print_=False):
+# # region evaluation code
+# def evaluate_seq2seq_model(model, source_test, target_test, labels_test, start_token, print_=False):
     
-    n = len(source_test)
-    output = np.zeros(shape=(n, (seqs_length+1)), dtype=int)
-    output[:,0] = start_token
-    for i in range(seqs_length):
-        predictions = model((source_test, output[:, :-1]), training=False)
-        predictions = predictions[:, i, :]
-        predicted_id = tf.argmax(predictions, axis=-1)
-        output[:,i+1] = predicted_id
+#     n = len(source_test)
+#     output = np.zeros(shape=(n, (seqs_length+1)), dtype=int)
+#     output[:,0] = start_token
+#     for i in range(seqs_length):
+#         predictions = model((source_test, output[:, :-1]), training=False)
+#         predictions = predictions[:, i, :]
+#         predicted_id = tf.argmax(predictions, axis=-1)
+#         output[:,i+1] = predicted_id
 
-    elementwise_acc = (np.mean(output[:,1:] == labels_test))
-    acc_per_position = [np.mean(output[:, i+1] == labels_test[:, i]) for i in range(seqs_length)]
-    seq_acc = np.mean(np.all(output[:,1:]==labels_test, axis=1))
-
-
-    teacher_forcing_acc = teacher_forcing_acc_metric(labels_test, model([source_test, target_test]))
-    teacher_forcing_acc_metric.reset_state()
-
-    if print_:
-        print('element-wise accuracy: %.2f%%' % (100*elementwise_acc))
-        print('full sequence accuracy: %.2f%%' % (100*seq_acc))
-        print('teacher-forcing accuracy:  %.2f%%' % (100*teacher_forcing_acc))
+#     elementwise_acc = (np.mean(output[:,1:] == labels_test))
+#     acc_per_position = [np.mean(output[:, i+1] == labels_test[:, i]) for i in range(seqs_length)]
+#     seq_acc = np.mean(np.all(output[:,1:]==labels_test, axis=1))
 
 
-    return_dict = {
-        'elementwise_accuracy': elementwise_acc, 'full_sequence_accuracy': seq_acc,
-        'teacher_forcing_accuracy': teacher_forcing_acc, 'acc_by_position': acc_per_position
-        }
+#     teacher_forcing_acc = teacher_forcing_acc_metric(labels_test, model([source_test, target_test]))
+#     teacher_forcing_acc_metric.reset_state()
 
-    return return_dict
+#     if print_:
+#         print('element-wise accuracy: %.2f%%' % (100*elementwise_acc))
+#         print('full sequence accuracy: %.2f%%' % (100*seq_acc))
+#         print('teacher-forcing accuracy:  %.2f%%' % (100*teacher_forcing_acc))
 
-def log_to_wandb(model, evaluation_dict):
-    acc_by_position_table = wandb.Table(
-        data=[(i, acc) for i, acc in enumerate(evaluation_dict['acc_by_position'])], 
-        columns=["position", "element-wise accuracy at position"])
 
-    evaluation_dict['acc_by_position'] = wandb.plot.line(
-        acc_by_position_table, "position", "element-wise accuracy at position",
-        title="Element-wise Accuracy By Position")
+#     return_dict = {
+#         'elementwise_accuracy': elementwise_acc, 'full_sequence_accuracy': seq_acc,
+#         'teacher_forcing_accuracy': teacher_forcing_acc, 'acc_by_position': acc_per_position
+#         }
 
-    wandb.log(evaluation_dict)
+#     return return_dict
+
+# def log_to_wandb(model, evaluation_dict):
+#     acc_by_position_table = wandb.Table(
+#         data=[(i, acc) for i, acc in enumerate(evaluation_dict['acc_by_position'])], 
+#         columns=["position", "element-wise accuracy at position"])
+
+#     evaluation_dict['acc_by_position'] = wandb.plot.line(
+#         acc_by_position_table, "position", "element-wise accuracy at position",
+#         title="Element-wise Accuracy By Position")
+
+#     wandb.log(evaluation_dict)
 
 max_train_size = args.max_train_size
 train_size_step = args.train_size_step
@@ -328,6 +353,63 @@ if args.model == 'transformer':
     else:
         raise NotImplementedError(f'`pretraining_mode` {args.pretraining_mode} is invalid`')
 
+# Autoregressive Abstractor
+elif args.model == 'abstractor':
+    # standard evaluation
+    if args.pretraining_mode == 'none':
+        def create_model():
+            argsort_model = autoregressive_abstractor.AutoregressiveAbstractor(
+                **autoreg_abstractor_kwargs)
+
+            argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+            argsort_model((source_train[:32], target_train[:32]));
+
+            return argsort_model
+        
+        group_name = 'Abstractor'
+    
+    # if evaluating generalization via pre-training
+    elif args.pretraining_mode in ['pretraining']:
+        
+        # fit model on pre-training task
+        pretrained_model = autoregressive_abstractor.AutoregressiveAbstractor(
+            **autoreg_abstractor_kwargs)
+
+        pretrained_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+        pretrained_model((source_train_pretraining[:32], target_train_pretraining[:32]));
+
+        utils.print_section('Fitting Model on Pre-training Task')
+        run = wandb.init(project=wandb_project_name, name=f'pretraining_mode={args.pretraining_mode}',
+            group=f'Pre-training Task ({args.pretraining_task_type}); Abstractor', 
+            config={
+                'train size': args.pretraining_train_size, 
+                'group': f'Pre-training Task ({args.pretraining_task_type}); Abstractor',
+                'pretraining_mode': args.pretraining_mode}
+            )
+        history = pretrained_model.fit(X_train, y_train, validation_data=(X_val, y_val), verbose=0, callbacks=create_callbacks(), **fit_kwargs)
+        eval_dict = evaluate_seq2seq_model(pretrained_model, source_test_pretraining, target_test_pretraining, labels_test_pretraining,
+            start_token_pretraining,  print_=False)
+        log_to_wandb(pretrained_model, eval_dict)
+        wandb.finish(quiet=True)
+
+        if args.pretraining_mode == 'pretraining':
+            def create_model():
+                argsort_model = autoregressive_abstractor.AutoregressiveAbstractor(
+                **autoreg_abstractor_kwargs)
+
+                argsort_model.compile(loss=loss, optimizer=create_opt(), metrics=metrics)
+                argsort_model((source_train[:32], target_train[:32]));
+
+                for model_layer, pretrained_layer in zip(argsort_model.layers[:-1], pretrained_model.layers[:-1]):
+                    model_layer.set_weights(pretrained_layer.weights)
+                    model_layer.trainable = args.init_trainable
+
+                return argsort_model
+
+            group_name = f'Abstractor (Pre-Trained; {args.pretraining_task_type})'
+    else:
+        raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
+
 # Relational abstracter
 elif args.model == 'rel-abstracter':
     # standard evaluation
@@ -450,7 +532,7 @@ elif args.model == 'simple-abstractor':
     else:
         raise ValueError(f'`pretraining_mode` {args.pretraining_mode} is invalid')
 
-# Relational abstracter
+# Symbolic abstracter
 elif args.model == 'sym-abstracter':
     # standard evaluation
     if args.pretraining_mode == 'none':
