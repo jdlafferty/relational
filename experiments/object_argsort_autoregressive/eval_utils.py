@@ -1,5 +1,6 @@
 import numpy as np
 from transformer_modules import TeacherForcingAccuracy
+import wandb
 
 teacher_forcing_acc_metric = TeacherForcingAccuracy(ignore_class=None)
 
