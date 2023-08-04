@@ -2,7 +2,8 @@
 
 import tensorflow as tf
 
-from multi_head_attention import MultiHeadAttention
+# from multi_head_attention import MultiHeadAttention
+from tensorflow.keras.layers import MultiHeadAttention
 
 class BaseAttention(tf.keras.layers.Layer):
     def __init__(self,
