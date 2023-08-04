@@ -10,14 +10,17 @@ import string
 import numpy as np
 import tensorflow.compat.v2 as tf
 
+from tensorflow.keras.layers import Layer
 from keras import constraints
 from keras import initializers
 from keras import regularizers
-from keras.engine.base_layer import Layer
-from keras.layers import activation
-from keras.layers import core
-from keras.layers import regularization
-from keras.utils import tf_utils
+# from keras.layers import activation
+# from keras.layers import core
+from tensorflow.keras.layers import EinsumDense
+# from keras.layers import regularization
+from tensorflow.keras.layers import Dropout
+# from keras.utils import tf_utils
+from tensorflow.python.keras.utils import tf_utils
 
 # isort: off
 from tensorflow.python.platform import tf_logging as logging
@@ -348,7 +351,7 @@ class MultiHeadAttention(Layer):
             einsum_equation, bias_axes, output_rank = _build_proj_equation(
                 free_dims, bound_dims=1, output_dims=2
             )
-            self._query_dense = core.EinsumDense(
+            self._query_dense = EinsumDense(
                 einsum_equation,
                 output_shape=_get_output_shape(
                     output_rank - 1, [self._num_heads, self._key_dim]
@@ -360,7 +363,7 @@ class MultiHeadAttention(Layer):
             einsum_equation, bias_axes, output_rank = _build_proj_equation(
                 self._key_shape.rank - 1, bound_dims=1, output_dims=2
             )
-            self._key_dense = core.EinsumDense(
+            self._key_dense = EinsumDense(
                 einsum_equation,
                 output_shape=_get_output_shape(
                     output_rank - 1, [self._num_heads, self._key_dim]
@@ -372,7 +375,7 @@ class MultiHeadAttention(Layer):
             einsum_equation, bias_axes, output_rank = _build_proj_equation(
                 self._value_shape.rank - 1, bound_dims=1, output_dims=2
             )
-            self._value_dense = core.EinsumDense(
+            self._value_dense = EinsumDense(
                 einsum_equation,
                 output_shape=_get_output_shape(
                     output_rank - 1, [self._num_heads, self._value_dim]
@@ -434,7 +437,7 @@ class MultiHeadAttention(Layer):
         einsum_equation, bias_axes, output_rank = _build_proj_equation(
             free_dims, bound_dims=2, output_dims=len(output_shape)
         )
-        return core.EinsumDense(
+        return EinsumDense(
             einsum_equation,
             output_shape=_get_output_shape(output_rank - 1, output_shape),
             bias_axes=bias_axes if self._use_bias else None,
@@ -468,11 +471,11 @@ class MultiHeadAttention(Layer):
             )
         )
         if activation_type == 'softmax':
-            self._activation = activation.Softmax(axis=norm_axes)
+            self._activation = tf.keras.layers.Softmax(axis=norm_axes)
         else:
             self._activation = tf.keras.layers.Activation(activation_type)
-        
-        self._dropout_layer = regularization.Dropout(rate=self._dropout)
+
+        self._dropout_layer = Dropout(rate=self._dropout)
 
     def _masked_softmax(self, attention_scores, attention_mask=None):
         # Normalize the attention scores to probabilities.
