@@ -153,6 +153,6 @@ print(model.summary())
 #region train model
 run = wandb.init(project=wandb_project_name, group=args.model, name=args.run_name,
                 config=vars(args))
-history = model.fit(train_ds, validation_data=val_ds, epochs=args.n_epochs, callbacks=create_callbacks())
+history = model.fit(train_ds, validation_data=val_ds, epochs=args.n_epochs, callbacks=create_callbacks(), verbose=0)
 wandb.finish(quiet=True)
 #endregion
