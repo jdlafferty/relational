@@ -20,9 +20,10 @@ seed = 314159
 
 # parse script arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, choices=('transformer', 'abstractor'))
+parser.add_argument('--model', type=str, choices=tuple(models.model_creator_dict.keys()))
 parser.add_argument('--n_epochs', default=10, type=int, help='number of epochs to train each model for')
 parser.add_argument('--train_size', default=-1, type=int, help='size of training set to take')
+parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
 parser.add_argument('--early_stopping', default=False, type=bool, help='whether to use early stopping')
 parser.add_argument('--wandb_project_name', type=str, help='W&B project name')
 parser.add_argument('--run_name', default=None, type=str, help='run namee')
@@ -129,7 +130,7 @@ def get_source_target_label(q,a):
 train_examples = train_examples.map(prepend_start_token).map(vectorize_qa).map(get_source_target_label)
 val_examples = val_examples.map(prepend_start_token).map(vectorize_qa).map(get_source_target_label)
 
-batch_size = 1024
+batch_size = args.batch_size
 buffer_size = 16_000
 train_ds = train_examples.shuffle(buffer_size).take(args.train_size).cache().batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
 val_ds = val_examples.batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
@@ -140,10 +141,8 @@ val_ds = val_examples.batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None)
 create_opt = lambda : tf.keras.optimizers.Adam()
 teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=None)
-if args.model == 'abstractor':
-    model = models.create_abstractor(input_vocab_size, target_vocab_size)
-elif args.model == 'transformer':
-    model = models.create_transformer(input_vocab_size, target_vocab_size)
+
+model = models.model_creator_dict[args.model](input_vocab_size, target_vocab_size)
 
 model.compile(loss=loss, optimizer=create_opt(), metrics=teacher_forcing_accuracy)
 model(next(iter(train_ds.take(1)))[0]); # build model
