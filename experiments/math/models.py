@@ -9,10 +9,25 @@ d_model = 512
 num_heads = 8
 dff = 2048
 num_layers = 1
+
+def get_params_by_size(size):
+    if size=='small':
+        d_model, num_heads, dff, num_layers = (64, 2, 128, 1)
+    elif size=='medium':
+        d_model, num_heads, dff, num_layers = (128, 4, 256, 1)
+    elif size=='large':
+        d_model, num_heads, dff, num_layers = (256, 8, 1024, 2)
+    elif size=='x-large':
+        d_model, num_heads, dff, num_layers = (512, 8, 2048, 2)
+    else:
+        raise ValueError(f'size {size} invalid')
+
+    return d_model, num_heads, dff, num_layers
 #endregion
 
 #region Transformer
-def create_transformer(input_vocab_size, target_vocab_size):
+def create_transformer(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
     transformer = Transformer(
         num_layers=num_layers, num_heads=num_heads, dff=dff, embedding_dim=d_model,
         input_vocab=input_vocab_size, target_vocab=target_vocab_size,
@@ -23,7 +38,8 @@ def create_transformer(input_vocab_size, target_vocab_size):
 
 
 #region Abstractor
-def create_abstractor(input_vocab_size, target_vocab_size):
+def create_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
@@ -47,7 +63,9 @@ def create_abstractor(input_vocab_size, target_vocab_size):
 #endregion
 
 #region Abstractor
-def create_abstractor2(input_vocab_size, target_vocab_size):
+def create_abstractor2(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
@@ -71,7 +89,9 @@ def create_abstractor2(input_vocab_size, target_vocab_size):
 #endregion
 
 #region Abstractor3
-def create_abstractor3(input_vocab_size, target_vocab_size):
+def create_abstractor3(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
@@ -95,7 +115,9 @@ def create_abstractor3(input_vocab_size, target_vocab_size):
 #endregion
 
 #region Abstractor4
-def create_abstractor4(input_vocab_size, target_vocab_size):
+def create_abstractor4(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
@@ -120,7 +142,9 @@ def create_abstractor4(input_vocab_size, target_vocab_size):
 
 
 #region RelationalAbstractor
-def create_relational_abstractor(input_vocab_size, target_vocab_size):
+def create_relational_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff,
