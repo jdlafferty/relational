@@ -21,6 +21,8 @@ seed = 314159
 # parse script arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, choices=tuple(models.model_creator_dict.keys()))
+parser.add_argument('--model_size', type=str, default='x-large')
+parser.add_argument('--task', type=str, choices=('algebra__linear_1d', 'comparison__closest'))
 parser.add_argument('--n_epochs', default=10, type=int, help='number of epochs to train each model for')
 parser.add_argument('--train_size', default=-1, type=int, help='size of training set to take')
 parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
@@ -75,12 +77,16 @@ fit_kwargs = {'epochs': args.n_epochs}
 
 #region Dataset
 train_examples, val_examples = tfds.load(
-    'math_dataset/algebra__linear_1d',
+    f'math_dataset/{args.task}',
     split=['train', 'test'],
     as_supervised=True)
 
 max_q_length = 60 # NOTE: this is for `algebera__linear_1d`
 max_a_length = 4
+
+# NOTE: for comparison__closest
+max_q_length = 90
+max_a_length = 10
 
 start_char = '@'
 eos_char = ';'
@@ -99,8 +105,8 @@ a_text_vectorizer = tf.keras.layers.TextVectorization(
     output_sequence_length=max_a_length+2,
 )
 
-q_text_vectorizer.load_assets('vectorizer_vocab')
-a_text_vectorizer.load_assets('vectorizer_vocab')
+q_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
+a_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
 
 def prepend_start_token(q,a):
     source = q
@@ -142,7 +148,7 @@ loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_cl
 create_opt = lambda : tf.keras.optimizers.Adam()
 teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=None)
 
-model = models.model_creator_dict[args.model](input_vocab_size, target_vocab_size)
+model = models.model_creator_dict[args.model](input_vocab_size, target_vocab_size, size=args.model_size)
 
 model.compile(loss=loss, optimizer=create_opt(), metrics=teacher_forcing_accuracy)
 model(next(iter(train_ds.take(1)))[0]); # build model
@@ -150,7 +156,7 @@ print(model.summary())
 #endregion
 
 #region train model
-run = wandb.init(project=wandb_project_name, group=args.model, name=args.run_name,
+run = wandb.init(project=wandb_project_name, group=f'{args.model}-{args.model_size}', name=args.run_name,
                 config=vars(args))
 history = model.fit(train_ds, validation_data=val_ds, epochs=args.n_epochs, callbacks=create_callbacks(), verbose=0)
 wandb.finish(quiet=True)
