@@ -1,0 +1,73 @@
+> It is mentioned in the main body as well as in the appendix that the symbolic message-passing can be applied several times. Will there be an observation of over-smoothing effect if applied too many times?
+
+Similar, to message-passing in GNNs, over-smoothing can result if too many iterations of message-passing are applied. Theorem 1 of [“Representation Learning on Graphs with Jumping Knowledge Networks”—Xu et. al.] provides one analysis of over-smoothing in message-passing neural networks. We will point out that the same tricks which combat over-smoothing in message-passing neural networks are also applicable here. For example, one can incorporate a residual connection, as is used in Transformers. In our implementation, whether a residual connection is used is a hyperparameter (see in the code in the supplement if interested). Finally, it is relevant to point out that the theory suggests that a deep Abstractor with many iterations of symbolic message-passing may not be necessary. Result 2 of the main text (Lemma B.1 of the supplement) shows that a single-layer Abstractor can model arbitrary first-order relations. To model more complex higher-order relations, one can compose several Abstractors together rather than make a single Abstractor deeper—over-smoothing is not a concern when composing Abstractor modules.
+
+> In line 103, what does the "may be useful to normalize the relations R via a soft-max" mean? Please provide more details.
+
+This comment is meant as a brief discussion of the effects of applying an activation function to the relation tensor. We will expand on this point in the final version of the paper. We give a brief explanation here. Let $X = (x_1, \ldots, x_m) \in \mathcal{X}^m$ be input sequence of objects. The relation tensor computes a $d_r$-dimensional vector of relations between each pair of objects $i,j \in [m]$. The $k \in [d_r]$ component of the relation vectors is given by the $m \times m$ matrix
+
+$$
+R_k = \sigma\left( \phi_1^{(k)}(X)^\top \phi_2^{(k)}(X)\right)
+$$
+
+where $\phi_1^{(k)}(X) = [\phi_1^{(k)}(x_1) \ \cdots  \ \phi_1^{(k)}(x_m)]$. Applying an activation function $\sigma$ to the relation matrix has empirical benefits. For instance if $\sigma$  is the tanh or sigmoid function, it acts as a normalization to a fixed range. If $\sigma$ is the softmax function, then rather than acting elementwise, it normalizes with respect to the context of the other relations involving each object. For example, object $i$’s relation with object $j$ is normalized to now depend on object $i$’s relation with all objects. That is,
+
+$$
+R_k[i,j] = \frac{\exp(\langle \phi_1^{(k)}(x_i), \phi_2^{(k)}(x_j)\rangle)}{\sum_t \exp(\langle \phi_1^{(k)}(x_i), \phi_2^{(k)}(x_t)\rangle)}.
+$$
+
+Sorting is one example where contextualizing the relations in this way may be useful. Suppose the inner product $\langle \phi_1(x_i), \phi_2(x_j)\rangle$ the captures the difference in the ordinal value of $x_i$ and $x_j$. By apply a softmax activation, $R_k[i,:]$ becomes contextualized such that the value of $R_k[i,j]$ now captures not only the ordinal difference between two objects, but also how that ordinal difference compares to the ordinal difference of $i$ with other objects.
+
+> In Eq. (2.4), the vectors fed to Q,K,V are changed to E,E,S, respectively. What is the benefit of doing this? How could it be if the vectors are E, S, S, respectively?
+
+Attention is an operation which takes three inputs, corresponding to queries, keys, and values. So, the notation $\mathrm{Attention}(Q \gets \cdot, K \gets \cdot, V \gets \cdot)$ simply means,
+
+$$
+\mathrm{Attention}(Q \gets X, \ K \gets Y, \ V \gets Z) = W_v Z \  \mathrm{Softmax}((W_q X)^\top (W_k Y))
+$$
+
+where $W_q, W_k, W_v$ are the parameters of the attention operation. The notation $Q \gets \cdot$ should be read as “the queries in the attention operation come from $\cdot$ ”. Equation 2.4 is saying that, in an architecture like the one shown in Figure 1 of the main paper where the input to the Abstractor is the encoder states $E$, relational symbolic message-passing corresponds to the attention operation $\mathrm{Attention}(Q \gets E, \ K \gets E, \ V \gets S)$, where $S$ are the symbols which are trainable parameters.
+
+Let us know if this answers your question or if we have misunderstood your confusion. The final version of our paper will revamp section 2 to make such things more clear.
+
+> I noticed that "relational bottleneck" is a central idea / support of this work. Can you formalize it? It would be good if it is discussed after its very first appearance.
+
+The “relational bottleneck” is indeed a central idea of this work. We agree that it should have been discussed more formally early in the paper. This will be an important edit to the final version of the paper. The idea of the relational bottleneck is to separate representations of the values of individual objects from representations of relations among objects. Standard self-attention in transformers encodes information about both relations as well as value information of individual objects. In the message-passing interpretation of self-attention, the messages being sent are value information of individual objects, and those messages are weighted by the relations between objects. The way that Abstractors and relational cross-attention achieve the relational bottleneck is that the messages being sent are *input-independent symbols,* which are weighted by the relations between objects. Hence, the Abstractor encodes purely relational information.
+
+> In line 133, what are lower level relations and higher order relations? Can you provide any examples?
+
+We will edit the paper to add an explanation of what precisely we mean by higher-order relations and provide some examples. This is explained in the corresponding theory within the supplement (though only formally, not intuitively). A one-layer abstractor returns a sequence of objects $A = (a_1, \ldots, a_m)$ where each $a_i$ encodes information about the relations of $i$ with all other objects. These are ‘relational objects’. Higher-order relations are relations between relational objects. This is what would be computed when we pass $A$ as input into another Abstractor.
+
+Concretely, consider as a simple example a relational match-to-sample task. You are given a sequence of four objects. The first two objects have a relation between them and the second two objects have a relation between them (the relations are typically same/different). The task is to determine whether the relation between the first pair of objects is the same as the relation between the second pair of objects. This is an example of a second-order relation. The first order relation is the relation within each pair of objects. The second-order relation is the relation between those two relations (i.e., whether the relation between the first pair is the same as the relation between the second pair).  This can be thought of in terms of first-order logic, where a truth statement can be built up in terms logical relations between component expressions (CNF being an example canonical form).
+
+The Abstractor framework can model higher-order relations by composing Abstractor modules.
+
+> In line 154, what are relational sequence-to-sequence tasks?
+
+A relational sequence-to-sequence task is a sequence-to-sequence task which relies on processing relational information between objects in the input sequence in order to generate the correct output sequence. An example of this is the sorting task in the experiments. The model needs to process the $\prec$ relation between objects in the input sequence in order to generate a sorted sequence of objects. Sequence-to-sequence tasks that rely on relational information are widespread; derivations of expressions in mathematics provide a rich class of examples (take Bayes’ rule as a simple example).
+
+This will be explained more clearly in the final version of the paper.
+
+> In line 170, the term "chaining together abstractors" may lead to confusion. Does it mean "abstract layers" in line 132?
+
+We apologize for the confusion here. It may be in part due to the use of the term “layer”. “Layer” might mean the number of times relational cross-attention is applied (similar to how the term “layer” is used for an encoder or a decoder). In Line 170, “layer” refers to the Abstractor module as a whole, which may include several steps of relational cross-attention. “Chaining together abstractors” means composing several abstractor modules together. For example, as depicted in Figure 3 of the page of figures.
+
+We will edit the paper to clarify what “composing Abstractors” means and to distinguish between abstractor “layers” and “modules”.
+
+> In line 184, the appearance of $\mathcal{X}$ is quite sudden. I managed to get what it refers to in appendix, but it would be better if it is described in the main text.
+
+Agreed. Thanks for the feedback.
+
+> As shown in Fig. 2(c), Abstractor requires much less data for training. What mechanism/design in Abstractor leads to this observation?
+
+We attribute the dramatic improvement in sample efficiency on relational tasks to the relational bottleneck within the Abstractor. The sorting task is a “purely relational” tasks in the sense that producing the “argsort” of any sequence of objects can be done by processing the pairwise $\prec$ relation. No further information about the values of individual objects is necessary. Hence, the relational bottleneck forms a useful inductive bias.
+
+> What are the pre-training tasks mentioned in line 285? Please provide more details.
+
+The pre-training task is described in the previous paragraph (lines 278-282). The experiment in this section builds on the experiment described in the previous section. The main task is the same as the previous section: to predict the argsort of the objects $\mathcal{O} = \mathcal{A} \times \mathcal{B}$, where the order relation on $\mathcal{O}$ corresponds to the order relation on $\mathcal{A}$ as the primary key and the order relation in $\mathcal{B}$ as the secondary key (both order relations generated randomly). The pre-training task is also to predict the argsort of objects in $\mathcal{O}$, where the order relation in $\mathcal{B}$ is the same as the main task but the ordinal relation in $\mathcal{A}$ is different (randomly permuted).
+
+Please let us know if any parts of the description in the text are unclear.
+
+> I would like to see the training time, learning-rate, and devices used for training.
+
+This will be added to the paper. The devices used are already there. We have also kept complete and detailed logs of all experiments (via wandb.ai) which are linked on the project repo. This was not included in the submission for anonymity but would be made public after the double-blind process. The logs include every trial of all experiments, both those that made it into the paper and not. The logs include metrics tracked by epoch, devices used, training time, code, system utilization, etc.
