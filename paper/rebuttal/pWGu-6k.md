@@ -24,7 +24,7 @@ $$
 a_i = \sum_j R[i,j] s_{j-i},
 $$
 
-where the learned parameters are now $S = (s_{-m+1}, \ldots, s_{-1}, s_0, s_1, \ldots, s_{m-1}) \in \reals^{d_s \times (2m - 1)}$.  This results in $a_i$ representing information about object $i$’s relations with the other objects in the sequence in a ‘centered’  coordinate system. Relative positional embeddings is one method that combats standard Transformer’s inability to generalize to longer sequences.
+where the learned parameters are now $S = (s_{-m+1}, \ldots, s_{-1}, s_0, s_1, \ldots, s_{m-1}) \in {\mathbb R}^{d_s \times (2m - 1)}$.  This results in $a_i$ representing information about object $i$’s relations with the other objects in the sequence in a ‘centered’  coordinate system. Relative positional embeddings is one method that combats standard Transformer’s inability to generalize to longer sequences.
 
 > While the authors encourage the use of asymmetric relationships by using different parameters for queries and keys, it would be nice to get a comparison with CoRelNet and other approaches on tasks that actually rely on symmetric relationships. This is important to understand whether the proposed method is still able to decently model such a setting, or just fails to generalize OoD here.
 
