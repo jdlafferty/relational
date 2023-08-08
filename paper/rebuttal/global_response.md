@@ -28,7 +28,7 @@ $$
 a_i \gets \sum_{j} R[i,j] s_j.
 $$
 
-Here, the learned parameters $s_1, \ldots, s_n \in \reals^{d_s}$ are called symbols because they act as abstract references to objects in the input sequence based on their position. To make this explicit, suppose that the symbols are simply the canonical basis vectors, $s_i = \bm{e}_i$ (i.e., 1 in position $i$ and 0 everywhere else). Then, the updated representation at the $i$th position is exactly the vector of relations with each object in the input sequence.
+Here, the learned parameters $s_1, \ldots, s_n \in {\mathbb R}^{d_s}$ are called symbols because they act as abstract references to objects in the input sequence based on their position. To make this explicit, suppose that the symbols are simply the canonical basis vectors, $s_i = \mathbf{e}_i$ (i.e., 1 in position $i$ and 0 everywhere else). Then, the updated representation at the $i$th position is exactly the vector of relations with each object in the input sequence.
 
 $$
 a_i = \begin{pmatrix}R[i,1] \\ \vdots \\ R[i,n]\end{pmatrix}
