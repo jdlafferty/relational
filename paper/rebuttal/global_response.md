@@ -1,3 +1,9 @@
+### perhaps add some boilerplate thanking reviewers??
+
+# Summary of contributions
+
+The primary contribution of our work is a modification of transformers that is simple to implement, but has profound consequences for generalization and sample efficiency. The most important distinguishing feature of the abstractor is that information processing is isolated from the sensory inputs by a ‘relational bottleneck’. This is accomplished by computing a relation tensor from the sensory inputs (treating them as the queries and keys in an attention operation), and then using this relation tensor to parameterize attention over a set of a standalone ‘symbols’ (treating these as the values in an attention operation). This has the consequence that symbols are only influenced by the relations between sensory inputs, not their specific content. This allows the abstractor to learn relational tasks much faster than a standard transformer, and to generalize learned relations out-of-distribution. At the same time, the abstractor maintains the strengths of the transformer framework, including the capacity to perform generative tasks, and the ease of modeling long-range dependencies between inputs.
+
 # A clearer description of the architecture: Relational Cross-Attention vs Iterative Message-passing
 
 First, some disambiguation of terminology. Symbolic relational message-passing and relational cross-attention refer to the same operation. Relational cross-attention is to an Abstractor what self-attention is to a Transformer—it is the core operation. In a transformer, self-attention has an interpretation as message-passing. Similarly, “symbolic relational message-passing” is the name we give the message-passing interpretation of the core operation in an Abstractor.
@@ -38,7 +44,7 @@ The fact that the messages are purely relational, and do not contain any informa
 
 # Comparison to other relational architectures
 
-The reason the comparison to existing relational architectures was minimal is that architectures like CorelNet or PrediNet are purely *discriminative*. One of the main contributions of the Abstractor is that it proposes a class of *generative* models for relational learning. This is done by developing a module which fits into transformer-based models. Our work is inspired by the findings of previous work on relational learning—in particular, that inner products model relations well, and that it is useful to separate the representations of value information from the representations of relational information.
+The reason the comparison to existing relational architectures was minimal is that architectures like CorelNet or PrediNet are purely *discriminative*, and therefore have no mechanism to perform many of the tasks that we investigate. One of the main contributions of the Abstractor is that it proposes a class of *generative* models for relational learning. This is done by developing a module which fits into transformer-based models. Our work is inspired by the findings of previous work on relational learning—in particular, that inner products model relations well, and that it is useful to separate the representations of value information from the representations of relational information.
 
 In our main experiments, we don’t compare performance to existing relational architectures like CorelNet because they are unable to perform such generative sequence-to-sequence tasks without major modifications (e.g., the autoregressive sorting task). Instead, we focus our comparison to standard Transformer models. Our results show that, while a Transformer can learn relational tasks given enough data, incorporating an Abstractor results in superior sample efficiency.
 
