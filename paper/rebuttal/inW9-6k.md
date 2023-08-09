@@ -1,8 +1,15 @@
 > For section 4.1, why not compare to the variant of CoRelNet model which can learn assymetric relations as mentioned in the footnote? Otherwise the difference is pretty contrived!
 
-Whether relations are modeled as symmetric or asymmetric is indeed not a fundamental limitation of either architecture. Section 4.1 is intended as a brief comment adding to the discussion on one of the findings of the CorelNet paper—that having symmetric relations is a good inductive bias. This was certainly the case in the tasks considered in that paper. The relation which needed to be modeled in those tasks was a simple “similarity” relation indicating whether two objects were the same or different.  Section 4.1 is making the point that the symmetry constraint is not always a good inductive bias and that many interesting relations are non-symmetric. A general relational architecture ought to be able to model asymmetric relations as well.
+Whether relations are modeled as symmetric or asymmetric is indeed not a fundamental limitation of either 
+architecture. Section 4.1 is intended as a brief comment adding to the discussion on one of the findings of the 
+CorelNet paper—that having symmetric relations is a good inductive bias. This was certainly the case in the tasks 
+considered in that paper, all of which tasks involved simple “similarity” relations indicating 
+whether two objects were the same or different. Section 4.1 is making the point that the symmetry constraint is not 
+always a good inductive bias and that many interesting relations are non-symmetric. A general relational architecture ought to be able to model asymmetric relations as well.
 
-This section was not intended to imply that the symmetry constraint is a fundamental difference between the two architectures, but rather that modeling asymmetric relations is sometimes useful/necessary for relational architectures in general. We will rephrase this section to make it more clear.
+This section was not intended to imply that the symmetry constraint is a fundamental difference between the two 
+architectures, but rather that modeling asymmetric relations is sometimes useful/necessary for relational 
+architectures in general, and that the Abstractor can do both. We will rephrase this section to make it more clear.
 
 > Footnote 1 on page 6 is an orphan, seemingly never referenced in the text...
 
@@ -10,7 +17,14 @@ Thanks for pointing this out. We fixed it.
 
 > I think the idea of a "sensory-connected" semi-bottlenecked network is enticing, as is the idea of evaluating on more general natural language tasks. This would dramatically strengthen the evaluation to find a way to check performance there, especially since this is the ultimate goal of cog-sci inspired relational architectures — general applicability, not just to sorting tasks.
 
-Agreed. Our focus was validating our key idea that relational cross attention improves sample-efficiency and out-of-distribution generalization of learning in relational tasks. With that validated in our experiments, we conjecture that the sensory-connected architecture should yield improvements for tasks which rely on both relational and sensory information. The intuitive reason is that the model retains the sensory-processing achieved by the Encoder while *adding* the Abstractor and its relational bottleneck for more efficient processing of relational information. Since the Decoder can attend to both the Encoder and the abstract symbols, the hypothesis is that this should translate to improved overall sample-efficiency and generalization. This remains to be experimentally verified in future work.
+Agreed. Our focus was validating our key idea that relational cross attention can dramaticaly improve 
+sample-efficiency and out-of-distribution generalization of learning in relational tasks. With that validated in our 
+experiments, we conjecture that the sensory-connected architecture should yield improvements for tasks which rely on 
+both relational and sensory information. The intuitive reason is that the model retains the sensory-processing 
+achieved by the Encoder while *adding* the Abstractor and its relational bottleneck for more efficient processing of 
+relational information. Since the Decoder can attend to both the Encoder and the abstract symbols, the hypothesis is 
+that this should translate to further improvements in overall sample-efficiency and generalization. This remains to be 
+experimentally verified in future work.
 
 > why does it take a Encoder -> Abstractor -> Abstracter -> Decoder architecture to learn higher order relations? From figure 1, my impression is that Encoder -> Abstractor -> Decoder is shown, and it seems like the "layers" of the network are the arrows, so there are still hierarchies of relational abstractor modules on top of each other.
 
@@ -19,8 +33,18 @@ This is an interesting finding that comes out of the theory. Here, we are distin
 A multi-layer Abstractor can work well empirically (some of our experiments use a 2-layer Abstractor), however the class of functions captured is not very interpretable. On the other hand, composing several 1-layer Abstractors together generates a function class which is interpretable. Informally, Result 3 (Lemma B.2 in the supplementary material) states that this class of functions captures higher-order relations.
 The proofs of Lemma B.1 and Lemma B.2 explain how this happens. 
 
-We note that although the class of functions generated by multi-layer abstractors has a less clear interpretation, multi-layer Abstractors may still yield empirical benefits (for example, the Abstractor in the experiments includes 2 layers). One possible reason for this is that in a 1-layer Abstractor $a_{i}$ represents information about $R[i,:]$ (i.e., the components of the relation tensor which involve object $i$). A multi-layer Abstractor enables $a_i$ to depend on components of the information tensor which don’t necessarily involve $i$.
+We note that although the class of functions generated by multi-layer abstractors has a less clear interpretation, 
+multi-layer Abstractors may still yield empirical benefits (for example, the Abstractor in the experiments includes 
+2 layers). One possible reason for this is that in a 1-layer Abstractor $a_{i}$ represents information about $R[i,:]
+$ (i.e., the components of the relation tensor which involve object $i$). A multi-layer Abstractor enables $a_i$ to 
+depend on components of the information tensor which don’t necessarily involve $i$, potentially allowing the network to 
+learn more abstract, higher-order relations (i.e., relations among relations).
 
 > Why is there no evaluation comparing the Abstractor to other proposed relational architectures mentioned in the text?
 
-This is a fair question. Please see the corresponding section in our global response. A main innovation of the Abstractor is that it extends relational learning to a class of *generative* models, which can solve relational *sequence-to-sequence* tasks (e.g., sorting). Existing relational architectures like CorelNet and PrediNet are purely discriminative. For this reason, while an Abstractor could be compared to existing relational architectures on discriminative tasks, we chose to focus our evaluation on what is gained over Transformers on relational sequence-to-sequences tasks. 
+This is a fair question. Please see the corresponding section in our global response. A main innovation of the 
+Abstractor is that it extends relational learning to a class of *generative* models, which can solve relational 
+*sequence-to-sequence* tasks (e.g., sorting). Existing relational architectures like CorelNet and PrediNet are 
+purely discriminative. For this reason, while an Abstractor could be compared to existing relational architectures 
+on discriminative tasks, we chose to focus our evaluation on what is gained over traditional Transformers on relational 
+sequence-to-sequences tasks. 
