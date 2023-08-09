@@ -1,10 +1,12 @@
-### perhaps add some boilerplate thanking reviewers??
+
+
+We thank the reviewers for their constructive comments, which will help us to significantly improve the paper. We found several misunderstandings in the reviews, which are no doubt due to our failure to communicate the key ideas in a clear manner. Below we make explicit what the contributions of the paper are, and how the paper can be modified to make these contributions clear to readers.
 
 # Summary of contributions
 
 The primary contribution of our work is a modification of transformers that is simple to implement, but has profound consequences for generalization and sample efficiency. The most important distinguishing feature of the abstractor is that information processing is isolated from the sensory inputs by a ‘relational bottleneck’. This is accomplished by computing a relation tensor from the sensory inputs (treating them as the queries and keys in an attention operation), and then using this relation tensor to parameterize attention over a set of a standalone ‘symbols’ (treating these as the values in an attention operation). This has the consequence that symbols are only influenced by the relations between sensory inputs, not their specific content. This allows the abstractor to learn relational tasks much faster than a standard transformer, and to generalize learned relations out-of-distribution. At the same time, the abstractor maintains the strengths of the transformer framework, including the capacity to perform generative tasks, and the ease of modeling long-range dependencies between inputs.
 
-# A clearer description of the architecture: Relational Cross-Attention vs Iterative Message-passing
+# A clearer description of the architecture
 
 First, some disambiguation of terminology. Symbolic relational message-passing and relational cross-attention refer to the same operation. Relational cross-attention is to an Abstractor what self-attention is to a Transformer—it is the core operation. In a transformer, self-attention has an interpretation as message-passing. Similarly, “symbolic relational message-passing” is the name we give the message-passing interpretation of the core operation in an Abstractor.
 
