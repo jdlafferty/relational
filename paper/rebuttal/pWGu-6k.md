@@ -16,15 +16,13 @@ The focus of the experiments is on purely relational tasks because improvements 
 
 > In line with the above problem, it also hinders the ability of the model to generalize and reason beyond the input sequence length seen as the abstract symbols are closely tied with their positions. This is a big limitation and vastly reduces the applicability of the system when compared to standard transformer models.
 
-The abstract symbols being tied to their positions (rather than the values of the objects they reference) is a crucial part of the architecture and is what enables the implementation of the relational bottleneck. It is true that this implies that the models will only reliably support the fixed input size they were trained on. But, in fact, the same is true of standard transformers, as they have been shown to dramatically fail in generalizing to longer sequences (see for example “The Devil is in the Detail: Simple Tricks Improve Systematic Generalization of Transformers” by Csordas et. al., and the references therein).
-
-Note that we can adjust the formulation of symbolic message-passing to instead use *position-relative* symbols. That is,
+The abstract symbols being tied to their positions (rather than the values of the objects they reference) is a crucial part of the architecture and is what enables the implementation of the relational bottleneck. However, as with standard transformers, a fixed (rather than learned) coding scheme could be used (e.g., sinusoidal position codes), which would in principle allow the same degree of generalization to longer sequences. In practice, this approach would not be likely to generalize reliably, just as with standard transformers (see for example “The Devil is in the Detail: Simple Tricks Improve Systematic Generalization of Transformers” by Csordas et. al., and the references therein). To address this, the same approaches used to improve generalization in transformers could be employed, such as using *relative* position encodings. In the context of symbolic message-passing, this would amount to using *position-relative* symbols. That is,
 
 $$
 a_i = \sum_j R[i,j] s_{j-i},
 $$
 
-where the learned parameters are now $S = (s_{-m+1}, \ldots, s_{-1}, s_0, s_1, \ldots, s_{m-1}) \in {\mathbb R}^{d_s \times (2m - 1)}$.  This results in $a_i$ representing information about object $i$’s relations with the other objects in the sequence in a ‘centered’  coordinate system. Relative positional embeddings is one method that combats standard Transformer’s inability to generalize to longer sequences.
+where the learned parameters are now $S = (s_{-m+1}, \ldots, s_{-1}, s_0, s_1, \ldots, s_{m-1}) \in {\mathbb R}^{d_s \times (2m - 1)}$.  This results in $a_i$ representing information about object $i$’s relations with the other objects in the sequence in a ‘centered’  coordinate system. Thus, abstractors have the same strengths and limitations as standard transformers with respect to generalization to longer sequences, and the same approaches can be employed to remedy this issue.
 
 > While the authors encourage the use of asymmetric relationships by using different parameters for queries and keys, it would be nice to get a comparison with CoRelNet and other approaches on tasks that actually rely on symmetric relationships. This is important to understand whether the proposed method is still able to decently model such a setting, or just fails to generalize OoD here.
 
