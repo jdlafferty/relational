@@ -21,7 +21,7 @@ transformers in processing sensory information.
 
 This is in fact one of the main advantages of the Abstractor over existing relational architectures. We will revise the paper to better explain this point.
 
-The focus of the experiments is on purely relational tasks because improvements in processing relational information is the main contribution of the Abstractor over standard Transformer-based models. Thus, initial work should validate that it in fact leads to improved sample-efficiency on relational tasks. We agree that experiments evaluating "mixed" architectures like the "sensory-connected" architecture we propose will be an important direction for future work.
+The focus of the experiments is on purely relational tasks because improvements in processing relational information is the main contribution of the Abstractor over standard Transformer-based models. Our work validates that the framework achieves improved sample-efficiency on relational tasks. We agree that experiments evaluating "mixed" architectures like the "sensory-connected" architecture we propose will be an important direction for future work.
 
 > In line with the above problem, it also hinders the ability of the model to generalize and reason beyond the input sequence length seen as the abstract symbols are closely tied with their positions. This is a big limitation and vastly reduces the applicability of the system when compared to standard transformer models.
 
@@ -46,3 +46,4 @@ symmetric relations is a good inductive bias. This was certainly the case in the
 Section 4.1 is making the point that the symmetry constraint is not always a good inductive bias and that many 
 interesting relations are non-symmetric. A general relational architecture ought to be able to model asymmetric 
 relations as well, which is what we test in this paper.
+The Abstractor is of course able to model symmetric relations by simply constraining the left-encoder and right-encoder to be equal. And CorelNet is able to model asymmetric relations by allowing for two different encoders. Whether relations are modeled as symmetric or asymmetric is not a fundamental limitation of either architecture. Section 4.1 is intended as a brief comment adding to the discussion on one of the findings of the CorelNet paper—that having symmetric relations can be a good inductive bias. This was certainly the case in the tasks considered in that paper. Section 4.1 is making the point that the symmetry constraint is not always a good inductive bias and that many interesting relations are non-symmetric. A general relational architecture ought to be able to model asymmetric relations as well.
