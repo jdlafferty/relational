@@ -81,12 +81,15 @@ train_examples, val_examples = tfds.load(
     split=['train', 'test'],
     as_supervised=True)
 
-max_q_length = 60 # NOTE: this is for `algebera__linear_1d`
-max_a_length = 4
+# max_q_length = 60 # NOTE: this is for `algebera__linear_1d`
+# max_a_length = 4
 
-# NOTE: for comparison__closest
-max_q_length = 90
-max_a_length = 10
+# # NOTE: for comparison__closest
+# max_q_length = 90
+# max_a_length = 10
+
+max_lengths = {'algebera__linear_1d': (60, 4), 'comparison__closest': (90, 10)}
+max_q_length, max_a_length = max_lengths[args.task]
 
 start_char = '@'
 eos_char = ';'
