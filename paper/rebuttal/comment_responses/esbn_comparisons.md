@@ -36,8 +36,8 @@ initialized, and not trained, which was sufficient to give separation between th
 In fact, we went further than the experiments in the ESBN paper, in several ways. First, 
 we modified the data to include scaled images, and replaced the same/different task with the task of learning the asymmetric relation "larger than/smaller than." For the corresponding RMTS task, the Abstractor again achieved 100% test accuracy, when trained on only a small fraction of the images. The original CorelNet is unable to perform this task due to the asymmetric relation. 
 
-Moreover, we considered learning 
-curves for the various tasks. In the scaled relational match-to-sample task (RMTS), we learned an Abstractor on larger than/smaller than task, and then used this as a pretrained relation in an Abstractor to perform RMTS, which has 12 input images (see above). This experiment parallels what we reported with pretraining for the sorting task. Our results were as follows:
+We next studied learning 
+curves for the various tasks. In the scaled relational match-to-sample task (RMTS), we learned an Abstractor on the "larger than/smaller than" task, and then used this as a pretrained relation in an Abstractor to perform RMTS, which has 12 input images (see above). This experiment parallels what we reported with pretraining for the sorting task. Our results were as follows:
 
 
 | Train Size | 5           | 10          | 50          | 100         | 150         | 200         | 250    | 
@@ -46,19 +46,16 @@ curves for the various tasks. In the scaled relational match-to-sample task (RMT
 
 
 Perhaps the most interesting variant we studied was 
-"distribution $n$" as a generalization of the "distribution of 3" task considered in the ESBN task. 
+"distribution of $n$" as a generalization of the "distribution of 3" task. 
 In an instance of "distribution of $n$", the input 
 consists of a sequence of $n$ objects, followed by 
-the first $n-1$ objects in a permutation of the first $n$.  For example, an instance of distribution of 5 might look like 
+the first $n-1$ objects of a permuted version of the sequence of $n$. For example, an instance of "distribution of 5" might look like 
 
 A B C D E <br>
 E C B A ? <br>
 Possible answers: B A F D (correct answer: D)
 
-We trained Abstractors all the way up to "distribution of 20", and trained *only on the first 23 images* (which is the minimum possible). The Abstractor achieved 100% test accuracy on previously unseen images. 
+We trained Abstractors all the way up to "distribution of 20", and trained *only on the first 23 images* (which is the minimum possible). The Abstractor achieved 100% test accuracy on previously unseen images. (The Abstractor used a pretrained same/different relation.)
 
-It is instructive (if non-intuitive) to consider how the Abstractor achieves this result. Effectively, the transformed abstract symbol $A_j$ for object $j$ is counting how 
-many times the encoded value $E_j$ appears among the 
-other encoded values. For answer F above, it appears zero times; for B it appears twice, and for D it appears exactly once. The perceptron that processes the transformed abstract symbols to train the discriminant function is able to easily discriminate 
-these values.
+It is instructive (if non-intuitive) to consider how the Abstractor achieves this result. Effectively, the transformed abstract symbol $A_j$ for object $j$ counts how many times the encoded value $E_j$ appears among the other encoded values. For answer F above, it appears zero times; for B it appears twice, and for D it appears exactly once. The multi-layer perceptron that processes the abstract symbols to learn the discriminant function is able to easily discriminate these values because they do not depend on the encoded images, only whether they are the same or different--this is the relational bottleneck.
 
