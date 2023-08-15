@@ -34,8 +34,7 @@ by two dense layers and 64 output neurons, with normalization so that the $\ell_
 initialized, and not trained, which was sufficient to give separation between these simple images. The Abstractors used symbols of dimension 64.
 
 In fact, we went further than the experiments in the ESBN paper, in several ways. First, 
-modified the relation to include scaled images. That is, rather than same/different, we learned an asymmetric
-relation that was "larger than/smaller than", and evaluated the corresponding relational tasks. For the corresponding RMTS task, the Abstractor again achieved 100% test accuracy, when trained on only a small fraction of the images. The original CorelNet is unable to perform this task. 
+we modified the data to include scaled images, and replaced the same/different task with the task of learning the asymmetric relation "larger than/smaller than." For the corresponding RMTS task, the Abstractor again achieved 100% test accuracy, when trained on only a small fraction of the images. The original CorelNet is unable to perform this task due to the asymmetric relation. 
 
 Moreover, we considered learning 
 curves for the various tasks. In the scaled relational match-to-sample task (RMTS), we learned an Abstractor on larger than/smaller than task, and then used this as a pretrained relation in an Abstractor to perform RMTS, which has 12 input images (see above). This experiment parallels what we reported with pretraining for the sorting task. Our results were as follows:
