@@ -1,0 +1,18 @@
+Thank you for the question. Here are a few results from experiments on discriminative tasks.
+
+**Learning pairwise order relation:**
+
+In section 4.1, we presented a "warm up" experiment on the discriminative task of predicting the order relation $\prec$ between two objects. In the paper, we compared against the standard variant of CorelNet which models relations as symmetric. This was an opportunity to add to the discussion of symmetry as an inductive bias, which was started in the CorelNet paper. The point of that section is that, while symmetry is a useful inductive bias when the underlying relation is symmetric, in general relations can be asymmetric and relational architectures ought to be able to model asymmetric relations as well.
+
+Of course, we can also compare the Abstractor to an asymmetric variant of CorelNet. We report those results below. The data is generated in an identical way to section 4.1: we generate $N=32$ random objectws represented by iid Gaussian vectors, and associate an order relation to them, $o_1 \prec o_2 \prec \cdots \prec o_N$. We randomly split the $N^2 = 1024$ pairs of objects into training (50%), validation (15%), and testing (30%) sets. We evaluate learning curves on both models by training on random subsets of the training set of varying size and evaluating on the hold-out test set. As mentioned in the paper, since the models will never have seen the pairs in the test set before, they would need to generalize based on the transitivity of the $\prec$ relation.
+
+The model architectures follow what is described in the supplement under section C.1, with the exception that we now use an asymmetric variant of CorelNet. The results are in the table below (for each training set size, we run 10 trials, and we report mean ± std of the test accuracy).
+
+| Train Size | 5           | 25          | 50          | 100         | 150         | 200         | 250         | 300         | 350         | 400         | 495         |
+|-----------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|
+| Abstractor | 0.522±0.037 | 0.520±0.054 | 0.519±0.066 | 0.602±0.056 | 0.707±0.029 | 0.745±0.081 | 0.742±0.060 | 0.775±0.071 | 0.847±0.029 | 0.858±0.032 | 0.886±0.021 |
+|  CorelNet  | 0.480±0.019 | 0.532±0.037 | 0.526±0.051 | 0.522±0.047 | 0.560±0.074 | 0.610±0.054 | 0.616±0.092 | 0.661±0.069 | 0.632±0.118 | 0.724±0.050 | 0.721±0.093 |
+
+This modification allows CorelNet to learn something about the $\prec$ relation (whereas the symmetric variant could not model the relation at all). However, the learning curve of the Abstractor remains significantly better. We hypothesize that this is because the Abstractor model has multiple heads to model the relation (in this experiment, 4 heads). Even though the $\prec$ relation can be modeled as a 1-dimensional relation, having multiple heads may have given the model, for e.g., more robustness or more optimization paths towards a good local optimum.
+
+Our perspective is the following: when the Abstractor is comparerd to other relational architectures on discriminative tasks, it can usually do just as well since it incorporates the lessons learned from that line of work (modeling relations as inner products, separating sensory information from relational information, etc.). However, we believe the more interesting aspect of the Abstractor is its ability to perform *generative* sequence-to-sequence tasks. This is a new type of task in the literature of relational architectures which previous architectures did not tackle.
