@@ -1,38 +1,36 @@
 
 **Results on ESBN tasks**
 
-We have run multiple experiments on the relational tasks described in the paper "Emergent symbols through binding in external memory" (ESBN). These are fairly simple discriminative tasks for relational learning, based on a set of 100 32x32 black and white images. 
+We have run multiple experiments on the relational tasks described in the paper "Emergent symbols through binding in external memory" (ESBN). These are fairly simple discriminative tasks for relational learning, based on a set of 100 32x32 black and white images:
 
 *Same/different:* <br>
 AA (same) or AB (different)
 
 *Relational match-to-sample:* <br> 
-AA BB CD (first and second match)<br>
-AB CC DE (first and third match)
+AA BB CD (first and second pairs match)<br>
+AB CC DE (first and third pairs match)
 
 *Distribution of three:*<br>
-A B A <br>
-C D ?  
-Possible answers: C A B D (first is correct)
+A B C <br>
+C B ?  
+Possible answers: C A B D (A is correct)
 
 *Identity rules:*<br>
 A B A <br>
 C A ?  
-Possible answers: E B F A (second is correct)
+Possible answers: E C F A (C is correct)
 
 Overall, we find that Abstractors 
 handle these discriminative tasks very well, 
 with out-of-domain generalization that 
 matches the best models presented in that paper. For example, for the same/different task,
-when trained on only 5 or 2 of the images, and tested on the remaining 95 or 98 images, the Abstractor 
-always achieves 100% test accuracy, matching the performance of ESBN reported in that paper, and out performing 
-the other models that included Transformers, Neural Turing Machines, LSTMs, PrediNet, Metalearned Neural Memories, 
-and Relation Net.
+when trained on pairs that use only 5 or 2 of the 100 images, and tested on pairs that use the remaining 95 or 98 images, the Abstractor 
+always achieves 100% test accuracy, matching the performance of ESBN reported in that paper, and out-performing the other models that include Transformers, Neural Turing Machines, LSTMs, PrediNet, Metalearned Neural Memories, 
+and Relation Nets.
 
 *Some implementation details:* The images were processed using a CNN with two convolutional layers, 
 each with 32 filters of size 2x2 followed by max-pooling. The resulting feature maps were followed 
-by two dense layers without 64 output neurons, with normalization so that the $\ell_2$ norm was one.
-(In constrast, the ESBN work used "temporal context normalization".) The CNN embedder was simply randomly 
+by two dense layers and 64 output neurons, with normalization so that the $\ell_2$ norm is one. (We note that the ESBN work uses "temporal context normalization.) The CNN embedder was randomly 
 initialized, and not trained, which was sufficient to give separation between these simple images. The Abstractors used symbols of dimension 64.
 
 In fact, we went further than the experiments in the ESBN paper, in several ways. First, 
