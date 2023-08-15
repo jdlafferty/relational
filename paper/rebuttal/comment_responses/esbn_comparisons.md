@@ -30,14 +30,14 @@ and Relation Nets.
 
 *Some implementation details:* The images were processed using a CNN with two convolutional layers, 
 each with 32 filters of size 2x2 followed by max-pooling. The resulting feature maps were followed 
-by two dense layers and 64 output neurons, with normalization so that the $\ell_2$ norm is one. (We note that the ESBN work uses "temporal context normalization.) The CNN embedder was randomly 
+by two dense layers and 64 output neurons, with normalization so that the $\ell_2$ norm is one. (We note that the ESBN work uses "temporal context normalization" rather than normalizing to be unit vectors.) The CNN embedder was randomly 
 initialized, and not trained, which was sufficient to give separation between these simple images. The Abstractors used symbols of dimension 64.
 
-In fact, we went further than the experiments in the ESBN paper, in several ways. First, 
-we modified the data to include scaled images, and replaced the same/different task with the task of learning the asymmetric relation "larger than/smaller than." For the corresponding RMTS task, the Abstractor again achieved 100% test accuracy, when trained on only a small fraction of the images. The original CorelNet is unable to perform this task due to the asymmetric relation. 
+In fact, we went further than the experiments in the ESBN paper in several ways. First, 
+we modified the data to include scaled images, and replaced the same/different task with the task of learning the asymmetric relation "larger than/smaller than." For the corresponding RMTS task, the Abstractor again achieved 100% test accuracy, when trained on only a small fraction of the images. The original CorelNet is unable to accurately perform this task due to the asymmetric relation. 
 
 We next studied learning 
-curves for the various tasks. In the scaled relational match-to-sample task (RMTS), we learned an Abstractor on the "larger than/smaller than" task, and then used this as a pretrained relation in an Abstractor to perform RMTS, which has 12 input images (see above). This experiment parallels what we reported with pretraining for the sorting task. Our results were as follows:
+curves for the various tasks. In the scaled relational match-to-sample task (RMTS), we learned an Abstractor on the "larger than/smaller than" task, and then used this as a pretrained relation in an Abstractor to perform RMTS, which has 12 input images (see above). This experiment parallels what we reported with pretraining for the sorting task. Our results are as follows:
 
 
 | Train Size | 5           | 10          | 50          | 100         | 150         | 200         | 250    | 
@@ -57,5 +57,5 @@ Possible answers: B A F D (correct answer: D)
 
 We trained Abstractors all the way up to "distribution of 20", and trained *only on the first 23 images* (which is the minimum possible). The Abstractor achieved 100% test accuracy on previously unseen images. (The Abstractor used a pretrained same/different relation.)
 
-It is instructive (if non-intuitive) to consider how the Abstractor achieves this result. Effectively, the transformed abstract symbol $A_j$ for object $j$ counts how many times the encoded value $E_j$ appears among the other encoded values. For answer F above, it appears zero times; for B it appears twice, and for D it appears exactly once. The multi-layer perceptron that processes the abstract symbols to learn the discriminant function is able to easily discriminate these values because they do not depend on the encoded images, only whether they are the same or different--this is the relational bottleneck.
+It is instructive (if non-intuitive) to consider how the Abstractor achieves this result. Effectively, the transformed abstract symbol $A_j$ for object $j$ counts how many times the encoded value $E_j$ appears among the other encoded values. For answer F above, it appears zero times; for B it appears twice, and for D it appears exactly once. The multi-layer perceptron that processes the abstract symbols is able to quickly learn to discriminate these values because they do not depend on the encoded images, only on whether they are the same or different--this is the relational bottleneck.
 
