@@ -1,18 +1,18 @@
-We thank reviewer pWGu for raising their concerns about length-generalization.
+We thank reviewer pWGu for raising their concerns about length-generalization. As we explain below, the Abstractor has the same strengths and limitations as the Transformer with regards to length generalization. Effective generalization to longer sequences is a challenging problem for Transformers, but a number of methods have been proposed to address this. All of these methods can be readily applied to Abstractors.
 
 **Length generalization in Transformers**
 
-It is important to keep in mind the context of the literature on the Transformer's ability to generalize to longer sequences. We commented on this in our previous response. Another recent paper which explains the context of research into length-generalization in transformers is "The Impact of Positional Encodings on Length Generalization in Transformers" by Kazemnejad et al. The standard way that Transformers can be applied to sequences of arbitrary length is by using non-parameteric absolute position embeddings (the original Vaswani et al. paper proposes sinusoidal embeddings). However, another option that is sometimes used in Transformers is *learned* absolute position embeddings. This is used in GPT3 (Brown et al. 2020) and OPT (Zhang et al. 2022), for example.
+The standard way that Transformers can be applied to sequences of arbitrary length is by using non-parameteric absolute position embeddings (the original Vaswani et al. paper proposes sinusoidal embeddings). This is in contrast to the use of *learned* absolute position embeddings, which are used, for instance, in GPT3 (Brown et al. 2020) and OPT (Zhang et al. 2022).
 
-While using non-parametric position embeddings enables the model to be applied to sequences of arbitrary length in principle, in practice this does not work well. We quote the above mentioned paper to provide some context.
+While using non-parametric position embeddings enables the model to be applied to sequences of arbitrary length in principle, in practice this does not work well. This issue is investigated in the paper "The Impact of Positional Encodings on Length Generalization in Transformers" by Kazemnejad et al.:
 
 > The ability to generalize from smaller training context sizes to larger ones, commonly known as length generalization, is a major challenge for Transformer-based language models (Vaswani et al., 2017; Deletang et al., 2023; Zhang et al., 2023). Even with larger Transformers, this issue persists (Brown et al., 2020; Furrer et al., 2020).
 
 > the original Transformer architecture (Vaswani et al., 2017) used non-parametric periodic functions to represent absolute position embeddings (APE) in a systematic manner, but further studies have shown that these functions are inadequate for length generalization (Ontanon et al., 2022).
 
-Thus, it is important to keep in mind that non-parametric position embeddings do not solve the problem of length generalization. Length generalization remains an unsolved problem and is an active area of research.
+Thus, though non-parametric position embeddings can in principle be extended to longer sequences than those observed during training, this approach does not work very well in practice. Length generalization remains an unsolved problem and is an active area of research.
 
-**The Abstractor has the same abilities/limitations with regard to length generalizaztion as transformers**
+**The Abstractor has the same abilities/limitations with regard to length generalization as Transformers**
 
 There is nothing fundamental about the Abstractor that incurs additional limitations with respect to length-generalization compared to Transformers. In particular, while we present the symbols as being learned parameters, they can also be non-parametric position embeddings. As we mentioned in one of our other responses, the theory shows that this would not reduce the representational power of the Abstractor--as long as the symbols are well-separated and full rank, the function class remains the same (see section B.2 of the supplement).
 
