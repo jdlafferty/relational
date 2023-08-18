@@ -1,13 +1,16 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 from multi_head_relation import MultiHeadRelation
-from transformer_modules import GlobalSelfAttention
+from transformer_modules import GlobalSelfAttention, create_positional_encoding
+
+# TODO: add feedforward layers after message-passing (like RelationalAbstracter)
 
 class Abstractor(tf.keras.layers.Layer):
     def __init__(self,
         num_layers,
         rel_dim,
         symbol_dim=None,
+        use_learned_symbols=True,
         proj_dim=None,
         symmetric_rels=False,
         encoder_kwargs=None,
@@ -26,11 +29,14 @@ class Abstractor(tf.keras.layers.Layer):
         Parameters
         ----------
         num_layers : int
-            number of Abstractor layers (i.e.: number of symbolic message-passing operations)
+            number of Abstractor layers (i.e., number of symbolic message-passing operations)
         rel_dim : int
             dimension of relations. applies to MultiHeadRelation in each layer.
         symbol_dim : int, optional
             dimension of symbols, by default None
+        use_learned_symbols: bool, optional
+            whether to use learned symbols or nonparametric sinusoidal symbols.
+            If learned, there will be a limit to the input length. by default True
         proj_dim : int, optional
             dimension of projections in MultiHeadRelation layers, by default None
         symmetric_rels : bool, optional
@@ -47,7 +53,7 @@ class Abstractor(tf.keras.layers.Layer):
             name of layer, by default None
         """
 
-        super().__init__(name=None)
+        super().__init__(name=name)
 
         self.num_layers = num_layers
         self.rel_dim = rel_dim
@@ -55,27 +61,35 @@ class Abstractor(tf.keras.layers.Layer):
         self.symmetric_rels = symmetric_rels
         self.encoder_kwargs = encoder_kwargs
         self.symbol_dim = symbol_dim
+        self.use_learned_symbols = use_learned_symbols
         self.rel_activation_type = rel_activation_type
         self.use_self_attn = use_self_attn
         self.use_layer_norm = use_layer_norm
         self.dropout_rate = dropout_rate
-    
+        self.max_length = 1024 # TODO: make this configurable?
+
     def build(self, input_shape):
 
         _, self.sequence_length, self.object_dim = input_shape
 
+        self.max_length = max(self.sequence_length, self.max_length)
+
         # symbol_dim is not given, use same dimension as objects
         if self.symbol_dim is None:
             self.symbol_dim = self.object_dim
-        
+
         if self.proj_dim is None:
             self.proj_dim = self.object_dim
 
         # define the input-independent symbolic input vector sequence
-        normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
-        self.symbol_sequence = tf.Variable(
-            normal_initializer(shape=(self.sequence_length, self.symbol_dim)),
-            name='symbols', trainable=True)
+        if self.use_learned_symbols:
+            normal_initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
+            self.symbol_sequence = tf.Variable(
+                normal_initializer(shape=(self.sequence_length, self.symbol_dim)),
+                name='symbols', trainable=True)
+        else:
+            # create non-parametric sinusoidal symbols
+            self.symbol_sequence = create_positional_encoding(length=self.max_length, depth=self.symbol_dim)
 
         if self.use_self_attn:
             self.self_attention_layers = [GlobalSelfAttention(
@@ -95,13 +109,9 @@ class Abstractor(tf.keras.layers.Layer):
         else:
             self.rel_activation = tf.keras.layers.Activation(self.rel_activation_type)
 
-        # a Reshape layer which collapses the final 'relation' dimension
-        self.symbol_collapser = tf.keras.layers.Reshape(
-            target_shape=(self.sequence_length, self.symbol_dim*self.rel_dim))
-
         # create dense layers to be applied after symbolic message-passing
         # (these transform the symbol sequence from dimension d_s * d_r to original dimension, d_s)
-        # TODO: make these configurable
+        # TODO: make these configurable. e.g. deeper feedforward layers.
         self.symbol_dense_layers = [layers.Dense(self.symbol_dim) for _ in range(self.num_layers)]
 
         if self.use_layer_norm:
@@ -111,8 +121,10 @@ class Abstractor(tf.keras.layers.Layer):
 
 
     def call(self, inputs):
-    
-    
+
+        m = tf.shape(inputs)[1]
+        symbol_sequence = self.symbol_sequence[:m, :]
+
         for i in range(self.num_layers):
 
             # get relation tensor via MultiHeadRelation layer
@@ -124,14 +136,12 @@ class Abstractor(tf.keras.layers.Layer):
             # perform symbolic message-passing based on relation tensor
             # A_bijr = sum_k R_bikr S_bkj (A = S.T @ R)
             if i == 0: # on first iteration, symbol equence is untransformed of shape [m, d_s]
-                abstract_symbol_seq = tf.einsum('bikr,kj->bijr', rel_tensor, self.symbol_sequence) # shape: [b, m, d_s, d_r]
+                abstract_symbol_seq = tf.einsum('bikr,kj->bijr', rel_tensor, symbol_sequence) # shape: [b, m, d_s, d_r]
             else: # on next iterations, symbol sequence is transformed with shape [b, m, d_s]
                 abstract_symbol_seq = tf.einsum('bikr,bkj->bijr', rel_tensor, abstract_symbol_seq) # shape: [b, m, d_s, d_r]
 
-            # symbol_seq = tf.matmul(symbol_seq, rel_tensor, transpose_a=True) # shape: [b, m, d_s, d_r]
-
-            # reshape to collapse final 'relation' dimension
-            abstract_symbol_seq = self.symbol_collapser(abstract_symbol_seq) # shape: [b, m, d_s * d_r]
+            # reshape to collapse final 'relation dimension'
+            abstract_symbol_seq = tf.concat([abstract_symbol_seq[:, :, :, r] for r in range(self.rel_dim)], axis=2) # shape: [b, m, d_s * d_r]
 
             # transform symbol sequence via dense layer to return to its original dimension
             abstract_symbol_seq = self.symbol_dense_layers[i](abstract_symbol_seq) # shape: [b, m, d_s]
@@ -139,7 +149,7 @@ class Abstractor(tf.keras.layers.Layer):
             if self.use_layer_norm:
                 abstract_symbol_seq = self.layer_norms[i](abstract_symbol_seq)
 
-            # apply self-attention to symbol sequence 
+            # apply self-attention to symbol sequence
             if self.use_self_attn:
                 # need to expand dims to add batch dim first
                 abstract_symbol_seq = self.self_attention_layers[i](abstract_symbol_seq) # shape [b, m, d_s]
@@ -148,6 +158,7 @@ class Abstractor(tf.keras.layers.Layer):
             abstract_symbol_seq = self.dropout(abstract_symbol_seq)
 
         return abstract_symbol_seq
+
 
     def get_config(self):
         config = super(Abstractor, self).get_config()
@@ -163,5 +174,5 @@ class Abstractor(tf.keras.layers.Layer):
                 'rel_activation_type': self.rel_activation_type,
                 'dropout_rate': self.dropout_rate
             })
-        
+
         return config
