@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, Model
 
 from transformer_modules import Encoder, Decoder, AddPositionalEmbedding
-from abstracters import SymbolicAbstracter, RelationalAbstracter, SimpleAbstractor, AblationAbstractor
+from abstracters import SymbolicAbstracter, RelationalAbstracter, AblationAbstractor
 
 
 class Transformer(tf.keras.Model):
@@ -51,7 +51,7 @@ class Transformer(tf.keras.Model):
         self.encoder = Encoder(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate, name='encoder')
         self.decoder = Decoder(num_layers=num_layers, num_heads=num_heads, dff=dff,
           dropout_rate=dropout_rate, name='decoder')
-        
+
 
         self.final_layer = layers.Dense(output_dim, name='final_layer')
 
@@ -69,7 +69,7 @@ class Transformer(tf.keras.Model):
 
         x = self.decoder(x=target_embedding, context=encoder_context)
 
-        logits = self.final_layer(x) 
+        logits = self.final_layer(x)
 
         try:
           # Drop the keras mask, so it doesn't scale the losses/metrics.
@@ -82,7 +82,7 @@ class Transformer(tf.keras.Model):
 
 
 class Seq2SeqRelationalAbstracter(tf.keras.Model):
-    def __init__(self, num_layers, num_heads, dff, rel_attention_activation,
+    def __init__(self, encoder_kwargs, abstracter_kwargs, decoder_kwargs,
             input_vocab, target_vocab, embedding_dim, output_dim,
             dropout_rate=0.1, name='seq2seq_relational_abstracter'):
         """
@@ -126,11 +126,9 @@ class Seq2SeqRelationalAbstracter(tf.keras.Model):
         self.pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
         self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
 
-        self.encoder = Encoder(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate, name='encoder')
-        self.abstracter = RelationalAbstracter(num_layers=num_layers, num_heads=num_heads, dff=dff,
-            mha_activation_type=rel_attention_activation, dropout_rate=dropout_rate, name='abstracter')
-        self.decoder = Decoder(num_layers=num_layers, num_heads=num_heads, dff=dff,
-          dropout_rate=dropout_rate, name='decoder')
+        self.encoder = Encoder(**encoder_kwargs)
+        self.abstracter = RelationalAbstracter(**abstracter_kwargs)
+        self.decoder = Decoder(**decoder_kwargs)
         self.final_layer = layers.Dense(output_dim, name='final_layer')
 
 
@@ -223,94 +221,6 @@ class Seq2SeqSymbolicAbstracter(tf.keras.Model):
         encoder_context = self.encoder(x)
 
         abstracted_context = self.abstracter(encoder_context)
-
-        target_embedding = self.target_embedder(target)
-        target_embedding = self.pos_embedding_adder_target(target_embedding)
-
-        x = self.decoder(x=target_embedding, context=abstracted_context)
-
-        logits = self.final_layer(x)
-
-        try:
-          # Drop the keras mask, so it doesn't scale the losses/metrics.
-          # b/250038731
-          del logits._keras_mask
-        except AttributeError:
-          pass
-
-        return logits
-
-class AutoregressiveSimpleAbstractor(tf.keras.Model):
-    def __init__(self, input_vocab, target_vocab, output_dim, 
-        embedding_dim, abstractor_kwargs, decoder_kwargs, name=None):
-        """create autoregressive SimpleAbstractor model.
-
-        (x1, ..., xm) -> embedder -> SimpleAbstractor -> Decoder -> (y1, ..., ym)
-
-        Parameters
-        ----------
-        input_vocab : int or str
-            if input is tokens, the size of vocabulary as an int. 
-            if input is vectors, the string 'vector'. used to create embedder.
-        target_vocab : int or str
-            if target is tokens, the size of the vocabulary as an int. 
-            if input is vectors, the string 'vector'. used to create embedder.
-        output_dim : int
-            dimension of final output. e.g.: # of classes.
-        embedding_dim : int
-            embedding dimension to use. this is the model dimension.
-        abstractor_kwargs : dict
-            kwargs for SimpleAbstractor
-        decoder_kwargs : dict
-            kwargs for Decoder
-        name : str, optional
-            name of model, by default None
-        """
-
-        super().__init__(name=name)
-
-        self.embedding_dim = embedding_dim
-        self.input_vocab = input_vocab
-        self.target_vocab = target_vocab
-        self.output_dim = output_dim
-        self.abstractor_kwargs = abstractor_kwargs
-        self.decoder_kwargs = decoder_kwargs
-  
-    def build(self, input_shape):
-    
-        if isinstance(self.input_vocab, int):
-            self.source_embedder = layers.Embedding(self.input_vocab, self.embedding_dim, name='source_embedder')
-        elif self.input_vocab == 'vector':
-            self.source_embedder = layers.TimeDistributed(layers.Dense(self.embedding_dim), name='source_embedder')
-        else:
-            raise ValueError(
-                "`input_vocab` must be an integer if the input sequence is token-valued or "
-                "'vector' if the input sequence is vector-valued.")
-
-        if isinstance(self.target_vocab, int):
-            self.target_embedder = layers.Embedding(self.target_vocab, self.embedding_dim, name='target_embedder')
-        elif self.target_vocab == 'vector':
-            self.target_embedder = layers.TimeDistributed(layers.Dense(self.embedding_dim), name='target_embedder')
-        else:
-            raise ValueError(
-                "`input_vocab` must be an integer if the input sequence is token-valued or "
-                "'vector' if the input sequence is vector-valued.")
-
-        self.pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
-        self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
-
-        self.abstractor = SimpleAbstractor(**self.abstractor_kwargs)
-
-        self.decoder = Decoder(**self.decoder_kwargs, name='decoder')
-        self.final_layer = layers.Dense(self.output_dim, name='final_layer')
-
-    def call(self, inputs):
-        source, target  = inputs
-
-        x = self.source_embedder(source)
-        x = self.pos_embedding_adder_input(x)
-
-        abstracted_context = self.abstractor(x)
 
         target_embedding = self.target_embedder(target)
         target_embedding = self.pos_embedding_adder_target(target_embedding)
