@@ -27,8 +27,8 @@ parser.add_argument('--n_epochs', default=10, type=int, help='number of epochs t
 parser.add_argument('--train_size', default=-1, type=int, help='size of training set to take')
 parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
 parser.add_argument('--early_stopping', default=False, type=bool, help='whether to use early stopping')
-parser.add_argument('--wandb_project_name', type=str, help='W&B project name')
-parser.add_argument('--run_name', default=None, type=str, help='run namee')
+parser.add_argument('--wandb_project_name', default=None, type=str, help='W&B project name')
+parser.add_argument('--run_name', default=None, type=str, help='run name')
 args = parser.parse_args()
 
 utils.print_section("SET UP")
@@ -49,6 +49,8 @@ logger = logging.getLogger("wandb")
 logger.setLevel(logging.ERROR)
 
 wandb_project_name = args.wandb_project_name
+if wandb_project_name is None:
+    wandb_project_name = f'math_{args.task}'
 
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 model_checkpoints_dir = f'model_checkpoints/{args.model}_{timestamp}'
@@ -81,15 +83,11 @@ train_examples, val_examples = tfds.load(
     split=['train', 'test'],
     as_supervised=True)
 
-# max_q_length = 60 # NOTE: this is for `algebera__linear_1d`
-# max_a_length = 4
-
-# # NOTE: for comparison__closest
-# max_q_length = 90
-# max_a_length = 10
-
 # TODO: put this in a npy folder somewhere along w vectorizors
-max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10), 'arithmetic__add_or_sub': (58, 19), 'calculus__differentiate': (160, 30)}
+max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10),
+    'arithmetic__add_or_sub': (58, 19), 'calculus__differentiate': (160, 30),
+    'algebra__sequence_next_term': (118, 11), 'arithmetic__mixed': (73, 6)
+    }
 max_q_length, max_a_length = max_lengths[args.task]
 
 start_char = '@'
