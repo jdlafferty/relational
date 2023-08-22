@@ -88,7 +88,8 @@ train_examples, val_examples = tfds.load(
 # max_q_length = 90
 # max_a_length = 10
 
-max_lengths = {'algebera__linear_1d': (60, 4), 'comparison__closest': (90, 10)}
+# TODO: put this in a npy folder somewhere along w vectorizors
+max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10), 'arithmetic__add_or_sub': (58, 19)}
 max_q_length, max_a_length = max_lengths[args.task]
 
 start_char = '@'
