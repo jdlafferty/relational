@@ -148,7 +148,7 @@ def create_relational_abstractor(input_vocab_size, target_vocab_size, size='x-la
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff,
-        use_pos_embedding=True, mha_activation_type='softmax', dropout_rate=0.1)
+        use_learned_symbols=False, mha_activation_type='softmax', use_self_attn=True)
 
     abstractor = AutoregressiveAbstractor(
         encoder_kwargs,
