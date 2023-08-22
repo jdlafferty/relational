@@ -22,7 +22,7 @@ seed = 314159
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, choices=tuple(models.model_creator_dict.keys()))
 parser.add_argument('--model_size', type=str, default='x-large')
-parser.add_argument('--task', type=str, choices=('algebra__linear_1d', 'comparison__closest'))
+parser.add_argument('--task', type=str)
 parser.add_argument('--n_epochs', default=10, type=int, help='number of epochs to train each model for')
 parser.add_argument('--train_size', default=-1, type=int, help='size of training set to take')
 parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
@@ -89,7 +89,7 @@ train_examples, val_examples = tfds.load(
 # max_a_length = 10
 
 # TODO: put this in a npy folder somewhere along w vectorizors
-max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10), 'arithmetic__add_or_sub': (58, 19)}
+max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10), 'arithmetic__add_or_sub': (58, 19), 'calculus__differentiate': (160, 30)}
 max_q_length, max_a_length = max_lengths[args.task]
 
 start_char = '@'
