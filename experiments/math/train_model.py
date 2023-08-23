@@ -29,6 +29,7 @@ parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
 parser.add_argument('--early_stopping', default=False, type=bool, help='whether to use early stopping')
 parser.add_argument('--wandb_project_name', default=None, type=str, help='W&B project name')
 parser.add_argument('--run_name', default=None, type=str, help='run name')
+parser.add_argument('--ignore_gpu_assert', action="store_true", help='whether to confirm that there is a recognized gpu')
 args = parser.parse_args()
 
 utils.print_section("SET UP")
@@ -37,7 +38,8 @@ print(f'received the following arguments: {args}')
 
 # check if GPU is being used
 print(tf.config.list_physical_devices())
-assert len(tf.config.list_physical_devices('GPU')) > 0
+if not args.ignore_gpu_assert:
+    assert len(tf.config.list_physical_devices('GPU')) > 0
 
 # set up W&B logging
 os.environ["WANDB_SILENT"] = "true"
@@ -53,27 +55,26 @@ if wandb_project_name is None:
     wandb_project_name = f'math_{args.task}'
 
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-model_checkpoints_dir = f'model_checkpoints/{args.model}_{timestamp}'
+model_checkpoints_dir = f'model_checkpoints/{args.task}_{args.model}_{timestamp}'
 os.mkdir(model_checkpoints_dir)
 
 def create_callbacks(monitor='loss'):
     callbacks = [
 #         tf.keras.callbacks.ReduceLROnPlateau( monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='auto'),
-        wandb.keras.WandbMetricsLogger(log_freq='batch'),
-        wandb.keras.WandbModelCheckpoint(filepath=model_checkpoints_dir, monitor="val_loss",
-            verbose=0, save_best_only=False, save_weights_only=True, save_freq="epoch")
+        # wandb.keras.WandbMetricsLogger(log_freq='batch'),
+        # wandb.keras.WandbModelCheckpoint(filepath=model_checkpoints_dir, monitor="val_loss",
+            # verbose=0, save_best_only=False, save_weights_only=True, save_freq="epoch")
+        wandb.keras.WandbCallback(
+            monitor="val_loss", verbose=0, mode="auto", save_weights_only=True,
+            log_weights=True, log_gradients=False, save_model=True,
+            log_batch_frequency=1, log_best_prefix="best_", save_graph=True,
+            compute_flops=True)
         ]
 
     if args.early_stopping:
         callbacks.append(tf.keras.callbacks.EarlyStopping(monitor='loss', patience=20, mode='auto', restore_best_weights=True))
 
     return callbacks
-
-metrics = [tf.keras.metrics.sparse_categorical_accuracy]
-
-
-loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None, name='sparse_categorical_crossentropy')
-create_opt = lambda : tf.keras.optimizers.Adam(learning_rate=6e-4, beta_1=0.9, beta_2=0.995, epsilon=1e-9, clipvalue=0.1)
 
 fit_kwargs = {'epochs': args.n_epochs}
 
