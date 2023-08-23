@@ -140,8 +140,6 @@ model_creator_dict = dict(
     transformer=create_transformer,
     abstractor=create_abstractor,
     abstractor2=create_abstractor2,
-    abstractor3=create_abstractor3,
-    abstractor4=create_abstractor4,
     relational_abstractor=create_relational_abstractor,
     relational_abstractor2=create_relational_abstractor2
     )
