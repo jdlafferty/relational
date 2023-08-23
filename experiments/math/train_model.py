@@ -52,11 +52,11 @@ logger.setLevel(logging.ERROR)
 
 wandb_project_name = args.wandb_project_name
 if wandb_project_name is None:
-    wandb_project_name = f'math_{args.task}'
+    wandb_project_name = f'math-{args.task}'
 
-timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-model_checkpoints_dir = f'model_checkpoints/{args.task}_{args.model}_{timestamp}'
-os.mkdir(model_checkpoints_dir)
+# timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+# model_checkpoints_dir = f'model_checkpoints/{args.task}_{args.model}_{timestamp}'
+# os.mkdir(model_checkpoints_dir)
 
 def create_callbacks(monitor='loss'):
     callbacks = [
@@ -85,20 +85,30 @@ train_examples, val_examples = tfds.load(
     as_supervised=True)
 
 # TODO: put this in a npy folder somewhere along w vectorizors
-max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10),
-    'arithmetic__add_or_sub': (58, 19), 'calculus__differentiate': (160, 30),
-    'algebra__sequence_next_term': (118, 11), 'arithmetic__mixed': (73, 6)
-    }
-max_q_length, max_a_length = max_lengths[args.task]
+# TODO: or remove and just use global values?
+# max_lengths = {'algebra__linear_1d': (60, 4), 'comparison__closest': (90, 10),
+#     'arithmetic__add_or_sub': (58, 19), 'calculus__differentiate': (160, 30),
+#     'algebra__sequence_next_term': (118, 11), 'arithmetic__mixed': (73, 6),
+#     'algebra__polynomial_roots': (138, 30),
+#     'numbers__list_prime_factors': (41, 26), 'numbers__list_prime_factors_composed': (160, 15)
+#     }
+
+# max_q_length, max_a_length = max_lengths[args.task]
+
+# global max lengths of questions and answers
+max_q_length, max_a_length = 160, 30
 
 start_char = '@'
 eos_char = ';'
+
+vocab = np.loadtxt('text_vectorizer_vocabs/global/vocabulary.txt', dtype=str)
 
 q_text_vectorizer = tf.keras.layers.TextVectorization(
     standardize=None,
     split='character',
     output_mode='int',
     output_sequence_length=max_q_length,
+    vocabulary=vocab
 )
 
 a_text_vectorizer = tf.keras.layers.TextVectorization(
@@ -106,10 +116,12 @@ a_text_vectorizer = tf.keras.layers.TextVectorization(
     split='character',
     output_mode='int',
     output_sequence_length=max_a_length+2,
+    vocabulary=vocab
 )
 
-q_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
-a_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
+# TODO: remove this? we're just using the global vocab?
+# q_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
+# a_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
 
 def prepend_start_token(q,a):
     source = q
