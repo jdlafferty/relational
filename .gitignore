@@ -4,6 +4,9 @@ wandb/
 # ignore figure directories
 figs/
 
+# ignore data directory
+data/
+
 # ignore .vscode files
 .vscode/
 
