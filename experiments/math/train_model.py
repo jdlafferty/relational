@@ -159,9 +159,11 @@ val_ds = val_examples.batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
 
 
 #region build model
-loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None)
+ignore_class = a_text_vectorizer.get_vocabulary().index('')
+assert (ignore_class == q_text_vectorizer.get_vocabulary().index(''))
+loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=ignore_class)
 create_opt = lambda : tf.keras.optimizers.Adam()
-teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=None)
+teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=ignore_class)
 
 model = models.model_creator_dict[args.model](input_vocab_size, target_vocab_size, size=args.model_size)
 
