@@ -12,6 +12,7 @@ data/
 
 # ignore model_checkpoint directories
 model_checkpoints/
+model_artifacts/
 
 # ignore certain files in paper directory
 paper/*.pdf
