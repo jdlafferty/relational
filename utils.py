@@ -127,7 +127,7 @@ def get_wandb_project_table(project_name, entity='Awni00', attr_cols=('group', '
 
     return runs_df
 
-def get_project_run_historiess(project_name, entity='Awni00', attr_cols=('group', 'name'), config_cols='all'):
+def get_project_run_histories(project_name, entity='Awni00', attr_cols=('group', 'name'), config_cols='all'):
     '''gets the log history of all runs in a project'''
 
     import wandb
