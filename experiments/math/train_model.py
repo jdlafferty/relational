@@ -16,8 +16,6 @@ import utils
 
 # region SETUP
 
-seed = 314159
-
 # parse script arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, choices=tuple(models.model_creator_dict.keys()))
@@ -30,6 +28,7 @@ parser.add_argument('--early_stopping', default=False, type=bool, help='whether 
 parser.add_argument('--wandb_project_name', default=None, type=str, help='W&B project name')
 parser.add_argument('--run_name', default=None, type=str, help='run name')
 parser.add_argument('--ignore_gpu_assert', action="store_true", help='whether to confirm that there is a recognized gpu')
+parser.add_argument('--seed', default=314159, help='random seed')
 args = parser.parse_args()
 
 utils.print_section("SET UP")
@@ -40,6 +39,10 @@ print(f'received the following arguments: {args}')
 print(tf.config.list_physical_devices())
 if not args.ignore_gpu_assert:
     assert len(tf.config.list_physical_devices('GPU')) > 0
+
+# set tensorflow random seed
+tf.random.set_seed(args.seed)
+
 
 # set up W&B logging
 os.environ["WANDB_SILENT"] = "true"
@@ -101,14 +104,14 @@ max_q_length, max_a_length = 160, 30
 start_char = '@'
 eos_char = ';'
 
-vocab = np.loadtxt('text_vectorizer_vocabs/global/vocabulary.txt', dtype=str)
+# vocab = np.loadtxt('text_vectorizer_vocabs/global/vocabulary.txt', dtype=str)
 
 q_text_vectorizer = tf.keras.layers.TextVectorization(
     standardize=None,
     split='character',
     output_mode='int',
     output_sequence_length=max_q_length,
-    vocabulary=vocab
+    # vocabulary=vocab
 )
 
 a_text_vectorizer = tf.keras.layers.TextVectorization(
@@ -116,8 +119,10 @@ a_text_vectorizer = tf.keras.layers.TextVectorization(
     split='character',
     output_mode='int',
     output_sequence_length=max_a_length+2,
-    vocabulary=vocab
+    # vocabulary=vocab
 )
+q_text_vectorizer.load_assets('text_vectorizer_vocabs/global')
+a_text_vectorizer.load_assets('text_vectorizer_vocabs/global')
 
 # TODO: remove this? we're just using the global vocab?
 # q_text_vectorizer.load_assets(f'text_vectorizer_vocabs/{args.task}')
@@ -161,8 +166,10 @@ val_ds = val_examples.batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
 #region build model
 ignore_class = a_text_vectorizer.get_vocabulary().index('')
 assert (ignore_class == q_text_vectorizer.get_vocabulary().index(''))
-loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=ignore_class)
+# loss does not ignore null string
+loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None)
 create_opt = lambda : tf.keras.optimizers.Adam()
+# teacher-forcing acc ignores null string
 teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=ignore_class)
 
 model = models.model_creator_dict[args.model](input_vocab_size, target_vocab_size, size=args.model_size)
