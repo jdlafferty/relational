@@ -19,11 +19,11 @@ import utils
 # parse script arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, choices=tuple(models.model_creator_dict.keys()))
-parser.add_argument('--model_size', type=str, default='x-large')
+parser.add_argument('--model_size', type=str, default='medium')
 parser.add_argument('--task', type=str)
 parser.add_argument('--n_epochs', default=10, type=int, help='number of epochs to train each model for')
 parser.add_argument('--train_size', default=-1, type=int, help='size of training set to take')
-parser.add_argument('--batch_size', default=1024, type=int, help='batch size')
+parser.add_argument('--batch_size', default=512, type=int, help='batch size')
 parser.add_argument('--early_stopping', default=False, type=bool, help='whether to use early stopping')
 parser.add_argument('--wandb_project_name', default=None, type=str, help='W&B project name')
 parser.add_argument('--run_name', default=None, type=str, help='run name')
