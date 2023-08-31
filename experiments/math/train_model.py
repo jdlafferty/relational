@@ -152,7 +152,7 @@ ignore_class = a_text_vectorizer.get_vocabulary().index('')
 assert (ignore_class == q_text_vectorizer.get_vocabulary().index(''))
 # loss does not ignore null string
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, ignore_class=None)
-create_opt = lambda : tf.keras.optimizers.Adam()
+create_opt = lambda : tf.keras.optimizers.Adam(learning_rate=6e-4, beta_1=0.9, beta_2=0.995, epsilon=1e-9)
 # teacher-forcing acc ignores null string
 teacher_forcing_accuracy = TeacherForcingAccuracy(ignore_class=ignore_class)
 
