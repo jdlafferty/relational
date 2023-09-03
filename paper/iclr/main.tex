@@ -1,0 +1,180 @@
+\documentclass{article}
+\usepackage{iclr2024_conference,times}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{mymathstyle} % math style with a bunch of commands defined
+
+\usepackage{cleveref}
+\usepackage{algorithm2e}
+\usepackage{graphicx}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\RestyleAlgo{ruled}
+
+% \usepackage{amsthm,amsbsy,amsmath,amsfonts,mathtools,amssymb}
+\usepackage{mathrsfs}
+\RequirePackage{hypernat}
+\usepackage{graphicx}
+\usepackage{verbatim}
+
+% \numberwithin{equation}{section}
+% \newtheorem{thm}{Theorem}[section]
+% \newtheorem{result}{Result}
+% \newtheorem{lemma}{Lemma}[section]
+% \newtheorem{corollary}{Corollary}[section]
+% \newtheorem{prop}{Proposition}[section]
+% \theoremstyle{remark}
+% \newtheorem{example}{Example}[section]
+% \newtheorem{remark}{Remark}[section]
+\newtheorem{result}{Result}
+\newcommand{\m}{m} % define a macro for the number of objects
+
+%region
+% john's definitions
+\newtheorem*{thm1}{Claim A}
+\newtheorem*{thm2}{Claim B}
+\newtheorem*{thm3}{Claim C}
+\newtheorem*{thm4}{Claim D}
+\def\conditionA{Condition $A$}
+\def\conditionAp{Condition $\tilde A$}
+\def\conditionB{Condition $B$}
+\newtheorem*{con0}{\conditionA}
+\newtheorem*{con1}{\conditionAp}
+\newtheorem*{con2}{\conditionB}
+
+\newcommand{\MLP}{\text{\sc mlp}}
+\newcommand{\FeedForward}{\text{FeedForward}}
+\newcommand{\Softmax}{\text{Softmax}}
+% \newcommand{\argmin}{\mathop{\rm argmin}}
+\newcommand{\ess}{\mathop{\rm ess}}
+% \newcommand{\argmax}{\mathop{\rm argmax}}
+\newcommand{\lnorm}[2]{\|{#1} \|_{{#2}}}
+\newcommand{\indc}[1]{{\mathbf{1}_{\left\{{#1}\right\}}}}
+%\newcommand{\norm}[1]{\|{#1} \|}
+% \newcommand{\norm}[1]{\left\|{#1} \right\|}
+\newcommand{\hf}{{1/2}}
+\newcommand{\wh}{\widehat}
+\newcommand{\wt}{\widetilde}
+\newcommand{\Norm}[1]{\|{#1} \|}
+\newcommand{\Fnorm}[1]{\lnorm{#1}{\rm F}}
+% \newcommand{\fnorm}[1]{\|#1\|_{\rm F}}
+% \newcommand{\opnorm}[1]{\|#1\|_{\rm op}}
+\newcommand{\nnorm}[1]{\|#1\|_{\rm *}}
+% \newcommand{\Prob}{\mathbb{P}}
+% \newcommand{\Expect}{\mathbb{E}}
+% \newcommand{\Span}{{\rm span}}
+\newcommand{\rank}{\mathop{\sf rank}}
+\newcommand{\sgn}{\mathop{\rm sign}}
+\newcommand{\rt}{\mathop{\sf root}}
+\newcommand{\R}{\mathop{\sf R}}
+% \newcommand{\Tr}{\mathop{\sf Tr}}
+\newcommand{\diag}{\mathop{\text{diag}}}
+\newcommand{\supp}{{\rm supp}}
+% \newcommand{\iprod}[2]{\left \langle #1, #2 \right\rangle}
+\newcommand{\pth}[1]{\left( #1 \right)}
+\newcommand{\qth}[1]{\left[ #1 \right]}
+\newcommand{\sth}[1]{\left\{ #1 \right\}}
+% \newcommand{\calL}{\mathcal{L}}
+\newcommand{\floor}[1]{{\left\lfloor {#1} \right \rfloor}}
+% \newcommand{\TV}{{\sf TV}}
+\newcommand{\blue}{\color{blue}}
+\newcommand{\nb}[1]{\texttt{\blue[#1]}}
+
+\def\bra#1{\langle #1 \vert}
+\def\ket#1{\vert #1 \rangle}
+\def\braket#1#2{\langle #1 \vert #2 \rangle}
+%\def\bind#1#2{\ket{#1}\bra{#2}}
+\def\bind#1#2{\ket{#1}|\ket{#2}}
+\def\bind#1#2{#1 \| #2}
+\let\tilde\widetilde
+\def\softmax#1{\mbox{Softmax}\left(#1\right)}
+\def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
+\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\def\selfattention#1{\mbox{SelfAttention}(#1)}
+\def\crossattention#1#2#3{\qkv{#1}{#2}{#3}}
+\def\crossattend#1#2#3#4{\mbox{CrossAttention}_{#4}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+%endregion
+
+
+\title{Abstractors and relational cross-attention: An extension of transformers for enhanced relational reasoning}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
+about author (webpage, alternative address)---\emph{not} for acknowledging
+funding agencies.  Funding acknowledgements go at the end of the paper.} \\
+Department of Computer Science\\
+Cranberry-Lemon University\\
+Pittsburgh, PA 15213, USA \\
+\texttt{\{hippo,brain,jen\}@cs.cranberry-lemon.edu} \\
+\And
+Ji Q. Ren \& Yevgeny LeNet \\
+Department of Computational Neuroscience \\
+University of the Witwatersrand \\
+Joburg, South Africa \\
+\texttt{\{robot,net\}@wits.ac.za} \\
+\AND
+Coauthor \\
+Affiliation \\
+Address \\
+\texttt{email}
+}
+
+\begin{document}
+
+
+\maketitle
+
+
+\input{abstract}
+\input{intro}
+\input{abstractor_module}
+\input{abstractor_architectures}
+% \input{messages_and_modules}
+\input{functions_preview}
+\input{experiments}
+\input{discussion}
+
+\medskip
+
+\clearpage
+{%\small
+\bibliography{references}
+% \bibliographystyle{plain}
+\bibliographystyle{iclr2024_conference}
+
+}
+
+%\end{document} % paper only
+
+\clearpage
+\appendix
+% \input{message_passing}
+% \input{functions}
+% \input{code}
+
+
+\end{document}
