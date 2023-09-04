@@ -8,6 +8,10 @@ import datetime
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
+# load .env env variables (specified TFDS_DATA_DIR)
+from dotenv import load_dotenv
+load_dotenv()
+
 import models
 
 import sys; sys.path.append('../'); sys.path.append('../..')
