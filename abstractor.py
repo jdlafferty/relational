@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 from multi_head_relation import MultiHeadRelation
-from transformer_modules import GlobalSelfAttention, create_positional_encoding
+from transformer_modules import GlobalSelfAttention, create_positional_encoding, FeedForward
 
 # TODO: add feedforward layers after message-passing (like RelationalAbstracter)
 
@@ -9,6 +9,7 @@ class Abstractor(tf.keras.layers.Layer):
     def __init__(self,
         num_layers,
         rel_dim,
+        dff,
         symbol_dim=None,
         use_learned_symbols=True,
         proj_dim=None,
@@ -111,8 +112,10 @@ class Abstractor(tf.keras.layers.Layer):
 
         # create dense layers to be applied after symbolic message-passing
         # (these transform the symbol sequence from dimension d_s * d_r to original dimension, d_s)
-        # TODO: make these configurable. e.g. deeper feedforward layers.
-        self.symbol_dense_layers = [layers.Dense(self.symbol_dim) for _ in range(self.num_layers)]
+        # NOTE: this is different from the concatenation and value_dim = dim // n_heads approach of std transformers
+        self.symbol_dense_layers = [FeedForward(self.symbol_dim, self.dff) for _ in range(self.num_layers)]
+
+        self.ffn = FeedForward(self.symbol_dim, self.dff)
 
         if self.use_layer_norm:
             self.layer_norms = [layers.LayerNormalization()]*self.num_layers
