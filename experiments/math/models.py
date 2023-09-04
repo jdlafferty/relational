@@ -16,6 +16,8 @@ def get_params_by_size(size):
     elif size=='medium':
         d_model, num_heads, dff, num_layers = (128, 4, 256, 1)
     elif size=='medium+':
+        d_model, num_heads, dff, num_layers = (200, 4, 400, 1)
+    elif size=='medium++':
         d_model, num_heads, dff, num_layers = (256, 4, 512, 1)
     elif size=='large':
         d_model, num_heads, dff, num_layers = (256, 8, 1024, 2)
