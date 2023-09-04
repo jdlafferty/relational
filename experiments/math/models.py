@@ -15,6 +15,8 @@ def get_params_by_size(size):
         d_model, num_heads, dff, num_layers = (64, 2, 128, 1)
     elif size=='medium':
         d_model, num_heads, dff, num_layers = (128, 4, 256, 1)
+    elif size=='medium+':
+        d_model, num_heads, dff, num_layers = (256, 4, 512, 1)
     elif size=='large':
         d_model, num_heads, dff, num_layers = (256, 8, 1024, 2)
     elif size=='x-large':
@@ -42,7 +44,7 @@ def create_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
     d_model, num_heads, dff, num_layers = get_params_by_size(size)
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
-    abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
+    abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, dff=dff, symbol_dim=d_model,
         proj_dim=d_model//num_heads, symmetric_rels=False, encoder_kwargs=None,
         rel_activation_type='softmax', use_self_attn=False, use_layer_norm=False,
         dropout_rate=0.1)
@@ -68,7 +70,7 @@ def create_abstractor2(input_vocab_size, target_vocab_size, size='x-large'):
 
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
-    abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, symbol_dim=d_model,
+    abstractor_kwargs = dict(num_layers=num_layers, rel_dim=num_heads, dff=dff, symbol_dim=d_model,
         proj_dim=d_model//num_heads, symmetric_rels=False, encoder_kwargs=None,
         rel_activation_type='tanh', use_self_attn=True, use_layer_norm=False,
         dropout_rate=0.1)
