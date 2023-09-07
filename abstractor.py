@@ -58,6 +58,7 @@ class Abstractor(tf.keras.layers.Layer):
 
         self.num_layers = num_layers
         self.rel_dim = rel_dim
+        self.dff = dff
         self.proj_dim = proj_dim
         self.symmetric_rels = symmetric_rels
         self.encoder_kwargs = encoder_kwargs
@@ -114,8 +115,6 @@ class Abstractor(tf.keras.layers.Layer):
         # (these transform the symbol sequence from dimension d_s * d_r to original dimension, d_s)
         # NOTE: this is different from the concatenation and value_dim = dim // n_heads approach of std transformers
         self.symbol_dense_layers = [FeedForward(self.symbol_dim, self.dff) for _ in range(self.num_layers)]
-
-        self.ffn = FeedForward(self.symbol_dim, self.dff)
 
         if self.use_layer_norm:
             self.layer_norms = [layers.LayerNormalization()]*self.num_layers
