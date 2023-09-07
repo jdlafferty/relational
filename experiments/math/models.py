@@ -117,6 +117,30 @@ def create_relational_abstractor(input_vocab_size, target_vocab_size, size='x-la
 #endregion
 
 #region RelationalAbstractor
+def create_linear_relational_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
+    encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    abstractor_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff,
+        use_learned_symbols=False, mha_activation_type='linear', use_self_attn=False)
+
+    abstractor = AutoregressiveAbstractor(
+        encoder_kwargs,
+        abstractor_kwargs,
+        decoder_kwargs,
+        input_vocab=input_vocab_size,
+        target_vocab=target_vocab_size,
+        embedding_dim=d_model,
+        output_dim=target_vocab_size,
+        abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic'
+        abstractor_on='encoder', # 'input' or 'encoder'
+        decoder_on='encoder-abstractor', # 'abstractor' or 'encoder-abstractor'
+        name='autoregressive_abstractor')
+    return abstractor
+#endregion
+
+#region RelationalAbstractor
 def create_relational_abstractor2(input_vocab_size, target_vocab_size, size='x-large'):
     d_model, num_heads, dff, num_layers = get_params_by_size(size)
 
@@ -145,5 +169,6 @@ model_creator_dict = dict(
     abstractor=create_abstractor,
     abstractor2=create_abstractor2,
     relational_abstractor=create_relational_abstractor,
+    linear_relational_abstractor=create_linear_relational_abstractor,
     relational_abstractor2=create_relational_abstractor2
     )
