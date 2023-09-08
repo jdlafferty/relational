@@ -16,39 +16,3 @@ To facilitate the discussion of different architectures, we distinguish between 
 The way that an Abstractor module is integrated into a broader model architecture should be informed by the underlying prediction task.~\Cref{fig:abstractor_architectures} depicts several Abstractor architectures with various properties. Architecture (a) depicts a generative architecture in which the Abstractor processes the relational features in the input, and the decoder attends to the abstract states $A$. Architecture (b) depicts a model in which the input objects are first processed by an Encoder, followed by an Abstractor for relational processing, and the decoder again attends to the abstract states. These architectures would be appropriate purely relational tasks since the decoder attends only to the relational representations in the abstract states. Architectures (c) and (d) would be more appropriate for partially-relational tasks. For example, in architecture (c), the model branches into two parallel processing streams in which an Encoder processes sensory information and an Abstractor processes abstract relational information. The decoder attends to \textit{both} the encoder states and abstract states. We refer to architectures which combine sensory processing with abstract relational processing as \textit{sensory-connected} architectures. These architectures use the ``multi-attention decoder'' described in~\Cref{alg:multi_attention_decoder} (e.g., with $X^{(1)} = E, X^{(2)} = A$).
 
 Finally, architecture (e) depicts a \textit{composition} of Abstractors, wherein the abstract states produced by one Abstractor module are used as input to another Abstractor. This results in computing ``higher-order'' relational information. That is, relations on relations. This is made formal in~\Cref{ssec:function_classes_preview}. We leave empirical evaluation of this architecture to future work.
-
-\begin{algorithm}[ht!]
-	\caption{Multi-Attention Decoder}\label{alg:multi_attention_decoder}
-	\SetKwInOut{Input}{Input}
-	% \SetKwInOut{Output}{Output}
-	% \SetKwInOut{LearnableParams}{Learnable parameters}
-	% \SetKwInOut{HyperParams}{Hyperparameters}
-
-	\Input{
-        Target sequence: $\bm{y} = (y_0, \ldots, y_{l_y-1})$, \\
-        Context sequences: $X^{(i)} = (x_1^{(i)}, \ldots, x_{l_i}^{(i)}), \ i=1, \ldots, K$
-        }
-	\vspace{1em}
-
-    $D^{(0)} \gets \bm{y}$
-
-	\For{\(l \gets 1\) \KwTo \(L\)}{
-
-        $D^{(l)} \gets \mathrm{CausalSelfAttention}\paren{D^{(l-1)}}$
-
-        \texttt{residual connection and layer-normalization}
-
-
-        \For{\(i \gets 1\) \KwTo \(K\)}{
-            $D^{(l)} \gets \mathrm{CrossAttention}\paren{D^{(l)}, X^{(i)}}$
-
-            \texttt{residual connection and layer-normalization}
-        }
-
-        $D^{(l)} \gets \mathrm{FeedForward}\paren{D^{(l)}}$
-
-        }
-
-    \textbf{Output:} $D^{(L)}$
-
-\end{algorithm}
