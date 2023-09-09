@@ -111,10 +111,11 @@ class Abstractor(tf.keras.layers.Layer):
         else:
             self.rel_activation = tf.keras.layers.Activation(self.rel_activation_type)
 
-        # create dense layers to be applied after symbolic message-passing
-        # (these transform the symbol sequence from dimension d_s * d_r to original dimension, d_s)
-        # NOTE: this is different from the concatenation and value_dim = dim // n_heads approach of std transformers
-        self.symbol_dense_layers = [FeedForward(self.symbol_dim, self.dff) for _ in range(self.num_layers)]
+        #W_o^h; output projection layers for each relation dim
+        self.symbol_proj_layers = [[layers.Dense(self.symbol_dim // self.rel_dim) for _ in range(self.rel_dim)] for _ in range(self.num_layers)]
+
+        # feedforward layers
+        self.ff_layers = [FeedForward(self.symbol_dim, self.dff) for _ in range(self.num_layers)]
 
         if self.use_layer_norm:
             self.layer_norms = [layers.LayerNormalization()]*self.num_layers
@@ -142,11 +143,11 @@ class Abstractor(tf.keras.layers.Layer):
             else: # on next iterations, symbol sequence is transformed with shape [b, m, d_s]
                 abstract_symbol_seq = tf.einsum('bikr,bkj->bijr', rel_tensor, abstract_symbol_seq) # shape: [b, m, d_s, d_r]
 
-            # reshape to collapse final 'relation dimension'
-            abstract_symbol_seq = tf.concat([abstract_symbol_seq[:, :, :, r] for r in range(self.rel_dim)], axis=2) # shape: [b, m, d_s * d_r]
+            # project and concatenate
+            abstract_symbol_seq = tf.concat([self.symbol_proj_layers[i][r](abstract_symbol_seq[:, :, :, r]) for r in range(self.rel_dim)], axis=2) # shape: [b, m, d_s]
 
             # transform symbol sequence via dense layer to return to its original dimension
-            abstract_symbol_seq = self.symbol_dense_layers[i](abstract_symbol_seq) # shape: [b, m, d_s]
+            abstract_symbol_seq = self.ff_layers[i](abstract_symbol_seq) # shape: [b, m, d_s]
 
             if self.use_layer_norm:
                 abstract_symbol_seq = self.layer_norms[i](abstract_symbol_seq)
