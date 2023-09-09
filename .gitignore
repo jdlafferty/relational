@@ -14,6 +14,10 @@ data/
 model_checkpoints/
 model_artifacts/
 
+# jobs
+jobs/*/*.job
+jobs/*/*.out
+
 # ignore certain files in paper directory
 paper/*.pdf
 paper/*.aux
