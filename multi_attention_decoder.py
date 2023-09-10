@@ -4,7 +4,7 @@ import tensorflow as tf
 from transformer_modules import DecoderLayer
 import tensorflow_models as tfm
 
-class TFMMultiAttentionDecoder(tf.keras.layers.Layer):
+class MultiAttentionDecoder(tf.keras.layers.Layer):
     def __init__(self, num_layers, num_heads, dff, dropout_rate=0.1, name="decoder"):
         """create a MultiAttentionDecoder layer.
 
@@ -25,7 +25,7 @@ class TFMMultiAttentionDecoder(tf.keras.layers.Layer):
         name : str, optional
             name of layer, by default "decoder"
         """
-        super(TFMMultiAttentionDecoder, self).__init__(name=name)
+        super(MultiAttentionDecoder, self).__init__(name=name)
 
         self.num_layers = num_layers
         self.num_heads = num_heads
