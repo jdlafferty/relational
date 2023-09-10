@@ -2,6 +2,8 @@
 
 import tensorflow as tf
 from tensorflow.keras import layers
+import tensorflow_models as tfm
+from transformer_modules import AddPositionalEmbedding
 from abstractor import Abstractor
 from abstracters import RelationalAbstracter, SymbolicAbstracter
 
