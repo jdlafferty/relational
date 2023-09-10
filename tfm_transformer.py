@@ -1,5 +1,6 @@
 """An implementation of a Seq2Seq Transformer using tensorflow_models"""
 
+import tensorflow as tf
 import tensorflow_models as tfm
 from tensorflow.keras import layers
 from transformer_modules import AddPositionalEmbedding
