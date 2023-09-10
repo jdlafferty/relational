@@ -4,6 +4,7 @@ import tensorflow as tf
 import tensorflow_models as tfm
 from tensorflow.keras import layers
 from transformer_modules import AddPositionalEmbedding
+from multi_attention_decoder import TFMMultiAttentionDecoder
 
 class TFMTransformer(tf.keras.Model):
     def __init__(self, num_layers, num_heads, dff,
@@ -34,7 +35,7 @@ class TFMTransformer(tf.keras.Model):
         self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
 
         self.encoder = tfm.nlp.models.TransformerEncoder(num_layers=num_layers, num_attention_heads=num_heads, intermediate_size=dff, dropout_rate=dropout_rate)
-        self.decoder = tfm.nlp.models.TransformerDecoder(num_layers=num_layers, num_attention_heads=num_heads, intermediate_size=dff, dropout_rate=dropout_rate)
+        self.decoder = TFMMultiAttentionDecoder(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=dropout_rate)
 
         self.final_layer = layers.Dense(output_dim, name='final_layer')
 
@@ -50,7 +51,7 @@ class TFMTransformer(tf.keras.Model):
         target_embedding = self.target_embedder(target)
         target_embedding = self.pos_embedding_adder_target(target_embedding)
 
-        x = self.decoder(target_embedding, encoder_context)
+        x = self.decoder([target_embedding, encoder_context])
 
         logits = self.final_layer(x)
 
