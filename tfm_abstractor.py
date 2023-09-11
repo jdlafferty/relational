@@ -152,3 +152,158 @@ class TFMAutoregressiveAbstractor(tf.keras.Model):
           pass
 
         return logits
+
+class TFMAutoregressiveCompisitionalAbstractor(tf.keras.Model):
+    def __init__(self,
+            encoder_kwargs,
+            abstractor_kwargs,
+            decoder_kwargs,
+            input_vocab,
+            target_vocab,
+            embedding_dim,
+            output_dim,
+            n_abstractors=1,
+            abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic'
+            abstractor_on='input', # 'input' or 'encoder'
+            decoder_on='abstractor', # 'abstractor' or 'encoder-abstractor'
+            name='autoregressive_abstractor'):
+        """Creates an autoregressive Abstractor model.
+
+        Parameters
+        ----------
+        encoder_kwargs : dict
+            kwargs for the Encoder module. Can be set to None if architecture does not use an encoder.
+        abstractor_kwargs : dict
+            kwargs for the Abstractor model. Should match `abstractor_type`
+        decoder_kwargs : dict
+            kwargs for Decoder module.
+        input_vocab : int or 'vector'
+            if input is tokens, the size of vocabulary as an int.
+            if input is vectors, the string 'vector'. used to create embedder.
+        target_vocab : int or 'vector'
+            if input is tokens, the size of vocabulary as an int.
+            if input is vectors, the string 'vector'. used to create embedder.
+        embedding_dim : int or tuple[int]
+            dimension of embedding (input will be transformed to this dimension).
+        output_dim : int
+            dimension of final output. e.g.: # of classes.
+        abstractor_type : 'abstractor', 'relational', or 'symbolic', optional
+            The type of Abstractor to use, by default 'relational'
+        abstractor_on: 'input' or 'encoder'
+            what the first abstractor should take as input.
+        decoder_on: 'abstractor' or 'encoder-abstractor'
+            what should form the decoder's 'context'.
+            if 'abstractor' the context is the output of the abstractor.
+            if 'encoder-abstractor' the context is the concatenation of the outputs of the encoder and decoder. 
+        """
+
+        super().__init__(name=name)
+
+        # set params
+        self.relation_on = abstractor_on
+        self.decoder_on = decoder_on
+        self.abstractor_type = abstractor_type
+        self.n_abstractors = n_abstractors
+
+        # if relation is computed on inputs and the decoder attends only to the abstractor,
+        # there is no need for an encoder
+        if (abstractor_on, decoder_on) == ('input', 'abstractor'):
+            self.use_encoder = False
+            print(f'NOTE: no encoder will be used since relation_on={abstractor_on} and decoder_on={decoder_on}')
+        else:
+            self.use_encoder = True
+
+        # set up source and target embedders
+        if isinstance(input_vocab, int):
+            self.source_embedder = layers.Embedding(input_vocab, embedding_dim, name='source_embedder')
+        elif input_vocab == 'vector':
+            self.source_embedder = layers.Dense(embedding_dim, name='source_embedder')
+        else:
+            raise ValueError(
+                "`input_vocab` must be an integer if the input sequence is token-valued or "
+                "'vector' if the input sequence is vector-valued.")
+
+        if isinstance(target_vocab, int):
+            self.target_embedder = layers.Embedding(target_vocab, embedding_dim, name='target_embedder')
+        elif target_vocab == 'vector':
+            self.target_embedder = layers.Dense(embedding_dim, name='target_embedder')
+        else:
+            raise ValueError(
+                "`input_vocab` must be an integer if the input sequence is token-valued or "
+                "'vector' if the input sequence is vector-valued.")
+
+        self.pos_embedding_adder_input = AddPositionalEmbedding(name='add_pos_embedding_input')
+        self.pos_embedding_adder_target = AddPositionalEmbedding(name='add_pos_embedding_target')
+
+        # initialize layers
+        if self.use_encoder:
+            self.encoder = tfm.nlp.models.TransformerEncoder(**encoder_kwargs, name='encoder')
+
+        # initialize the abstractor based on requested type
+        if abstractor_type == 'abstractor':
+            self.abstractors = [Abstractor(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+        elif abstractor_type == 'relational':
+            self.abstractors = [RelationalAbstracter(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+        elif abstractor_type == 'symbolic':
+            self.abstractors = [SymbolicAbstracter(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+        else:
+            raise ValueError(f'unexpected `abstracter_type` argument {abstractor_type}')
+
+        # initialize decoder
+        self.decoder = MultiAttentionDecoder(**decoder_kwargs, name='decoder')
+
+        # initialize final prediction layer
+        self.final_layer = layers.Dense(output_dim, name='final_layer')
+
+
+    def call(self, inputs):
+        source, target = inputs # get source and target from inputs
+
+        # embed source and add positional embedding
+        source = self.source_embedder(source)
+        source = self.pos_embedding_adder_input(source)
+
+        # pass input to Encoder
+        if self.use_encoder:
+            encoder_context = self.encoder(source)
+
+        # compute abstracted context (either directly on embedded input or on encoder output)
+        abstract_states_layers = []
+        if self.relation_on == 'input':
+            abstracted_context = self.abstractors[0](source)
+        elif self.relation_on == 'encoder':
+            abstracted_context = self.abstractors[0](encoder_context)
+        else:
+            raise ValueError()
+        abstract_states_layers.append(abstracted_context)
+
+        for l in range(1, self.n_abstractors):
+            abstracted_context = self.abstractors[l](abstracted_context)
+            abstract_states_layers.append(abstracted_context)
+
+        # embed target and add positional embedding
+        target_embedding = self.target_embedder(target)
+        target_embedding = self.pos_embedding_adder_target(target_embedding)
+
+        # decode context (either abstractor only or concatenation of encoder and abstractor outputs)
+        # attend to abstract states at all layers
+        # TODO: add option to only attend to last abstract states?
+        if self.decoder_on == 'abstractor':
+            decoder_inputs = [target_embedding, *abstract_states_layers]
+        elif self.decoder_on == 'encoder-abstractor':
+            decoder_inputs = [target_embedding, encoder_context, *abstract_states_layers]
+        else:
+            raise ValueError()
+
+        x = self.decoder(decoder_inputs)
+
+        # produce final prediction
+        logits = self.final_layer(x)
+
+        try:
+          # Drop the keras mask, so it doesn't scale the losses/metrics. b/250038731
+          del logits._keras_mask
+        except AttributeError:
+          pass
+
+        return logits
