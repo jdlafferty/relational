@@ -241,11 +241,11 @@ class TFMAutoregressiveCompisitionalAbstractor(tf.keras.Model):
 
         # initialize the abstractor based on requested type
         if abstractor_type == 'abstractor':
-            self.abstractors = [Abstractor(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+            self.abstractors = [Abstractor(**abstractor_kwargs, name=f'abstractor_{l}') for l in range(self.n_abstractors)]
         elif abstractor_type == 'relational':
-            self.abstractors = [RelationalAbstracter(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+            self.abstractors = [RelationalAbstracter(**abstractor_kwargs, name=f'abstractor_{l}') for l in range(self.n_abstractors)]
         elif abstractor_type == 'symbolic':
-            self.abstractors = [SymbolicAbstracter(**abstractor_kwargs, name='abstractor') for _ in range(self.n_abstractors)]
+            self.abstractors = [SymbolicAbstracter(**abstractor_kwargs, name=f'abstractor_{l}') for l in range(self.n_abstractors)]
         else:
             raise ValueError(f'unexpected `abstracter_type` argument {abstractor_type}')
 
