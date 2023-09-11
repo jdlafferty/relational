@@ -226,7 +226,7 @@ def create_tfm_compisitional_abstractor(input_vocab_size, target_vocab_size, siz
         embedding_dim=d_model,
         output_dim=target_vocab_size,
         abstractor_type='abstractor', # 'abstractor', 'simple', 'relational', or 'symbolic'
-        n_abstractors=n_layers,
+        n_abstractors=num_layers,
         abstractor_on='encoder', # 'input' or 'encoder'
         decoder_on='encoder-abstractor', # 'abstractor' or 'encoder-abstractor'
         name='autoregressive_abstractor')
