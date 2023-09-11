@@ -1,4 +1,8 @@
 \subsection{Object-sorting: (fully) relational sequence-to-sequence tasks}\label{ssec:experiments_object_sorting}
+
+In the following set of experiments, we consider sequence-to-sequence relational tasks, and compare an Abstractor-supported model to a plain Transformer. We consider the task of \textit{sorting} sequences of randomly permuted random objects. These experiments demonstrate that the Abstractor enables a dramatic improvement in sample-efficiency on sequence-to-sequence relational tasks.
+
+
 \begin{figure}[ht]
     \begin{subfigure}[t]{0.40\textwidth}
         %\centering
@@ -31,8 +35,7 @@
     \vskip-.10in
 \end{figure}
 
-\subsubsection{Superior sample-efficiency on relational tasks compared to plain transformers}
-The next experiment extends the idea of learning an order relation $\prec$ on random objects: now, the task is to fully sort sequences of randomly permuted random objects.
+\subsubsection{Superior sample-efficiency on relational seq2seq tasks compared to standard transformers}
 
 We generate random objects in the following way. First, we generate two sets of random attributes $\mathcal{A} = \{a_1, a_2, a_3, a_4\}$, $a_i \overset{iid}{\sim} \mathcal{N}(0, I) \in \mathbb{R}^{4}$ and $\mathcal{B} = \{b_1, \ldots, b_{12}\}$, $b_i \overset{iid}{\sim} \mathcal{N}(0, I) \in \mathbb{R}^{8}$. To each set of attributes, we associate the strict ordering relation $a_1 \prec a_2 \prec a_3 \prec a_4$ and $b_1 \prec b_2 \prec \cdots \prec b_{12}$, respectively. Our random objects are formed by the Cartesian product of these two attributes $\mathcal{O} = \mathcal{A} \times \mathcal{B}$, yielding $N = 4 \times 12 = 48$ objects (i.e.: each object in $\mathcal{O}$ is a vector in $\mathbb{R}^{4+8}$ formed by a concatenation of one attribute value in $\mathcal{A}$ and one in $\mathcal{B}$). Then, we associate with $\mathcal{O}$ the strict ordering relation corresponding to the order relation of $\mathcal{A}$ as the primary key and the order relation of $\mathcal{B}$ as the secondary key. i.e.: $(a_i, b_j) \prec (a_k, b_l)$ if $a_i \prec a_k$ or if $a_i = a_k$ and $b_j \prec b_l$.
 
