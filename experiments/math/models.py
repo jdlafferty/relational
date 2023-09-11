@@ -2,7 +2,7 @@ import sys; sys.path += ['..', '../..']
 from autoregressive_abstractor import AutoregressiveAbstractor
 from seq2seq_abstracter_models import Transformer
 from tfm_transformer import TFMTransformer
-from tfm_abstractor import TFMAutoregressiveAbstractor
+from tfm_abstractor import TFMAutoregressiveAbstractor, TFMAutoregressiveCompisitionalAbstractor
 
 #region common kwargs
 
