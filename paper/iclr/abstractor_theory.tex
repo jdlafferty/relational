@@ -5,7 +5,7 @@ In this section, we consider the representational power of the Abstractor module
     A_i \gets \mathrm{FeedForward}\paren{\sum_{j} \iprod{\phi(x_i)}{\psi(x_j)} s_j}.
 \end{equation}
 
-The following result shows that a 1-layer Abstractor can approximate arbitrary functions of each object's relations with the other objects. This result follows from the analysis of function classes of inner products of neural networks in~\citep{TODO:POST TO ARXIV}.
+The following result shows that a 1-layer Abstractor can approximate arbitrary functions of each object's relations with the other objects. This result follows from the analysis of function classes of inner products of neural networks in~\citep{TODO:POSTtoARXIV}.
 \begin{result}\label{result:abstractor_univ_approximation}
     Let $r: \calX \times \calX \to \reals^{d_r}$ be any relation function. Then, there exists a choice of symbols $s_1, \ldots, s_\m$ and parameters of the feed-forward network such that $A_i$ approximates an arbitrary function of $\paren{r(x_i, x_j)}_{j=1}^\m$.
 \end{result}
