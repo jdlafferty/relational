@@ -19,3 +19,25 @@ The dataset consists of several math problem-solving tasks, with each task havin
     \caption{Examples of input/target sequences from the math problem-solving dataset.}\label{fig:math_dataset}
 \end{figure}
 
+
+\begin{table}[p]
+    \input{figures/experiments/math_metrics_table.tex}
+    \caption{Metrics for the math problem-solving tasks.}\label{tab:math_metrics}
+\end{table}
+
+\begin{table}[p]
+    \input{figures/experiments/math_tfm_metrics_table.tex}
+    \caption{Metrics for the math problem-solving tasks (tfm implementation).}\label{tab:math_tfm_metrics}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/experiments/math_metrics.pdf}
+    \caption{`from scratch' implementation}\label{fig:math_metrics}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{figures/experiments/math_tfm_metrics.pdf}
+    \caption{tfm implementation}\label{fig:tfm_math_metrics}
+\end{figure}
