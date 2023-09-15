@@ -9,6 +9,13 @@ paper/*.log
 paper/*.out
 paper/*.bbl
 paper/*.synctex.gz
+paper/*/*.pdf
+paper/*/*.aux
+paper/*/*.blg
+paper/*/*.log
+paper/*/*.out
+paper/*/*.bbl
+paper/*/*.synctex.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
