@@ -1,0 +1,31 @@
+\begin{tabular}{llrr}
+\toprule
+                    &                            &  teacher_forcing_accuracy &  val_teacher_forcing_accuracy \\
+task & model &                           &                               \\
+\midrule
+algebra__linear_1d & transformer &                  0.792189 &                      0.733368 \\
+                    & transformer+ &                  0.776148 &                      0.602674 \\
+                    & relational_abstractor &                  0.834093 &                      0.790830 \\
+                    & relational_abstractor (v2) &                  0.810168 &                      0.755261 \\\hline
+algebra__sequence_next_term & transformer &                  0.888972 &                      0.880760 \\
+                    & transformer+ &                  0.922191 &                      0.918061 \\
+                    & relational_abstractor &                  0.916107 &                      0.922129 \\
+                    & relational_abstractor (v2) &                  0.910967 &                      0.917234 \\\hline
+calculus__differentiate & transformer &                  0.995819 &                      0.997979 \\
+                    & transformer+ &                  0.997599 &                      0.997952 \\
+                    & relational_abstractor &                  0.998768 &                      0.999622 \\
+                    & relational_abstractor (v2) &                  0.995293 &                      0.998114 \\\hline
+polynomials__add & transformer &                  0.851280 &                      0.840554 \\
+                    & transformer+ &                  0.859877 &                      0.851360 \\
+                    & relational_abstractor &                  0.869215 &                      0.863132 \\
+                    & relational_abstractor (v2) &                  0.866214 &                      0.855785 \\\hline
+polynomials__coefficient_named & transformer &                  0.586787 &                      0.549235 \\
+                    & transformer+ &                  0.603445 &                      0.563831 \\
+                    & relational_abstractor &                  0.629913 &                      0.598824 \\
+                    & relational_abstractor (v2) &                  0.601525 &                      0.563749 \\\hline
+polynomials__expand & transformer &                  0.804260 &                      0.774356 \\
+                    & transformer+ &                  0.816965 &                      0.784722 \\
+                    & relational_abstractor &                  0.847377 &                      0.821497 \\
+                    & relational_abstractor (v2) &                  0.822705 &                      0.791595 \\
+\bottomrule
+\end{tabular}
