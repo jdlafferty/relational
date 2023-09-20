@@ -2,9 +2,6 @@
 
 The object-sorting experiments in the previous section are ``fully relational'' in the sense that the set of pairwise $\prec$ relations is a sufficient statistic for solving the task (i.e., the target sequence is conditionally independent of the input sequence given the relations). In general, in a generative sequence-to-sequence task, there may not be a relation which is a sufficient statistic. Nonetheless, relational reasoning may still be crucial for solving the task, and the enhanced relational reasoning capabilities of the Abstractor may enable performance improvements. The ``sensory-connected'' architectures described in~\Cref{sec:abstractor_architectures} enable a branch of the model to focus on relational reasoning while maintaining a connection to the sensory information of individual objects. In this section, we compare sensory-connected Abstractor models to standard Transformers on a set of math problem-solving tasks based on the dataset proposed in~\citep{saxtonAnalyzingMathematicalReasoning2019}.
 
-The dataset consists of several math problem-solving tasks, with each task having a dataset of question-answer pairs. The tasks include solving equations, expanding products of polynomials, simplifying polynomials, differentiating functions, predicting the next term in a sequence, etc. A sample of question-answer pairs are displayed in~\Cref{fig:math_dataset}.
-
-% TODO: create this figure
 \begin{figure}
     \begin{minipage}{0.5\textwidth}
         % \centering
@@ -16,28 +13,25 @@ The dataset consists of several math problem-solving tasks, with each task havin
         Question: \texttt{Solve for z: 5*z + 2 = 9.}\\
         Answer: \texttt{7/5}\\
     \end{minipage}
-    \caption{Examples of input/target sequences from the math problem-solving dataset.}\label{fig:math_dataset}
+\caption{Examples of input/target sequences from the math problem-solving dataset.}\label{fig:math_dataset}
 \end{figure}
 
+The dataset consists of several math problem-solving tasks, with each task having a dataset of question-answer pairs. The tasks include solving equations, expanding products of polynomials, simplifying polynomials, differentiating functions, predicting the next term in a sequence, etc. A sample of question-answer pairs is displayed in~\Cref{fig:math_dataset}. The overall dataset contains $2 \times 10^6$ training examples and $10^4$ validation examples per module. Questions have a maximum length of 160 characters and answers have a maximum length of 30 characters. We use character-level encoding with a common alphabet of size $95$ (including upper/lower case characters, digits, and punctuation). Each question and answer is tokenized and padded with the null character.
 
-\begin{table}[p]
-    \input{figures/experiments/math_metrics_table.tex}
-    \caption{Metrics for the math problem-solving tasks.}\label{tab:math_metrics}
-\end{table}
+We compare a sensory-connected Abstractor using architecture (b) in~\Cref{fig:abstractor_architectures} to a standard Transformer. Since the Abstractor-based model with architecture (b) has an Abstractor module in addition to an Encoder and Decoder, we compare against two versions of the Transformer in order to control for parameter count. In the first, the Encoder/Decoder have identical hyperparamters to the Abstractor model. In the second, we increase the model dimension and hidden layer size of the feedforward network such that the overall parameter count is approximately the same as the Abstractor model. We refer to the first model as ``Transformer'' and the second as ``Transformer+'' in the figures. We train on modestly sized models. The precise architectural details and hyperparamters are in~\Cref{tab:math_architecture}. The text is 
 
-\begin{table}[p]
-    \input{figures/experiments/math_tfm_metrics_table.tex}
-    \caption{Metrics for the math problem-solving tasks (tfm implementation).}\label{tab:math_tfm_metrics}
-\end{table}
-
-\begin{figure}
+\begin{wrapfigure}{R}{0.5\textwidth}
     \centering
-    \includegraphics{figures/experiments/math_metrics.pdf}
-    \caption{`from scratch' implementation}\label{fig:math_metrics}
-\end{figure}
+    \includegraphics[width=0.5\textwidth]{figures/experiments/math_metrics.pdf}
+    \caption{\footnotesize End-of-training teacher-forcing accuracy. Shaded regions indicate twice the error of mean computed over 5 trials.}\label{fig:math_metrics}
+\end{wrapfigure}
 
-\begin{figure}
+We evaluate the three models on 5 tasks within the dataset, differentiating functions (calculus), predicting the next term in a sequence (algebra), solving a linear equation (algebra), expanding polynomials, and adding polynomials. For each, we train on the training split and track the teacher-forcing accuracy (excluding null characters) on the validation split. We train each model for 50 epochs with the categorical crossentropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. For each pair of model and task, we repeat the experiment 5 times and compute error bars as twice the standard error of mean.
+
+\Cref{fig:math_metrics} shows the end-of-training teacher-forcing accuracy on the validation split for each task.~\Cref{fig:math_training_curves} shows the validation teacher-forcing accuracy during the course of training. We observe a modest improvement in accuracy compared to both `Transformer' and `Transformer+' across all tasks. The larger Transformer tends to perform better than the smaller Transformer, but the Abstractor-based model consistently outperforms both. This indicates that the performance improvement stems from the architectural modification rather than merely the increase in parameter count. We conjecture that a sensory-connected Abstractor architecture implements two branches of information-processing. The Encoder performs more general-purpose processing of the input sequence, while the Abstractor performs more specialized relational processing. The Decoder then has access to both representations, enabling it to perform the task more effectively.
+
+\begin{figure}[t]
     \centering
-    \includegraphics{figures/experiments/math_tfm_metrics.pdf}
-    \caption{tfm implementation}\label{fig:tfm_math_metrics}
+    \includegraphics[width=\textwidth]{figures/experiments/math_training_curves.pdf}
+    \caption{Training curves.}\label{fig:math_training_curves}
 \end{figure}
