@@ -105,7 +105,7 @@ projects = [project for project in api.projects('awni00') if 'math-' in project.
 
 print(projects)
 
-save_dir = 'project_run_histories'
+save_dir = 'figure_data/math/project_run_histories'
 
 metrics = ['val_teacher_forcing_accuracy', 'epoch']
 groups = ['transformer-medium', 'transformer-medium+', 'relational_abstractor-medium', 'relational_abstractor2-medium']
