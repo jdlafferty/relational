@@ -23,7 +23,7 @@ We compare a sensory-connected Abstractor using architecture (d) in~\Cref{fig:ab
 \begin{wrapfigure}{R}{0.5\textwidth}
     \centering
     \includegraphics[width=0.5\textwidth]{figures/experiments/math_metrics.pdf}
-    \caption{\footnotesize End-of-training teacher-forcing accuracy. Shaded regions indicate twice the error of mean computed over 5 trials.}\label{fig:math_metrics}
+    \caption{\footnotesize End-of-training teacher-forcing accuracy.}\label{fig:math_metrics}
 \end{wrapfigure}
 
 We evaluate the three models on 5 tasks within the dataset, differentiating functions (calculus), predicting the next term in a sequence (algebra), solving a linear equation (algebra), expanding polynomials, and adding polynomials. For each, we train on the training split and track the teacher-forcing accuracy (excluding null characters) on the validation split. We train each model for 50 epochs with the categorical crossentropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. For each pair of model and task, we repeat the experiment 5 times and compute error bars as twice the standard error of mean.
@@ -33,5 +33,5 @@ We evaluate the three models on 5 tasks within the dataset, differentiating func
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{figures/experiments/math_training_curves.pdf}
-    \caption{Training curves.}\label{fig:math_training_curves}
+    \caption{Training curves comparing a ``sensory-connected'' Abstractor architecture to a standard Transformer on mathematics problem-solving tasks.}\label{fig:math_training_curves}
 \end{figure}
