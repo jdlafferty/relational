@@ -59,11 +59,11 @@ We observe in our experiments that allowing $\sigma_{\mathrm{rel}}$ to be a conf
 
 Relational cross-attention implements a type of information bottleneck, which we term the relational bottleneck, wherein the resultant representation encodes only relational information about the object sequence and does not encode information about the features of individual objects\footnote{The diagonal entries of the relation matrix $R_{ii} = \iprod{\phi(x_i)}{\psi(x_i)}$ encode information about individual objects (a self-relation). This can be interpreted as a leakage of non-relational information. It's possible to implement a stricter relational bottleneck by masking the diagonal entries of $R$, but we find this to be unnecessary in our experiments.}. This enables a branch of the model to focus purely on modeling the relations between objects, yielding greater sample-efficiency in tasks which rely on relational reasoning.
 
-\begin{remark}
-    We call this operation ``relational cross-attention'' because 1) it computes relational representations, and 2) when attending to the input objects,  only
-    relational information, not sensory information, is allowed to cross over, since 
-    the values are input-independent.
-\end{remark}
+% \begin{remark}
+%     We call this operation ``relational cross-attention'' because 1) it computes relational representations, and 2) when attending to the input objects,  only
+%     relational information, not sensory information, is allowed to cross over, since 
+%     the values are input-independent. \awni{I was thinking (1) explains `relational' and (2) explains `cross-attention'. But we might want to remove this since we're tight on space and it's not really necessary.}
+% \end{remark}
 
 In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$. Relational cross-attention is given by,
 \begin{equation}
