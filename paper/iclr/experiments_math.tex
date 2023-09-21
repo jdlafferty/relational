@@ -3,16 +3,23 @@
 The object-sorting experiments in the previous section are ``fully relational'' in the sense that the set of pairwise $\prec$ relations is a sufficient statistic for solving the task (i.e., the target sequence is conditionally independent of the input sequence given the relations). In general, in a generative sequence-to-sequence task, there may not be a relation which is a sufficient statistic. Nonetheless, relational reasoning may still be crucial for solving the task, and the enhanced relational reasoning capabilities of the Abstractor may enable performance improvements. The ``sensory-connected'' architectures described in~\Cref{sec:abstractor_architectures} enable a branch of the model to focus on relational reasoning while maintaining a connection to the sensory information of individual objects. In this section, we compare sensory-connected Abstractor models to standard Transformers on a set of math problem-solving tasks based on the dataset proposed in~\citep{saxtonAnalyzingMathematicalReasoning2019}.
 
 \begin{figure}
-    \begin{minipage}{0.5\textwidth}
-        % \centering
+    \begin{center}
+    \begin{small}
+    \begin{tabular}{cc}
+        \begin{tabular}{l}
         Task: \texttt{polynomials\_\_expand}\\
         Question: \texttt{Expand (2*x + 3)*(x - 1).}\\
-        Answer: \texttt{2*x**2 + x - 3}\\
-
+        Answer: \texttt{2*x**2 + x - 3}
+        \end{tabular}
+        &
+        \begin{tabular}{l}
         Task: \texttt{algebra\_\_linear\_1d}\\
         Question: \texttt{Solve for z: 5*z + 2 = 9.}\\
-        Answer: \texttt{7/5}\\
-    \end{minipage}
+        Answer: \texttt{7/5}
+        \end{tabular}
+    \end{tabular}
+    \end{small}
+    \end{center}
 \caption{Examples of input/target sequences from the math problem-solving dataset.}\label{fig:math_dataset}
 \end{figure}
 
