@@ -31,13 +31,6 @@ For example, in the figure to the right, the cards with two solid blue/purple di
 \textbf{Experimental details:} The task is, given a triplet of card images, to determine whether they form a set or not. A CNN classifier is trained on the card images to predict the four attributes. An intermediate layer is used as an embedder for all relational models. We compare an Abstractor model to CorelNet. The shared architecture is CNN embedder $\to$ Dense $\to$ \{Abstractor or CorelNet\} $\to$ Flatten $\to$ Dense $\to$ Prediction. The CNN is trained to predict the four attributes of
 each card and then an embedding of dimension $d=32$ of each card is obtained from an intermediate layer. The Abstractor has hyperparamaters: 2 layers, 4-dimensional symmetric relations, linear relation activation. We tested against the standard version of CorelNet, but found that it did not learn anything. We iterated over the hyperparamters and architecture to improve its performance. We found that removing the softmax activation in CoRelNet improved performance a bit. We report learning curves in~\Cref{fig:exp_set_classification} (10 trials per training set size). We find that the Abstractor model significantly out-performs both variants of CoRelNet. We attribute this to its ability to model multi-dimensional relations. In this task, there exists four different relations (one for each attribute) which are needed to determine whether a triple of cards forms a set. CoRelNet would need to squeeze all of this information into a single-dimensional scaler whereas the Abstractor can model each relation separately. We hypothesize that the ability to model relations as multi-dimensional is also the reason that the Abstractor can learn the order relation better than asymmetric CoRelNet---even though the underlying relation is one-dimensional, having a multi-dimensional representation enables greater robustness and multiple avenues towards a good solution during optimization.
 
-% TODO: decide whether to keep or remove this experiment
-% I think it makes an interesting point. But the Neurips reviewers didn't seem to like it and it overlaps a bit with the end-to-end experiment. 
-
-In~\Cref{fig:exp_set_symbolic}, we compare an Abstractor-based model to a "symbolic" model which receives as input a binary representation of the four relevant relations. The same CNN embedder as in the previous SET experiment is used. Next, we train 1-head Abstractors separately for each of the four attributes to learn same/different relations, where the task is to decide if an input pair of cards is the same or different for that attribute. We then use the learned $W_1$ and $W_2$ parameters learned for these relations to initialize the relations in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET.
-
-This is compared to a baseline symbolic model where, instead of images, the input is a vector with 12 bits,
-explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation represents an upper bound on the performance achievable by any model. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained with purely symbolic, noise-free encodings of the relevant relations.
 
 \begin{figure}[t]
     % \vskip-.2in
@@ -56,16 +49,6 @@ explicitly encoding the relations. That is, for each of the four attributes, a b
         \includegraphics[scale=.95]{figures/experiments/set_classification.pdf}
         % \vskip-5pt
         \caption{The Abstractor's ability to model multi-dimensional relations enables it to solve the "SET" task.}\label{fig:exp_set_classification}
-    \end{subfigure}
-    \centering
-    \begin{subfigure}[t]{0.40\textwidth}
-        \centering
-        % \vskip10pt
-        % \hskip-.6in
-        \includegraphics[scale=.95]{figures/experiments/set_symbolic_vs_abstractor.pdf}
-        % \vskip-5pt
-        \caption{Comparison of Abstractor trained on images of cards and MLP with relations hand-encoded symbolically as bit vectors.}% The Abstractor is nearly as sample efficient as symbolic computation.}
-        \label{fig:exp_set_symbolic}
     \end{subfigure}
     \caption{Experiments on discriminative relational tasks and comparison to CoRelNet.}
 \end{figure}
