@@ -1,19 +1,41 @@
 \section{Introduction}
 
-\awni{Question on title: "enhanced relational reasoning" vs "explicit relational reasoning" vs just "relational reasoning"? one reason to include a prefix is that transformers can model relations, but they are less sample-efficient due to their entangled representations}
+The ability to infer and process relations and reason in terms 
+of analogies lies at the heart of human abilities for abstraction and creative thinking
+\citep{snow,holyoak}. This capability is 
+largely separate from our ability to acquire semantic and procedural 
+knowledge through sensory tasks, such as image and audio processing. Modern 
+deep learning systems can often capture this latter type of intelligence 
+through efficient function approximation. However, deep learning has 
+seen limited success with relational and abstract reasoning, which 
+requires identifying novel associations  from limited data
+and generalizing to new domains. 
 
-\texttt{A paragraph on the importance of relations to cognition/intelligence.}
+Recognizing the importance of this capability,
+machine learning research has explored several novel frameworks for relational learning \citep{TEM, NTM,episodicControl,esbn,mondal23learned,
+battaglia,barrett:2018,santoro1}. 
+In this paper we propose a framework that casts relational learning in terms of Transformers. 
+The success of Transformers lies in combining the function approximation capabilities of deep learning with the use
+of attentional mechanisms to support richly context-sensitive processing \citep{transformers,vaswani2017attention,
+    kerg2020untangling}. However, it is clear that Transformers are missing core capabilities required for modeling
+human thought \citep{mahowald2023dissociating}, including an ability to support analogy and abstraction.
+While large language models show a surprising ability to complete some analogies \citep{webb}, this ability
+emerges implicitly after processing vast amounts of data. The challenge is to provide ways of binding
+domain-specific information to low dimensional, abstract representations that can be used to compute a given function
+in any setting for which it is relevant, based on limited data.
 
-The ability to infer and process relations is at the heart of abstraction and creative thinking. Under one theory of cognitive science, intelligence can be understood through the lens of two categories of cognition---``neocortical'' and ``prefrontal''. Neocortical intelligence is refers to the ability to acquire semantic and procedural knowledge. By contrast, preforntal intelligence refers to the ability to identify novel associations and relations, building abstractions and generalizing to new domains. It is sometimes argued that modern deep learning systems achieve neocortical intelligence through efficient function approximation, but so far have limited prefrontal intelligence.
 
-\texttt{A paragraph on how transformers fit into this theory. the attention mechanisms of transformers enables contextual processing. but they don't support explicit relational reasoning. The emerging literature on relational reasoning shows that the Transformer can be sample-inefficient in learning relational reasoning tasks.}
+In this work we propose an extension of Transformers that enables explicit relational reasoning through a novel module called the \textit{Abstractor}.  At the core of the Abstractor module is a novel variant of attention called \textit{relational cross-attention}. This enables more focused and explicit relational reasoning, without extraneous sensory information. Additionally, it enables improved out-of-distribution generalization since the same relations may be present in different domains, even if the underlying sensory information of individual objects is different.
 
-An example of this is the Transformer architecture \citep{vaswani2017attention}. The transformer is a powerful sequence model with the ability to . A testament to the power and versatility of the Transformer architecture is the fact that it is at the core of the most successful large language models today \citep{gpt3,gpt4,llamma,T5,etc?}. Beyond architectural variations, there is no real competitor to the Transformer in this domain. Recent work has studied the emergent abstraction abilities of large language models based on the Transformer architecture. While large language models show some ability to complete analogies~\citep{}, this is attained implicitly through processing vast amounts of data.
+Our approach is motivated by a type of inductive bias for relational learning architectures we call the
+``relational bottleneck," 
+which restricts the flow of information from sensory subsystems to  
+reasoning subsystems to be relational. 
+Through the relational cross-attention mechanism, the Abstractor architecture
+creates a powerful combination of deep learning and relational learning that implements a form of symbolic processing, enabling abstraction and generalization from limited data.
 
-\texttt{A paragraph introducing our work and our main claims/contributions. relational bottleneck. Abstractor module.}
-
-In this work we propose an extension of the Transformer framework for explicit relational reasoning through a novel module called the \textit{Abstractor}. The Abstractor achieves this enhanced relational reasoning through an inductive bias we call a \textit{relational information bottleneck}. This is an inductive bias which enforces that the representations learned by the Abstractor encode purely relational information which is abstracted away from the attributes of individual objects. At the core of the Abstractor module is a novel variant of attention called \textit{relational cross-attention}. This enables more focused and explicit relational reasoning, absent any extraneous sensory information. Additionally, it enables improved out-of-distribution generalization since the same relations may be present in different domains, even if the underlying sensory information of individual objects are different.
-
-We empirically evaluate the Abstractor on two sets of tasks. The first set of tasks are based on learning order relations and sorting sequences of randomly-generated objects. This is a sequence-to-sequence relational task, which is so far unexplored in the literature on relational architectures (which has so far focused on discriminative tasks). We compare an Abstractor-based model to a standard transformer and observe dramatic improvements in sample efficiency. The second set of tasks are based on solving mathematical problems. Whereas the sorting tasks are purely relational synthetic tasks, the mathematical problem-solving tasks are more realistic and require a combination of relational reasoning and function approximation. Here too, the Abstractor yields a small but consistent improvement in sample efficiency over a standard transformer. This suggests that explicit relational reasoning is a useful architectural addition to sequence models. We hope that this work marks a step towards the development of machine learning methods and theories that for improved prefrontal intelligence.
+We empirically evaluate the Abstractor on two sets of tasks. The first set of tasks is based on learning order relations and sorting sequences of objects. This is a sequence-to-sequence relational task, which is so far unexplored in the literature on relational architectures, which had 
+previously focused on discriminative tasks. We compare an Abstractor-based model to a standard Transformer and observe dramatic improvements in sample efficiency. The second set of tasks is based on solving mathematical problems. Whereas the sorting tasks are purely relational synthetic tasks, the mathematical problem-solving tasks are more realistic and require a combination of relational reasoning and function approximation. Here too, the Abstractor yields a consistent although small improvement in sample efficiency over a standard Transformer. This provides
+evidence that the Abstractor module for relational reasoning is a useful architectural addition to sequence models. 
 
 \input{related_work}
