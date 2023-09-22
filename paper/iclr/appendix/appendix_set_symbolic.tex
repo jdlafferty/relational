@@ -1,4 +1,7 @@
 \subsection{SET: Comparison to ``symbolic'' model}
+
+This experiment is based on the SET experiment in~\Cref{sssec:exp_set}. Whereas the experiment in the main body of the paper considered how the Abstractor compared to CoRelNet when training end-to-end on the SET task, here we examine how the relational representations produced by an Abstractor compare to ``symbolic'' hand-encoded representations.
+
 In~\Cref{fig:exp_set_symbolic}, we compare an Abstractor-based model to a ``symbolic'' model which receives as input a binary representation of the four relevant relations. The same CNN embedder as in the previous SET experiment is used. Next, we train 1-head Abstractors separately for each of the four attributes to learn same/different relations, where the task is to decide if an input pair of cards is the same or different for that attribute. We then use the learned $W_1$ and $W_2$ parameters learned for these relations to initialize the relations in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET.
 
 This is compared to a baseline symbolic model where, instead of images, the input is a vector with 12 bits,
