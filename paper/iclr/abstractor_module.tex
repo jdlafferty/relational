@@ -30,7 +30,7 @@ where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied elementwise to e
 
 Thus, self-attention is a form of message-passing where the message from object $j$ to object $i$ is an encoding of object $j$'s features weighted by the (softmax-normalized) relation between the two objects. As a result, the processed representation obtained by self-attention involves some relational information. However, this relational information is entangled with the features of individual objects.
 
-Our goal is to learn relational representations which are abstracted away from the features of individual objects in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by the entangled sensory-relational representations learned in standard self-attention. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with input-independent vectors which identify the objects but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, we make it so that the message from object $j$ to object $i$ is the symbol identifying object $j$, $s_j$, together with the relation between the two objects, $R_{ij}$, through
+Our goal is to learn relational representations which are abstracted away from the features of individual objects in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by standard self-attention, as it produces representations which entangle relational information with object-level attributes. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with input-independent vectors which identify the objects but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, we make it so that the message from object $j$ to object $i$ is the symbol identifying object $j$, $s_j$, together with the relation between the two objects, $R_{ij}$, through
 \begin{equation}\label{eq:relational_crossattn_message_passing}
     A_i \gets \mathrm{MessagePassing}\paren{\set{(s_j, R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} s_j.
 \end{equation}
@@ -61,7 +61,6 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$. Rel
     \end{split}
 \end{equation}
 
-% TODO: FIGURE COMPARING DIFFERENT ATTENTION MECHANISMS
 \begin{figure}
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -76,13 +75,12 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$. Rel
         \caption{$A \gets \mathrm{RelationalCrossAttention(X, S)}$}
         \label{fig:relational_cross_attention}
     \end{subfigure}
-    \caption{Comparison of relational cross-attention with self-attention. Red represents the sensory information of individual objects, blue represents relational information, and purple represents entangled representations of sensory and relational information. Relational cross-attention computes relational information disentangled from the features of individual objects.}
-    \label{fig:attn_mechanisms}
+    \caption{Comparison of relational cross-attention with self-attention. Red represents object-level features, blue represents relational features, and purple represents entangled representations of both. Relational cross-attention computes relational information disentangled from the features of individual objects.}\label{fig:attn_mechanisms}
 \end{figure}
 
 \subsection{Abstractor module}\label{ssec:abstractor_module}
 
-We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module which processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ which represents features of the input sequence. In the Encoder, the output objects $E = \paren{E_1, \ldots, E_\m}$ represents a mix of sensory information about individual objects and relational information. In the Abstractor, $A$ represents purely relational information which is abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an encoder, an Abstractor module can consist of several layers, each consisting of relational cross-attention followed by a feedforward network. Optionally, we might apply a residual connection and layer-normalization as suggested in~\citep{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
+We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module which processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ which represents features of the input sequence. In the Encoder, the output objects $E = \paren{E_1, \ldots, E_\m}$ represents a mix of object-level attributes and relational information. In the Abstractor, $A$ represents purely relational information which is abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an encoder, an Abstractor module can consist of several layers, each consisting of relational cross-attention followed by a feedforward network. Optionally, we might apply a residual connection and layer-normalization as suggested in~\citep{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
 
 \begin{algorithm}[ht!]
 	\caption{Abstractor module}\label{alg:abstractor_module}

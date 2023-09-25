@@ -1,14 +1,5 @@
 \section{Summary}\label{sec:discuss}
 
-In this work we have proposed a framework which extends Transformer models to 
-naturally support types of relational learning, through cross-attention
-mechanisms that enforce a relational bottleneck, so that only information about relations between encoder states
-are used in transformations of the abstract states.
-Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships.
-Experiments with sorting and other relational tasks indicate that this framework has the potential to combine the
-benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities supported by symbolic processing.
-Interesting
-work remains to better understand the potential of this framework, and
-how it may relate to the algorithms of human cognition as implemented in the brain.
-
-
+In this work we have proposed a framework which extends Transformer models to naturally support types of relational learning, through a cross-attention mechanism that enforces a relational bottleneck, separating relational information from object-level attributes. Building on insights gained from the implementation of a relational bottleneck in other forms \citep{esbn, kerg2022neural}, this exploits the powerful attentional capabilities of the transformer architecture to identify relevant relationships. Our experiments validate that the proposed architecture enables dramatic improvements in relational processing, and that this has the potential to translate into meaningful gains in more general sequence modeling tasks.
+% Experiments with controlled purely relational tasks as well as more general sequence modeling tasks indicate that this framework has the potential to combine the benefits of function approximation over sensory states, as exploited in many deep learning models, with abstraction and relational reasoning abilities supported by symbolic processing.
+Interesting work remains to better understand the potential of this framework, and how it may relate to the algorithms of human cognition as implemented in the brain.
