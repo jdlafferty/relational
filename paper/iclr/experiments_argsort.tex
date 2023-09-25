@@ -6,7 +6,7 @@
 A natural type of relation on which to test our Abstractor models is \textit{ordering}. Suppose we have a set of $N$
 objects $\mathcal{X} = \{ x_1 , ..., x_N \}$ with a strict ordering relation $x_1 \prec x_2 \prec \cdots \prec x_N$. The task is as follows: given a set of randomly permuted objects in $\mathcal{X}$, return the sorted sequence of objects according to the underlying ordering, by sorting their indices in the sequence---\texttt{argsort}.
 
-The \texttt{argsort} task is a fully relational sequence-to-sequence task since it only requires relational
+The \texttt{argsort} task is a purely relational sequence-to-sequence task since it only requires relational
 information (the ordinal values of the objects) to solve. We use this task to compare our proposed Abstractor models
 to a standard Transformer.
 Transformers are large and powerful sequence models. Given enough data, they can solve almost any task. We are interested in comparing the sample efficiency of our Abstractor models to Transformers, investigating how the Abstractor's

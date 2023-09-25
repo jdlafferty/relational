@@ -1,6 +1,6 @@
 \subsection{Object-sorting: (fully) relational sequence-to-sequence tasks}\label{ssec:experiments_object_sorting}
 
-In the following set of experiments, we consider sequence-to-sequence relational tasks, and compare an Abstractor-supported model to a plain Transformer. We consider the task of \textit{sorting} sequences of randomly permuted random objects. These experiments are ``fully relational'' in the sense that there exists a relation (order) which is a sufficient statistic for solving the task---the features of individual objects beyond this relation are extraneous. This is a more controlled setting which tests the hypothesis that the inductive biases of the Abstractor indeed confer benefits in modeling relations. We consider the more ``realistic'' setting of partially-relational tasks in the next section. The experiments in the present section demonstrate that the Abstractor enables a dramatic improvement in sample-efficiency on sequence-to-sequence relational tasks.
+In the following set of experiments, we consider sequence-to-sequence relational tasks, and compare an Abstractor-supported model to a plain Transformer. We consider the task of \textit{sorting} sequences of randomly permuted random objects. These experiments are ``purely relational'' in the sense that there exists a relation (order) which is a sufficient statistic for solving the task---the features of individual objects beyond this relation are extraneous. This is a more controlled setting which tests the hypothesis that the inductive biases of the Abstractor indeed confer benefits in modeling relations. We consider the more ``realistic'' setting of partially-relational tasks in the next section. The experiments in the present section demonstrate that the Abstractor enables a dramatic improvement in sample-efficiency on sequence-to-sequence relational tasks.
 \begin{figure}[ht]
     \begin{subfigure}[t]{0.40\textwidth}
         %\centering
@@ -15,7 +15,7 @@ In the following set of experiments, we consider sequence-to-sequence relational
         \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benefits from pre-training.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure}
     % \bigskip
-    \caption{Experiments on fully relational sequence-to-sequence tasks.}\label{fig:experiments}
+    \caption{Experiments on purely relational sequence-to-sequence tasks.}\label{fig:experiments}
     \vskip-.10in
 \end{figure}
 
