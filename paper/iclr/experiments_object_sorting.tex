@@ -2,15 +2,16 @@
 
 In the following set of experiments, we consider sequence-to-sequence relational tasks, and compare an Abstractor-supported model to a plain Transformer. We consider the task of \textit{sorting} sequences of randomly permuted random objects. These experiments are ``purely relational'' in the sense that there exists a relation (order) which is a sufficient statistic for solving the task---the features of individual objects beyond this relation are extraneous. This is a more controlled setting which tests the hypothesis that the inductive biases of the Abstractor indeed confer benefits in modeling relations. We consider the more ``realistic'' setting of partially-relational tasks in the next section. The experiments in the present section demonstrate that the Abstractor enables a dramatic improvement in sample-efficiency on sequence-to-sequence relational tasks.
 \begin{figure}[ht]
-    \begin{subfigure}[t]{0.40\textwidth}
-        %\centering
-        \hskip-.35in\includegraphics[scale=.95]{figures/experiments/random_object_sorting.pdf}
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \hskip-.35in\includegraphics[width=\textwidth]{figures/experiments/random_object_sorting.pdf}
         \vskip-5pt
         \caption{Learning curves on sorting sequences of random objects. The abstractor is dramatically more sample-efficient.}\label{fig:exp_object_sorting}
     \end{subfigure}\hspace{\fill}
-    \begin{subfigure}[t]{0.40\textwidth}
-        %\centering
-        \hskip-.6in\includegraphics[scale=.95]{figures/experiments/random_object_sorting_generalization.pdf}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \hskip-.6in\includegraphics[width=\textwidth]{figures/experiments/random_object_sorting_generalization.pdf}
         \vskip-5pt
         \caption{Learning curves with and without pre-training on a similar sorting task. The Abstractor benefits from pre-training.}\label{fig:exp_object_sorting_generalization}
     \end{subfigure}
