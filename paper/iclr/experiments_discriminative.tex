@@ -19,10 +19,7 @@ However, some relations are more complex and may be asymmetric---an example is o
 
 % \subsubsection{SET: modeling multi-dimensional relations}\label{sssec:exp_set}
 
-\textbf{SET: modeling multi-dimensional relations.}
-% The $\prec$ relation is a one-dimensional relation. Similarly, the underlying relations in the experiments considered in~\citep{kerg2022neural} are also one-dimensional (same/different). In the next experiment, we explore a discriminative relational tasks which relies on a multi-dimensional relation. The task we consider is SET. 
-``SET'' is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory information. Players are presented with a sequence of cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape) and they must find triplets of cards which obey a deceptively simple rule: along each dimension, cards in a SET must either have the same value or three unique values. For example, in~\Cref{fig:set_example}, the cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs form a SET: same color, same number, different patterns, different shapes.
-
+% might need to move this back down if we make other edits and things move around
 \begin{wrapfigure}{R}{0.25\textwidth}
 	\vskip-5pt
 	\begin{tabular}{c}
@@ -30,6 +27,10 @@ However, some relations are more complex and may be asymmetric---an example is o
 	\end{tabular}
 	\caption{\footnotesize The SET game}\label{fig:set_example}
 \end{wrapfigure}
+\textbf{SET: modeling multi-dimensional relations.}
+% The $\prec$ relation is a one-dimensional relation. Similarly, the underlying relations in the experiments considered in~\citep{kerg2022neural} are also one-dimensional (same/different). In the next experiment, we explore a discriminative relational tasks which relies on a multi-dimensional relation. The task we consider is SET. 
+``SET'' is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory information. Players are presented with a sequence of cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape) and they must find triplets of cards which obey a deceptively simple rule: along each dimension, cards in a SET must either have the same value or three unique values. For example, in~\Cref{fig:set_example}, the cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs form a SET: same color, same number, different patterns, different shapes.
+
 
 
 In this experiment, the task is, given a triplet of card images, to determine whether they form a SET or not. A CNN classifier is trained on the card images to predict the four attributes. An intermediate layer is used as an embedder for all relational models. We compare an Abstractor model to CorelNet. The shared architecture is $\texttt{CNN} \to \{\texttt{Abstractor} \text{ or } \texttt{CorelNet}\} \to \texttt{Flatten} \to \texttt{Dense}$. We report learning curves in~\Cref{fig:exp_set_classification} (10 trials per training set size). We find that the Abstractor model significantly out-performs CoRelNet. We attribute this to its ability to model multi-dimensional relations. In this task, there exists four different relations (one for each attribute) which are needed to determine whether a triple of cards forms a set. CoRelNet would need to squeeze all of this information into a single-dimensional scalar whereas the Abstractor can model each relation separately. We hypothesize that the ability to model relations as multi-dimensional is also the reason that the Abstractor can learn the order relation better than asymmetric CoRelNet---even though the underlying relation is one-dimensional, having a multi-dimensional representation enables greater robustness and multiple avenues towards a good solution during optimization.
