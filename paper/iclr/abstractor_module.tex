@@ -127,11 +127,11 @@ The hyperparamters of an Abstractor module includes the the number of layers $L$
 Observe that in the first layer of the Abstractor, the values in relational cross-attention are the input-independent symbols. In the following layers, the values are the abstract states from the previous layer. In the next subsection we characterize the function class of 1-layer Abstractor modules. Computations in deeper Abstractor modules are more difficult to interpret in terms of the original input sequence, but, empirically, we find that deeper Abstractor modules can yield improvements in performance.
 
 \begin{remark}[Length generalization]\rm
-    Similar to positional embeddings in standard Transformers, the symbols $S = (s_1, s_2, \ldots)$ can be either learned parameters of the model or non-parameteric positional embeddings (e.g., sinusoidal positional embeddings). In principle, using non-parameteric positional embeddings as symbols allows for generalization to longer sequence lengths than was observed during training. However, length-generalization remains an unsolved challenge in Transformers~\citep{kazemnejadImpactPositionalEncoding2023}. Although we don't carry-out a systematic evaluation of length-generalization for Abstractor-based models, it is likely that the same challenges apply. To begin to address this, we propose a variant of the Abstractor which uses position-relative symbols, $S = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$, where the message-passing operation of relational cross-attention becomes
-    \begin{equation}\label{eq:position_relative_symbols}
-            A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}}
-            = \sum_{j} R_{ij} s_{j-i}.
-    \end{equation}
+    Similar to positional embeddings in standard Transformers, the symbols $S = (s_1, s_2, \ldots)$ can be either learned parameters of the model or non-parameteric positional embeddings (e.g., sinusoidal positional embeddings). In principle, using non-parameteric positional embeddings as symbols allows for generalization to longer sequence lengths than was observed during training. However, length-generalization remains an unsolved challenge in Transformers~\citep{kazemnejadImpactPositionalEncoding2023}. Although we don't carry-out a systematic evaluation of length-generalization for Abstractor-based models, it is likely that the same challenges apply. To begin to address this, we propose a variant of the Abstractor which uses position-relative symbols, $S = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$, where the message-passing operation of relational cross-attention becomes $A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} s_{j-i}$.
+    % \begin{equation}\label{eq:position_relative_symbols}
+    %         A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}}
+    %         = \sum_{j} R_{ij} s_{j-i}.
+    % \end{equation}
     Hence, the symbols carry information about relative-position with respect to the object being processed, as opposed to absolute position. In Transformers, relative positional embeddings have been shown to yield improvements in length-generalization.
 \end{remark}
 
