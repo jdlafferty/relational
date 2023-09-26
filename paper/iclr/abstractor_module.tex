@@ -19,10 +19,10 @@ Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that
 
 \subsection{Relational Cross-Attention}\label{ssec:relational_crossattention}
 
-The core operation in a transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via,
-\begin{equation}\label{eq:self_attn}
-    X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
-\end{equation}
+The core operation in a transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via, $ X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)}$,
+% \begin{equation}\label{eq:self_attn}
+%     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
+% \end{equation}
 where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied elementwise to each object in the sequence (i.e., $\phi(X) = \paren{\phi(x_1), \ldots, \phi(x_\m)}$). Typically, those are linear or affine functions, with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. Note that $\phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of message-passing. In particular, let $R = \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)}$ be the softmax-normalized relation matrix. Then self-attention takes the form
 \begin{equation}\label{eq:self_attn_message_passing}
     x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} \phi_v(x_j).
@@ -30,7 +30,7 @@ where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied elementwise to e
 
 Thus, self-attention is a form of message-passing where the message from object $j$ to object $i$ is an encoding of object $j$'s features weighted by the (softmax-normalized) relation between the two objects. As a result, the processed representation obtained by self-attention involves some relational information. However, this relational information is entangled with the features of individual objects.
 
-Our goal is to learn relational representations which are abstracted away from the features of individual objects in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by the entangled sensory-relational representations learned in standard self-attention. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with input-independent vectors which identify the objects but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, we make it so that the message from object $j$ to object $i$ is the symbol identifying object $j$, $s_j$, together with the relation between the two objects, $R_{ij}$, through
+Our goal is to learn relational representations which are abstracted away from the features of individual objects in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by standard self-attention, as it produces representations which entangle relational information with object-level attributes. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with input-independent vectors which identify the objects but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, we make it so that the message from object $j$ to object $i$ is the symbol identifying object $j$, $s_j$, together with the relation between the two objects, $R_{ij}$, through
 \begin{equation}\label{eq:relational_crossattn_message_passing}
     A_i \gets \mathrm{MessagePassing}\paren{\set{(s_j, R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} s_j.
 \end{equation}
@@ -61,7 +61,6 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$. Rel
     \end{split}
 \end{equation}
 
-% TODO: FIGURE COMPARING DIFFERENT ATTENTION MECHANISMS
 \begin{figure}
     \begin{subfigure}[b]{0.5\textwidth}
         \centering
@@ -76,13 +75,12 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$. Rel
         \caption{$A \gets \mathrm{RelationalCrossAttention(X, S)}$}
         \label{fig:relational_cross_attention}
     \end{subfigure}
-    \caption{Comparison of relational cross-attention with self-attention. Red represents the sensory information of individual objects, blue represents relational information, and purple represents entangled representations of sensory and relational information. Relational cross-attention computes relational information disentangled from the features of individual objects.}
-    \label{fig:attn_mechanisms}
+    \caption{Comparison of relational cross-attention with self-attention. Red represents object-level features, blue represents relational features, and purple represents entangled representations of both. Relational cross-attention computes relational information disentangled from the features of individual objects.}\label{fig:attn_mechanisms}
 \end{figure}
 
 \subsection{Abstractor module}\label{ssec:abstractor_module}
 
-We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module which processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ which represents features of the input sequence. In the Encoder, the output objects $E = \paren{E_1, \ldots, E_\m}$ represents a mix of sensory information about individual objects and relational information. In the Abstractor, $A$ represents purely relational information which is abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an encoder, an Abstractor module can consist of several layers, each consisting of relational cross-attention followed by a feedforward network. Optionally, we might apply a residual connection and layer-normalization as suggested in~\citep{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
+We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module which processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ which represents features of the input sequence. In the Encoder, the output objects $E = \paren{E_1, \ldots, E_\m}$ represents a mix of object-level attributes and relational information. In the Abstractor, $A$ represents purely relational information which is abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an encoder, an Abstractor module can consist of several layers, each consisting of relational cross-attention followed by a feedforward network. Optionally, we might apply a residual connection and layer-normalization as suggested in~\citep{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
 
 \begin{algorithm}[ht!]
 	\caption{Abstractor module}\label{alg:abstractor_module}
@@ -129,11 +127,11 @@ The hyperparamters of an Abstractor module includes the the number of layers $L$
 Observe that in the first layer of the Abstractor, the values in relational cross-attention are the input-independent symbols. In the following layers, the values are the abstract states from the previous layer. In the next subsection we characterize the function class of 1-layer Abstractor modules. Computations in deeper Abstractor modules are more difficult to interpret in terms of the original input sequence, but, empirically, we find that deeper Abstractor modules can yield improvements in performance.
 
 \begin{remark}[Length generalization]\rm
-    Similar to positional embeddings in standard Transformers, the symbols $S = (s_1, s_2, \ldots)$ can be either learned parameters of the model or non-parameteric positional embeddings (e.g., sinusoidal positional embeddings). In principle, using non-parameteric positional embeddings as symbols allows for generalization to longer sequence lengths than was observed during training. However, length-generalization remains an unsolved challenge in Transformers~\citep{kazemnejadImpactPositionalEncoding2023}. Although we don't carry-out a systematic evaluation of length-generalization for Abstractor-based models, it is likely that the same challenges apply. To begin to address this, we propose a variant of the Abstractor which uses position-relative symbols, $S = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$, where the message-passing operation of relational cross-attention becomes
-    \begin{equation}\label{eq:position_relative_symbols}
-            A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}}
-            = \sum_{j} R_{ij} s_{j-i}.
-    \end{equation}
+    Similar to positional embeddings in standard Transformers, the symbols $S = (s_1, s_2, \ldots)$ can be either learned parameters of the model or non-parameteric positional embeddings (e.g., sinusoidal positional embeddings). In principle, using non-parameteric positional embeddings as symbols allows for generalization to longer sequence lengths than was observed during training. However, length-generalization remains an unsolved challenge in Transformers~\citep{kazemnejadImpactPositionalEncoding2023}. Although we don't carry-out a systematic evaluation of length-generalization for Abstractor-based models, it is likely that the same challenges apply. To begin to address this, we propose a variant of the Abstractor which uses position-relative symbols, $S = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$, where the message-passing operation of relational cross-attention becomes $A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} s_{j-i}$.
+    % \begin{equation}\label{eq:position_relative_symbols}
+    %         A_i \gets \mathrm{MessagePassing}\paren{\set{(s_{j-i}, R_{ij})}_{j \in [\m]}}
+    %         = \sum_{j} R_{ij} s_{j-i}.
+    % \end{equation}
     Hence, the symbols carry information about relative-position with respect to the object being processed, as opposed to absolute position. In Transformers, relative positional embeddings have been shown to yield improvements in length-generalization.
 \end{remark}
 
