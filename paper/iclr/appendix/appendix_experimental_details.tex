@@ -4,14 +4,14 @@ In this section, we give further experimental details including architectures, h
 
 \subsection{Discriminative tasks (\Cref{ssec:experiments_discriminative})}
 
-\subsubsection{Pairwise Order (\Cref{sssec:exp_order_relation})}
+\subsubsection{Pairwise Order}
 \textbf{Abstractor architecture} number of layers $L = 1$, relation dimension $d_r = 4$, symbol dimension $d_s = 64$, projection dimension $d_p = 16$, feedforward hidden dimension $d_{\mathrm{ff}} = 64$, relation activation function $\sigma_{\mathrm{rel}} = \mathrm{sigmoid}$. No layer normalization or residual connection. The symbols are learned parameters.
 
 \textbf{CoRelNet Architecture} Given a sequence of objects, $X = (x_1, \ldots, x_\m)$, standard CoRelNet simply computes the inner product and takes the Softmax. We also add a learnable linear map, $W \in \reals^{d \times d}$. Hence, $R = \text{Softmax}(A), A = {\left[\langle W x_i, W x_j\rangle\right]}_{ij}$. The asymmetric variant of CoRelNet is given by $R = \text{Softmax}(A), A = {\left[\langle W_1 x_i, W_2 x_j\rangle\right]}_{ij}$, where $W_1, W_2 \in \reals^{d \times d}$ are learnable matrices.
 
 \textbf{Training/Evaluation} We use the sparse categorical crossentropy loss and the Adam optimizer with a learning rate of $10^{-2}$, $\beta_1 = 0.9, \beta_2 = 0.999, \varepsilon = 10^{-7}$. We use a batch size of 64. We train for 100 epochs and restore the best model according to validation loss. We evaluate on the test set.
 
-\subsubsection{SET (\Cref{sssec:exp_set})}
+\subsubsection{SET}
 
 The card images are RGB images of dimension $70 \times 50$. The CNN embedder produces embeddings fo dimension $d=64$ for each card. The CNN is trained to predict the four attributes of each card and then an embedding for each card is obtained from an intermediate layer (i.e., the parameters of the CNN are then frozen). Recall that the common architecture is $\texttt{CNN Embedder} \to \{\texttt{Abstractor} \text{ or } \texttt{CoRelNet}\} \to \texttt{Flatten} \to \texttt{Dense(2)}$. We tested against the standard version of CorelNet, but found that it did not learn anything. We iterated over the hyperparamters and architecture to improve its performance. We found that removing the softmax activation in CoRelNet improved performance a bit. We describe hyperparameters below.
 
@@ -31,7 +31,7 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \subsection{Relational sequence-to-sequence tasks (\Cref{ssec:experiments_object_sorting})}
 
-\subsubsection{Sample-efficiency in relational seq2seq tasks (\Cref{sssec:exp_object_sorting_sample_efficiency})}
+\subsubsection{Sample-efficiency in relational seq2seq tasks}
 
 \textbf{Abstractor architecture} The Abstractor model uses architecture (b) of~\Cref{fig:abstractor_architectures}. For each of the Encoder, Abstractor, and Decoder modules, we use 2 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding/symbol dimension of 64. The Abstractor's symbols are learned parameters of the model, and uses $\sigma_{\mathrm{rel}} = \mathrm{Softmax}$. The number of trainable parameters is $386,954$.
 
@@ -41,7 +41,7 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \textbf{Training/Evaluation} We use the sparse categorical crossentropy loss and the Adam optimizer with a learning rate of $10^{-3}$, $\beta_1 = 0.9, \beta_2 = 0.999, \varepsilon = 10^{-7}$. We use a batch size of 512. We train for 100 epochs and restore the best model according to validation loss. We evaluate learning curves by varying the training set size and sampling a random subset of the data at that size. Learning curves are evaluated starting at 100 samples up to 3000 samples in increments of 100 samples. We repeat each experiment 10 times and report the mean and standard error of the mean.
 
-\subsubsection{Generalization to new object-sorting tasks (\Cref{sssec:exp_object_sorting_generalization})}
+\subsubsection{Generalization to new object-sorting tasks}
 
 \textbf{Abstractor architecture} The Abstractor model uses architecture (a) of~\Cref{fig:abstractor_architectures}. The Abstractor module has 1 layer, a symbol dimension of 64, a relation dimension of 4, a softmax relation activation, and a 64-unit feedforward network. The decoder also has 1 layer with 4-head MHA and a 64-unit feedforward network.
 
