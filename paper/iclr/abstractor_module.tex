@@ -19,10 +19,10 @@ Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that
 
 \subsection{Relational Cross-Attention}\label{ssec:relational_crossattention}
 
-The core operation in a transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via,
-\begin{equation}\label{eq:self_attn}
-    X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
-\end{equation}
+The core operation in a transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via, $ X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)}$,
+% \begin{equation}\label{eq:self_attn}
+%     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
+% \end{equation}
 where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied elementwise to each object in the sequence (i.e., $\phi(X) = \paren{\phi(x_1), \ldots, \phi(x_\m)}$). Typically, those are linear or affine functions, with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. Note that $\phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of message-passing. In particular, let $R = \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)}$ be the softmax-normalized relation matrix. Then self-attention takes the form
 \begin{equation}\label{eq:self_attn_message_passing}
     x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} \phi_v(x_j).
