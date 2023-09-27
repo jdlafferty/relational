@@ -9,16 +9,15 @@ The models are evaluated on the hold-out test set with objects replaced by their
 This experiment can be interpreted in two lights: the first is robustness to noise. The second is a form of out-of-distribution generalization. Note that the objects seen by the models post-corruption lie in a different space than those seen during training. Hence the models need to learn relations that are in some sense independent of the value representation. As a theoretical justification for this behavior,~\cite{zhouCompressedPrivacySensitive2009} shows that $\langle \Phi x, \Phi y \rangle \approx \langle x, y \rangle$ in high dimensions, for a random matrix $\Phi$ with iid Gaussian entries. This indicates that models whose primary computations are performed via inner products, like Abstractors, may be more robust to this kind of corruption.
 
 \begin{figure}[ht]
-    \begin{subfigure}[t]{0.40\textwidth}
-        %\centering
-        \hskip-.35in\includegraphics[scale=.95]{figures/experiments/additive_robustness.pdf}
-        \vskip-5pt
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/experiments/additive_robustness.pdf}
         \caption{The Abstractor is more robust to corruption by additive noise. }\label{fig:exp_robustness1}
     \end{subfigure}\hspace{\fill}
-    \begin{subfigure}[t]{0.40\textwidth}
-        %\centering
-        \hskip-.6in\includegraphics[scale=.95]{figures/experiments/multiplicative_robustness.pdf}
-        \vskip-5pt
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/experiments/multiplicative_robustness.pdf}
         \caption{The Abstractor is more robust to corruption by a random linear transformation.}\label{fig:exp_robustness2}
     \end{subfigure}
     \caption{Experiments on robustness.}\label{fig:exp_robustness}
