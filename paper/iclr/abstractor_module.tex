@@ -1,6 +1,6 @@
 \section{Relational cross-attention and the abstractor module}\label{sec:abstractor_module}
 
-At a high level, the primary function of an Abstractor is to compute abstract relational features of its inputs.\footnote{In this paper, we will tend to use the name `Abstractor' to refer to both the module and to model architectures which contain the Abstractor module as a main component.} That is, given a sequence of input objects $x_1, \ldots, x_\m$, the Abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on the set of pairwise relations between objects ${\{ r(x_i, x_j) \}}_{ij}$. At the heart of the Abstractor module is an inductive bias we call the \textit{relational bottleneck}---it disentangles relational information from the features of individual objects.
+At a high level, the primary function of an Abstractor is to compute abstract relational features of its inputs.\footnote{In this paper, we will use the name `Abstractor' to refer to both the module and to model architectures which contain the Abstractor module as a main component.} That is, given a sequence of input objects $x_1, \ldots, x_\m$, the Abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on the set of pairwise relations between objects ${\{ r(x_i, x_j) \}}_{ij}$. At the heart of the Abstractor module is an inductive bias we call the \textit{relational bottleneck}, that disentangles relational information from the features of individual objects.
 
 \subsection{Modeling relations as inner products}\label{ssec:relations_as_inner_prods}
 

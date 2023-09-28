@@ -11,7 +11,7 @@ A recent related work on relational architectures is~\citep{kerg2022neural}, whi
 We generate $N = 32$ ``random objects'' represented by iid Gaussian vectors, $o_i \overset{iid}{\sim} \mathcal{N}(0,
 I_d) \in \mathbb{R}^d$, and associate an order relation to them $o_1 \prec o_2 \prec \cdots \prec o_N$. Note that $\prec$ is \textit{not symmetric}. Of the $N^2 = 1024$ possible pairs $(o_i, o_j)$, 15\% are held out as a validation set (for early stopping) and 35\% as a test set. We evaluate learning curves by training on the remaining 50\% and computing accuracy on the test set (10 trials for each training set size). Note that the models are evaluated on pairs they have never seen. Thus, the models will need to generalize based on the transitivity of the $\prec$ relation.
 
-We compare three models: an Abstractor, standard (symmetric) CoRelNet, and asymmetric CoRelNet. We observe that standard symmetric CoRelNet is completely unable to learn the task, whereas the Abstractor and asymmetric CoRelNet learn the transitive $\prec$ relation~(\Cref{fig:exp_order_relation}). This can be explained in terms of the relational bottleneck. In a relational task, there exists a sufficient statistic which is relational. The relational bottleneck restricts search space of representations to be a space of relational features, making the search for a good representation more sample efficient. In a task in which there exists a sufficient statistic involving a \textit{symmetric} relation (as is the case with the same/different tasks considered in~\citep{kerg2022neural}), we can further restrict the search space to be over symmetric relational representations, making learning a good representation even more sample efficient.
+We compare three models: an Abstractor, standard (symmetric) CoRelNet, and asymmetric CoRelNet. We observe that standard symmetric CoRelNet is completely unable to learn the task, whereas the Abstractor and asymmetric CoRelNet learn the transitive $\prec$ relation~(\Cref{fig:exp_order_relation}). This can be explained in terms of the relational bottleneck. In a relational task, there exists a sufficient statistic which is relational. The relational bottleneck restricts search space of representations to be a space of relational features, making the search for a good representation more sample efficient. In a task in which there exists a sufficient statistic involving a \textit{symmetric} relation (as is the case with the same/different tasks considered in~\citep{kerg2022neural}), we can further restrict the search space to symmetric relational representations, making learning a good representation even more sample efficient.
 However, some relations are more complex and may be asymmetric---an example is order relations. Symmetric inner products don't have the representational capacity to model such relations. But asymmetric inner products with different learned left and right encoders can model such relations.
 
 
@@ -31,24 +31,65 @@ However, some relations are more complex and may be asymmetric---an example is o
 
 In this experiment, the task is, given a triplet of card images, to determine whether they form a SET or not. A CNN classifier is trained on the card images to predict the four attributes. An intermediate layer is used as an embedder for all relational models. We compare an Abstractor model to CoRelNet. The shared architecture is $\texttt{CNN} \to \{\texttt{Abstractor} \text{ or } \texttt{CorelNet}\} \to \texttt{Flatten} \to \texttt{Dense}$. We report learning curves in~\Cref{fig:exp_set_classification} (10 trials per training set size). We find that the Abstractor model significantly out-performs CoRelNet. We attribute this to its ability to model multi-dimensional relations. In this task, there exists four different relations (one for each attribute) which are needed to determine whether a triple of cards forms a set. CoRelNet would need to squeeze all of this information into a single-dimensional scalar whereas the Abstractor can model each relation separately. We hypothesize that the ability to model relations as multi-dimensional is also the reason that the Abstractor can learn the order relation better than asymmetric CoRelNet---even though the underlying relation is ``one-dimensional'', having a multi-dimensional representation enables greater robustness and multiple avenues towards a good solution during optimization.
 
+% TODO: need to fix references here
+% TODO: also, make this flow well
+% TODO: decide on what to do with the SET symbolic variant
+\paragraph{SET (continued): comparison to ``symbolic'' relations}
+In~\Cref{fig:exp_set_symbolic}, we compare an Abstractor-based model to a ``symbolic'' model which receives as input a binary representation of the four relevant relations. The same CNN embedder as in the previous SET experiment is used. Next, we train 1-head Abstractors separately for each of the four attributes to learn same/different relations, where the task is to decide if an input pair of cards is the same or different for that attribute. We then use the learned $W_1$ and $W_2$ parameters learned for these relations to initialize the relations in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET.
+
+This is compared to a baseline symbolic model where, instead of images, the input is a vector with 12 bits,
+explicitly encoding the relations. That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise. A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation represents an upper bound on the performance achievable by any model. This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained with purely symbolic, noise-free encodings of the relevant relations.
+
+% old version without comparison to symbolic MLP
+% \begin{figure}[t]
+%     % \vskip-.2in
+%     \centering
+%     \begin{subfigure}[t]{0.45\textwidth}
+%         \centering
+%         \vskip-20pt
+%         \includegraphics[width=\textwidth]{figures/experiments/pairwise_order_learning_curves.pdf}
+%         \vskip-5pt
+%         \caption{The $\prec$ relation can be learned with asymmetric but not symmetric inner products.}\label{fig:exp_order_relation}
+%     \end{subfigure} 
+%     \hskip10pt
+%     % \captionsetup[subfigure]{oneside,margin={-.3in,0in}}
+%     \begin{subfigure}[t]{0.45\textwidth}
+%         \centering
+%         \vskip-20pt
+%         \includegraphics[width=\textwidth]{figures/experiments/set_classification.pdf}
+%         \vskip-5pt
+%         \caption{The Abstractor's ability to model multi-dimensional relations enables it to solve SET.}\label{fig:exp_set_classification}
+%     \end{subfigure}
+%     \caption{Experiments on discriminative relational tasks and comparison to CoRelNet.}
+%     \vskip-15pt
+% \end{figure}
+
+
 \begin{figure}[t]
     % \vskip-.2in
     \centering
-    \begin{subfigure}[t]{0.45\textwidth}
+    \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \vskip-20pt
         \includegraphics[width=\textwidth]{figures/experiments/pairwise_order_learning_curves.pdf}
         \vskip-5pt
         \caption{The $\prec$ relation can be learned with asymmetric but not symmetric inner products.}\label{fig:exp_order_relation}
-    \end{subfigure} 
-    \hskip10pt
+    \end{subfigure}
+    % \hskip10pt
     % \captionsetup[subfigure]{oneside,margin={-.3in,0in}}
-    \begin{subfigure}[t]{0.45\textwidth}
+    \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \vskip-20pt
         \includegraphics[width=\textwidth]{figures/experiments/set_classification.pdf}
         \vskip-5pt
         \caption{The Abstractor's ability to model multi-dimensional relations enables it to solve SET.}\label{fig:exp_set_classification}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \vskip-20pt
+        \includegraphics[width=\textwidth]{figures/experiments/set_symbolic_vs_abstractor.pdf}
+        \vskip-5pt
+        \caption{Comparison of Abstractor trained card images and MLP with hand-encoded relations.}\label{fig:set_symbolic}% The Abstractor is nearly as sample 
     \end{subfigure}
     \caption{Experiments on discriminative relational tasks and comparison to CoRelNet.}
     \vskip-15pt
