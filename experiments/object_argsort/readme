@@ -1,7 +1,0 @@
-# Object argsort
-
-This directory experiments with object-sorting models which are "one-shot" rather than autoregressive (as in `object_argsort_autoregressive`). This task is possible, but requires more training samples to learn---we find the teacher-forcing is very useful for learning this task.
-
-Intuitively, teacher-forcing breaks down the task to only need to find the next object in the partially-sorted sequence, rather than sorting the entire sequence in one go. Finding the next object in the partially-sorted sequence involves computing a minimum according to $\prec$ (think, $\mathcal{O}(n)$), which is easier than sorting (think, $\mathcal{O}(n^2)$ or $\mathcal{O}(n \log n)$).
-
-We found the autoregressive version of the task more interesting, so we focused on that for the paper. We leave this here in case it is interesting to return to.
