@@ -38,7 +38,7 @@ We compare an Abstractor model using architecture (d) in~\Cref{fig:abstractor_ar
 %     \caption{\footnotesize End-of-training teacher-forcing accuracy.}\label{fig:math_metrics}
 % \end{wrapfigure}
 
-We evaluate the three models on 5 tasks within the dataset: differentiating functions (calculus); predicting the next term in a sequence (algebra); solving a linear equation (algebra); expanding polynomials; and adding polynomials. For each, we train on the training split and track the teacher-forcing accuracy (excluding null characters) on the validation split. We train each model for 50 epochs with the categorical cross-entropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. For each pair of model and task, we repeat the experiment 5 times and report error bars as twice the standard error of mean.
+We evaluate the three models on 5 tasks within the dataset: differentiating functions (calculus); predicting the next term in a sequence (algebra); solving a linear equation (algebra); expanding polynomials; and adding polynomials. For each, we train on the training split and track the teacher-forcing accuracy (excluding null characters) on the validation split. For each pair of model and task, we repeat the experiment 5 times and report error bars as twice the standard error of mean.
 
 \begin{figure}[t]
     \vskip-15pt

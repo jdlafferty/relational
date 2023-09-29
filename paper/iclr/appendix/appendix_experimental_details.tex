@@ -57,3 +57,5 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 \textbf{Transformer architecture} The Transformer Encoder and Decoder have identical hyperparameters to the Encoder and Decoder of the Abstractor architecture.
 
 \textbf{Transformer+ architecture} In `Transformer+', the model dimension is increased $d_\mathrm{model} = 200$ and the feedforward hidden dimension are increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
+
+\textbf{Training/Evaluation} We train each model for 50 epochs with the categorical cross-entropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. We use a batch size of 128.
