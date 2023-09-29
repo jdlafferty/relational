@@ -72,44 +72,44 @@ class CrossAttention(BaseAttention):
         return x
 
 class SymbolicAttention(BaseAttention):
-    def call(self, x, context):
+    def call(self, symbols, inputs):
         attn_output, attn_scores = self.mha(
-            query=x,
-            key=context,
-            value=x ,
+            query=symbols,
+            key=inputs,
+            value=symbols ,
             return_attention_scores=True)
 
         # Cache the attention scores for plotting later.
         self.last_attn_scores = attn_scores
 
         if self.use_residual:
-            x = self.add([x, attn_output])
+            symbols = self.add([symbols, attn_output])
         else:
-            x = attn_output
+            symbols = attn_output
 
         if self.use_layer_norm:
-            x = self.layernorm(x)
+            symbols = self.layernorm(symbols)
 
 
-        return x
+        return symbols
 
 class RelationalAttention(BaseAttention):
-  def call(self, x, context):
+  def call(self, symbols, inputs):
     attn_output, attn_scores = self.mha(
-        query=context,
-        key=context,
-        value=x ,
+        query=inputs,
+        key=inputs,
+        value=symbols ,
         return_attention_scores=True)
 
     # Cache the attention scores for plotting later.
     self.last_attn_scores = attn_scores
 
     if self.use_residual:
-        x = self.add([x, attn_output])
+        symbols = self.add([symbols, attn_output])
     else:
-        x = attn_output
+        symbols = attn_output
 
     if self.use_layer_norm:
-        x = self.layernorm(x)
+        symbols = self.layernorm(symbols)
 
-    return x
+    return symbols

@@ -82,12 +82,17 @@ class Transformer(tf.keras.Model):
 
 
 class Seq2SeqRelationalAbstracter(tf.keras.Model):
+    """
+    Sequence-to-Sequence Relational Abstracter.
+    Uses the architecture X -> Encoder -> RelationalAbstracter -> Decoder -> y.
+
+    Note: 'autoregressive_abstractor.py' implements a more general seq2seq
+    abstractor architecture.
+    """
     def __init__(self, encoder_kwargs, abstracter_kwargs, decoder_kwargs,
             input_vocab, target_vocab, embedding_dim, output_dim,
             dropout_rate=0.1, name='seq2seq_relational_abstracter'):
         """
-        Sequence-to-Sequence Relational Abstracter.
-
         Args:
             num_layers (int): # of layers in encoder and decoder
             num_heads (int): # of attention heads in attention operations

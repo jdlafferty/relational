@@ -27,6 +27,9 @@ class Abstractor(tf.keras.layers.Layer):
         and performs message-passing on a set of input-independent symbolic parameters
         based on the relation tensor ("(relational) symbolic message-passing").
 
+        Unlike RelationalAbstractor, this layer does not use tensorflow's MultiHeadAttention,
+        instead implementing 'symbolic message-passing' directly from scratch.
+
         Parameters
         ----------
         num_layers : int

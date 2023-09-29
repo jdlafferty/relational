@@ -19,13 +19,12 @@ from attention import GlobalSelfAttention, BaseAttention, RelationalAttention, S
 
 class RelationalAbstracter(tf.keras.layers.Layer):
     """
-    The 'Relational Abstracter' module.
+    An implementation of the 'Abstractor' module.
 
-
-    The 'input' is a sequence of input-independent learnable symbolic vectors.
-    Implements cross-attention between these symbols and the entities at the encoder.
-    Uses the scheme Q=E, K=E, V=A.
+    This implementation uses tensorflow's MultiHeadAttention layer
+    to implement relational cross-attention.
     """
+
     def __init__(
         self,
         num_layers,
@@ -36,7 +35,29 @@ class RelationalAbstracter(tf.keras.layers.Layer):
         mha_activation_type='softmax',
         use_self_attn=True,
         dropout_rate=0.1,
-        name='relational_abstracter'):
+        name=None):
+        """
+        Parameters
+        ----------
+        num_layers : int
+            number of layers
+        num_heads : int
+            number of 'heads' in relational cross-attention (relation dimension)
+        dff : int
+            dimension of intermediate layer in feedforward network
+        use_pos_embedding : bool, optional
+            whether to add positional embeddings to symbols, by default True
+        use_learned_symbols : bool, optional
+            whether to use learned symbols or nonparametric positional embeddings, by default True
+        mha_activation_type : str, optional
+            activation of MHA in relational cross-attention, by default 'softmax'
+        use_self_attn : bool, optional
+            whether to apply self-attention in addition to relational cross-attn, by default True
+        dropout_rate : float, optional
+            dropout rate, by default 0.1
+        name : str, optional
+            name of layer, by default None
+        """
 
         super(RelationalAbstracter, self).__init__(name=name)
 
@@ -76,10 +97,10 @@ class RelationalAbstracter(tf.keras.layers.Layer):
 
         self.last_attn_scores = None
 
-    def call(self, encoder_context):
+    def call(self, inputs):
         # symbol sequence is input independent, so use the same one for all computations in the given batch
         # (this broadcasts the symbol_sequence across all inputs in the batch)
-        symbol_seq = tf.zeros_like(encoder_context)
+        symbol_seq = tf.zeros_like(inputs)
         if self.use_learned_symbols:
             symbol_seq = symbol_seq + self.symbol_sequence
         # add positional embedding
@@ -89,7 +110,7 @@ class RelationalAbstracter(tf.keras.layers.Layer):
         symbol_seq = self.dropout(symbol_seq)
 
         for i in range(self.num_layers):
-            symbol_seq = self.abstracter_layers[i](symbol_seq, encoder_context)
+            symbol_seq = self.abstracter_layers[i](symbol_seq, inputs)
 
 #             self.last_attn_scores = self.dec_layers[-1].last_attn_scores
 
@@ -141,11 +162,10 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
 
 class SymbolicAbstracter(tf.keras.layers.Layer):
     """
-    The 'Symbolic Abstracter' module.
+    A variant of an 'Abstractor' module early in development.
 
-    The 'input' is a sequence of input-independent learnable symbolic vectors.
-    Implements cross-attention between these symbols and the entities at the encoder.
-    Uses the scheme Q=A, K=E, V=A.
+    This variant uses a 'symbolic' attention mechanism, in which
+    Q <- S, K <- X, V <- X, where X is the input and S are learned symbols.
     """
 
     def __init__(

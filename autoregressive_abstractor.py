@@ -6,6 +6,15 @@ from abstractor import Abstractor
 from abstracters import RelationalAbstracter, SymbolicAbstracter
 
 class AutoregressiveAbstractor(tf.keras.Model):
+    """
+    An implementation of an Abstractor-based Transformer module.
+
+    This supports several architectures, including:
+    a) X -> Abstractor -> Decoder -> Y
+    b) X -> Encoder -> Abstractor -> Decoder -> Y
+    c) X -> [Encoder, Abstractor] -> Decoder -> Y
+    d) X -> Encoder -> Abstractor; [Encoder, Abstractor] -> Decoder -> Y
+    """
     def __init__(self,
             encoder_kwargs,
             abstractor_kwargs,
@@ -17,7 +26,7 @@ class AutoregressiveAbstractor(tf.keras.Model):
             abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic'
             abstractor_on='input', # 'input' or 'encoder'
             decoder_on='abstractor', # 'abstractor' or 'encoder-abstractor'
-            name='autoregressive_abstractor'):
+            name=None):
         """Creates an autoregressive Abstractor model.
 
         Parameters
