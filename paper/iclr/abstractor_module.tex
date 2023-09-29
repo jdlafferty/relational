@@ -18,7 +18,7 @@ Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that
 Considering all pairwise relations yields a \textit{relation tensor}, $R = \left[r(x_i, x_j)\right]_{i,j} \in \mathbb{R}^{\m \times \m \times d_r}$.
 \subsection{Relational Cross-Attention}\label{ssec:relational_crossattention}
 
-The core operation in a transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via, $ X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{{\phi_q(X)}^\top \phi_k(X)}$,
+The core operation in a Transformer is attention. For an input sequence $X = \paren{x_1, \ldots, x_\m}$, self-attention transforms the sequence via, $ X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{{\phi_q(X)}^\top \phi_k(X)}$,
 % \begin{equation}\label{eq:self_attn}
 %     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
 % \end{equation}
@@ -77,7 +77,7 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$, and
 
 \subsection{The Abstractor module}\label{ssec:abstractor_module}
 
-We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module that processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a processed sequence of those objects $A = \paren{A_1, \ldots, A_\m}$ that represents features of the input sequence. In an Encoder, the output objects represent a mix of object-level features and relational information. In an Abstractor, the output objects are abstract states that represent purely relational information, abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an Encoder, an Abstractor module can comprise several layers, each composed of relational cross-attention followed by a feedforward network. Optionally, residual connections and layer-normalization can be applied as suggested by~\citet{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
+We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module that processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ that represents features of the input sequence. In an Encoder, the output objects represent a mix of object-level features and relational information. In an Abstractor, the output objects are abstract states that represent purely relational information, abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an Encoder, an Abstractor module can comprise several layers, each composed of relational cross-attention followed by a feedforward network. Optionally, residual connections and layer-normalization can be applied as suggested by~\citet{vaswani2017attention}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
 
 \begin{algorithm}[ht!]
 	\caption{Abstractor module}\label{alg:abstractor_module}
