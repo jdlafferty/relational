@@ -126,3 +126,30 @@ def get_wandb_project_table(project_name, entity='Awni00', attr_cols=('group', '
     runs_df = pd.DataFrame(data)
 
     return runs_df
+
+def get_project_run_histories(project_name, entity='Awni00', attr_cols=('group', 'name'), config_cols='all'):
+    '''gets the log history of all runs in a project'''
+
+    import wandb
+    import pandas as pd
+
+    api = wandb.Api()
+
+    runs = api.runs(entity + "/" + project_name)
+
+    run_history_dfs = []
+
+    for run in runs:
+        run_history = run.history()
+
+        for config_col in config_cols:
+            run_history[config_col] = run.config.get(config_col, None)
+
+        for attr_col in attr_cols:
+            run_history[attr_col] = getattr(run, attr_col, None)
+
+        run_history_dfs.append(run_history)
+
+    runs_history_df = pd.concat(run_history_dfs, axis=0)
+
+    return runs_history_df

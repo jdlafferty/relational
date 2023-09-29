@@ -1,5 +1,31 @@
-#
-wandb
+# ignore wandb directories
+wandb/
+
+# ignore figure directories
+figs/
+
+# ignore data directory
+data/
+
+# ignore .vscode files
+.vscode/
+
+# ignore model_checkpoint directories
+model_checkpoints/
+model_artifacts/
+
+# jobs
+jobs/*/*.job
+jobs/*/*.out
+
+# ignore certain files in paper directory
+paper/*.pdf
+paper/*.aux
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.synctex.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
