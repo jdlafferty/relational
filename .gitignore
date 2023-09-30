@@ -18,6 +18,15 @@ paper/*/*.bbl
 paper/*/*.synctex.gz
 paper/*/*.fls
 paper/*/*.fdb_latexmk
+paper/*/*/*.pdf
+paper/*/*/*.aux
+paper/*/*/*.blg
+paper/*/*/*.log
+paper/*/*/*.out
+paper/*/*/*.bbl
+paper/*/*/*.synctex.gz
+paper/*/*/*.fls
+paper/*/*/*.fdb_latexmk
 
 jobs/*/.out
 jobs/*/*.job
