@@ -1,0 +1,183 @@
+\documentclass[12pt,pdftex,noinfoline]{imsart}
+\RequirePackage[OT1]{fontenc}
+\usepackage{amsthm,amsbsy,amsmath,amsfonts,natbib,mathtools,amssymb,mathrsfs}
+\RequirePackage{hypernat}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\hypersetup{citecolor=MidnightBlue}
+\hypersetup{linkcolor=MidnightBlue}
+\hypersetup{urlcolor=MidnightBlue}
+\usepackage{enumerate}
+\usepackage{fullpage}
+\usepackage[margin=1in,footskip=.40in]{geometry}
+\usepackage{dsfont}
+\usepackage{wrapfig}
+% \usepackage{url}            % simple URL typesetting
+\usepackage{xurl} % this allows line-breaking in urls
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{verbatim}
+
+\usepackage{parskip}
+
+\usepackage{mymathstyle} % math style with a bunch of commands defined
+
+\usepackage{cleveref}
+\usepackage{algorithm2e}
+\usepackage{graphicx}
+\crefname{algocf}{alg.}{algs.}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\RestyleAlgo{ruled}
+
+% \numberwithin{equation}{section}
+% \newtheorem{thm}{Theorem}[section]
+% \newtheorem{result}{Result}
+% \newtheorem{lemma}{Lemma}[section]
+% \newtheorem{corollary}{Corollary}[section]
+% \newtheorem{prop}{Proposition}[section]
+% \theoremstyle{remark}
+% \newtheorem{example}{Example}[section]
+% \newtheorem{remark}{Remark}[section]
+\newtheorem{result}{Result}
+\newcommand{\m}{m} % define a macro for the number of objects
+
+%region
+% john's definitions
+\newtheorem*{thm1}{Claim A}
+\newtheorem*{thm2}{Claim B}
+\newtheorem*{thm3}{Claim C}
+\newtheorem*{thm4}{Claim D}
+\def\conditionA{Condition $A$}
+\def\conditionAp{Condition $\tilde A$}
+\def\conditionB{Condition $B$}
+\newtheorem*{con0}{\conditionA}
+\newtheorem*{con1}{\conditionAp}
+\newtheorem*{con2}{\conditionB}
+
+\newcommand{\MLP}{\text{\sc mlp}}
+\newcommand{\FeedForward}{\text{FeedForward}}
+\newcommand{\Softmax}{\text{Softmax}}
+% \newcommand{\argmin}{\mathop{\rm argmin}}
+\newcommand{\ess}{\mathop{\rm ess}}
+% \newcommand{\argmax}{\mathop{\rm argmax}}
+\newcommand{\lnorm}[2]{\|{#1} \|_{{#2}}}
+\newcommand{\indc}[1]{{\mathbf{1}_{\left\{{#1}\right\}}}}
+%\newcommand{\norm}[1]{\|{#1} \|}
+% \newcommand{\norm}[1]{\left\|{#1} \right\|}
+\newcommand{\hf}{{1/2}}
+\newcommand{\wh}{\widehat}
+\newcommand{\wt}{\widetilde}
+\newcommand{\Norm}[1]{\|{#1} \|}
+\newcommand{\Fnorm}[1]{\lnorm{#1}{\rm F}}
+% \newcommand{\fnorm}[1]{\|#1\|_{\rm F}}
+% \newcommand{\opnorm}[1]{\|#1\|_{\rm op}}
+\newcommand{\nnorm}[1]{\|#1\|_{\rm *}}
+% \newcommand{\Prob}{\mathbb{P}}
+% \newcommand{\Expect}{\mathbb{E}}
+% \newcommand{\Span}{{\rm span}}
+\newcommand{\rank}{\mathop{\sf rank}}
+\newcommand{\sgn}{\mathop{\rm sign}}
+\newcommand{\rt}{\mathop{\sf root}}
+\newcommand{\R}{\mathop{\sf R}}
+% \newcommand{\Tr}{\mathop{\sf Tr}}
+\newcommand{\diag}{\mathop{\text{diag}}}
+\newcommand{\supp}{{\rm supp}}
+% \newcommand{\iprod}[2]{\left \langle #1, #2 \right\rangle}
+\newcommand{\pth}[1]{\left( #1 \right)}
+\newcommand{\qth}[1]{\left[ #1 \right]}
+\newcommand{\sth}[1]{\left\{ #1 \right\}}
+% \newcommand{\calL}{\mathcal{L}}
+\newcommand{\floor}[1]{{\left\lfloor {#1} \right \rfloor}}
+% \newcommand{\TV}{{\sf TV}}
+\newcommand{\blue}{\color{blue}}
+\newcommand{\nb}[1]{\texttt{\blue[#1]}}
+
+\def\bra#1{\langle #1 \vert}
+\def\ket#1{\vert #1 \rangle}
+\def\braket#1#2{\langle #1 \vert #2 \rangle}
+%\def\bind#1#2{\ket{#1}\bra{#2}}
+\def\bind#1#2{\ket{#1}|\ket{#2}}
+\def\bind#1#2{#1 \| #2}
+\let\tilde\widetilde
+\def\softmax#1{\mbox{Softmax}\left(#1\right)}
+\def\task#1{\vskip5pt\noindent{\it\bfseries #1.}}
+\def\qkv#1#2#3{\mbox{CrossAttention}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\def\selfattention#1{\mbox{SelfAttention}(#1)}
+\def\crossattention#1#2#3{\qkv{#1}{#2}{#3}}
+\def\crossattend#1#2#3#4{\mbox{CrossAttention}_{#4}(Q\!\leftarrow\!#1,\; K\!\leftarrow\!#2,\; V\!\leftarrow\!#3)}
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+%endregion
+
+% commands for john and i to leave comments
+\newcommand{\awni}[1]{\textcolor{blue}{\texttt{[Awni]}: #1}}
+\newcommand{\john}[1]{\textcolor{red}{\texttt{[John]}: #1}}
+
+% \title{Abstractors and relational cross-attention: An inductive bias for explicit relational \\ reasoning in Transformers}
+
+\begin{document}
+
+\def\snote#1{${}^{#1}$}
+\setlength{\parskip}{0.5em}
+\begin{frontmatter}
+{\bf\Large Abstractors and relational cross-attention: An inductive bias for explicit relational reasoning in Transformers}
+%\affil[**]{Department of Statistics and Data Science, Yale University}
+\begin{aug}
+\vskip15pt
+\address{
+\begin{tabular}{ccccc}
+{\normalsize\rm\bfseries Awni Altabaa}\snote{1} & {\normalsize\rm\bfseries Taylor Webb}\snote{2} & {\normalsize\rm\bfseries Jonathan  Cohen}\snote{3} & {\normalsize\rm\bfseries John Lafferty}\snote{4}\\[5pt]
+\end{tabular}
+\vskip5pt
+\footnotetext{
+\snote{1}Department of Statistics and Data Science, Yale University; awni.altabaa@yale.edu.
+\snote{2}Department of Psychology, UCLA; taylor.w.webb@gmail.com.
+\snote{3}Department of Psychology and Princeton Neuroscience Institute, Princeton University; jdc@princeton.edu.
+\snote{4}Department of Statistics and Data Science, Wu Tsai Institute, Institute for Foundations of Data Science, Yale University; john.lafferty@yale.edu.
+}
+\today
+\vskip10pt
+}
+\input{abstract}
+\end{aug}
+\end{frontmatter}
+
+
+\input{abstract}
+\input{intro}
+\input{abstractor_module}
+\input{abstractor_architectures}
+% \input{messages_and_modules}
+% \input{functions_preview}
+\input{experiments}
+\input{discussion}
+
+\subsection*{Code and Data}
+Code, experimental logs, and instructions for reproducing our results are available at: \url{https://github.com/jdlafferty/relational}
+
+\medskip
+
+% \clearpage
+{%\small
+\setlength{\bibsep}{8pt plus 0.3ex}
+\bibliographystyle{apalike}
+\bibliography{references}
+}
+
+
+\clearpage
+\appendix
+\input{appendix/multi_attn_decoder_alg}
+\input{appendix/appendix_experimental_details}
+\input{appendix/appendix_additional_experiments}
+% \input{message_passing}
+% \input{functions}
+% \input{code}
+
+\end{document}

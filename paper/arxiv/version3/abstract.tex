@@ -1,0 +1,20 @@
+\begin{abstract}
+    An extension of Transformers is proposed that enables explicit relational reasoning through a novel module called the \textit{Abstractor}. At the core of the Abstractor is a variant of attention called \textit{relational cross-attention}. The approach is motivated by an architectural inductive bias for relational learning that disentangles relational information from extraneous features about individual objects. This enables explicit relational reasoning, supporting abstraction and generalization from limited data. The Abstractor is first evaluated on simple discriminative relational tasks and compared to existing relational architectures. Next, the Abstractor is evaluated on purely relational sequence-to-sequence tasks, where dramatic improvements are seen in sample efficiency compared to standard Transformers. Finally, Abstractors are evaluated on a collection of tasks based on mathematical problem solving, where modest but consistent improvements in performance and sample efficiency are observed.
+\end{abstract}
+
+% A version of the Abstract I wrote simultaneously
+% \begin{abstract}
+%     Through simple attention mechanisms, the Transformer architecture supports general-purpose sequence-modeling and has the ability to learn a wide range of tasks.
+%     However, this versatility comes at the cost of sample-efficiency in more specialized processing.
+%     In particular, relational reasoning in Transformers emerges implicitly given enough data,
+%     but the ``entangled'' representations produced by standard attention mechanisms result in suboptimal sample-efficiency for learning relations and limited generalization to new domains.
+%     In this work, we propose an extension of the Transformer framework via a novel module which achieves enhanced relational processing by separating relation information from extraneous features about individual objects.
+%     We empirically evaluate the proposed architecture on a range of tasks which require some form of relational reasoning and demonstrate superior sample-efficiency compared to standard Transformers.
+% \end{abstract}
+
+% The old abstract from the NeurIPS submission
+% \begin{abstract}
+%     Reasoning in terms of relations, analogies, and abstraction is a hallmark of human intelligence. An active debate is whether this relies on the use of symbolic processing or can be achieved using the same forms of function approximation that have been used for tasks such as image, audio, and, most recently, language processing.  We propose an intermediate approach, 
+%     motivated by principles of cognitive neuroscience, in which abstract symbols can emerge from
+%     distributed, neural representations under the influence of an inductive bias for learning that we refer to as a ``relational bottleneck.''  We present a framework that casts this inductive bias in terms of an extension of transformers, in which specific types of attention mechanisms enforce the relational bottleneck and transform distributed symbols to implement a form of relational reasoning and abstraction. We study the class of relation functions the models can compute and demonstrate superior sample-efficiency on relational tasks compared to standard transformer architectures.
+%  \end{abstract}
