@@ -13,16 +13,29 @@ This modification of self-attention is indeed very simple. But it has significan
 
 There are other more sophisticated methods of assigning symbols to objects that we considered. One, which we mention in the paper, is position-relative symbols. Another reasonable method is to have a library of learned symbols, and each object retrieves a symbol based on its semantics (e.g., via cross-attention to the symbol sequence). In our experiments, we found that simple positional symbols tended to perform well. But we believe these other ideas are promising as well. We think that beginning evaluations with the simplest possible solution which meets the criteria will offer important insights for further research.
 
+---------
 > If the outputs of an abstractor layer are "abstract states that represent purely relational information" (section 2.3), then how are features associated with objects passed along/learned in models that use abstractor layers? In all the examples presented in Figure 2, abstractors are used in conjunction with regular encoders. How can you ensure that the abstractor is learning meaningful information and that all the "information flow" does not happen through the encoder layers in parlalle setups (architectures c, d, and e)?
 
-...
+Thanks for this question. A minor correction, architecture (a) of Figure 2 depicts a model without a standard Encoder. In the discriminative relational tasks of section 4.1, the Abstractor models do not include an Encoder (this is an Abstractor-only model with no decoder either, since these are classification tasks).
 
+But indeed, most architectures we consider do include an Encoder. The reason for this is that most real-world tasks rely on relational reasoning as well as more general-purpose sequence modeling which needs object-level features. In the architectures proposed in Section 3 and Figure 2 (e.g., architectures c, d, e), we think of the Abstractor as performing specialized relational processing in a branch of the model, while an Encoder performs more general-purpose processing in another branch. The Decoder then sequentially attends to the outputs of both.
+
+> then how are features associated with objects passed along/learned in models that use abstractor layers?
+
+This is done by the Decoder when it integrates the information from the Abstractor and the Encoder.
+
+> How can you ensure that the abstractor is learning meaningful information and that all the "information flow" does not happen through the encoder layers in parlalle setups
+
+This is evidenced by the performance difference compared to models which do not contain an Abstractor. For example, in the experiments of section 4.2, we compare to a standard Transformer of similar size as well as to an ablation model with matching architecture but standard cross-attention replaced by relational cross-attention. We observe a dramatic difference in performance. In the experiments of section 4.3, we compare to two Transformers of different size (one matching the hyperparameters of the Encoder/Decoder and a larger one to match parameter count). We observe a modest but consistent difference in performance here as well.
+
+Through comparison to these controlled baselines, we can attribute the performance difference to the addition of an Abstractor module. If the Encoder was doing all the work, the Abstractor-based models would not perform better.
+
+---------
 > Is there an ablation on model size? The baseline transformer is not very large, but it may be that a smaller transformer can learn with fewer training data points, or a larger transformer may converge faster.
 
 ...
 
+---------
 > The experiments seem to be on simple problems with small models. Simple problems may not necessarily be an issue since they are relatively diverse problems, but it would be nice to see larger, more complicated problems. For example, the partial order task training set is small enough that one could consider using in context learning with a large LLM, which may offer comparable performance.
 
 ...
-
-> The experiments seem to be on simple problems with small models. Simple problems may not necessarily be an issue since they are relatively diverse problems, but it would be nice to see larger, more complicated problems. For example, the partial order task training set is small enough that one could consider using in context learning with a large LLM, which may offer comparable performance.
