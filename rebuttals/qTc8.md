@@ -33,9 +33,11 @@ Through comparison to these controlled baselines, we can attribute the performan
 ---------
 > Is there an ablation on model size? The baseline transformer is not very large, but it may be that a smaller transformer can learn with fewer training data points, or a larger transformer may converge faster.
 
-...
+This was mentioned in the answer to the previous question, but we did include controls to test for the following question: given a certain budget of model size (as measured by parameter count), which would yield a greater performance, incorporating an Abstractor or simply enlarging a standard Transformer? We find that incorporating an Abstractor tends to yield greater performance benefits.
+
+This was for a fixed model size, however. It would be interesting to see whether these performance benefits are persistent across model size and task complexity. We leave this to future work.
 
 ---------
 > The experiments seem to be on simple problems with small models. Simple problems may not necessarily be an issue since they are relatively diverse problems, but it would be nice to see larger, more complicated problems. For example, the partial order task training set is small enough that one could consider using in context learning with a large LLM, which may offer comparable performance.
 
-...
+We agree that it would be interesting and important to evaluate Abstractors on larger more complex problems. For now, this is outside the scope of this initial paper which aims to propose the idea and perform small-scale controlled evaluations.
