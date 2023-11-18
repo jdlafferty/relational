@@ -5,7 +5,7 @@ In this section, we give further experimental details including architectures, h
 \subsection{Discriminative tasks (\Cref{ssec:experiments_discriminative})}
 
 \subsubsection{Pairwise Order}
-\textbf{Abstractor architecture} number of layers $L = 1$, relation dimension $d_r = 4$, symbol dimension $d_s = 64$, projection dimension $d_p = 16$, feedforward hidden dimension $d_{\mathrm{ff}} = 64$, relation activation function $\sigma_{\mathrm{rel}} = \mathrm{sigmoid}$. No layer normalization or residual connection. The symbols are learned parameters.
+\textbf{Abstractor architecture} number of layers $L = 1$, relation dimension $d_r = 4$, symbol dimension $d_s = 64$, projection dimension $d_p = 16$, feedforward hidden dimension $d_{\mathrm{ff}} = 64$, relation activation function $\sigma_{\mathrm{rel}} = \mathrm{sigmoid}$. No layer normalization or residual connection. Positional symbols are used  and are learned parameters of the model.
 
 \textbf{CoRelNet Architecture} Given a sequence of objects, $X = (x_1, \ldots, x_\m)$, standard CoRelNet simply computes the inner product and takes the Softmax. We also add a learnable linear map, $W \in \reals^{d \times d}$. Hence, $R = \text{Softmax}(A), A = {\left[\langle W x_i, W x_j\rangle\right]}_{ij}$. The asymmetric variant of CoRelNet is given by $R = \text{Softmax}(A), A = {\left[\langle W_1 x_i, W_2 x_j\rangle\right]}_{ij}$, where $W_1, W_2 \in \reals^{d \times d}$ are learnable matrices.
 
@@ -18,7 +18,7 @@ The card images are RGB images of dimension $70 \times 50$. The CNN embedder pro
 \textbf{Common embedder's architecture} The architecture is given by \texttt{Conv2D} $\to$ \texttt{MaxPool2D} $\to$ \texttt{Conv2D} $\to$ \texttt{MaxPool2D} $\to$ \texttt{Flatten} $\to$ \texttt{Dense(64, 'relu')} $\to$ \texttt{Dense(64, 'relu')} $\to$ \texttt{Dense(2)}. The embedding is extracted from the penultimate layer. The CNN is trained to predict the four attributes of each card until it reaches perfect accuracy and near-zero loss.
 
 \textbf{Abstractor architecture}
-The Abstractor module has hyperparameters: number of layers $L = 1$, relation dimension $d_r = 4$, symmetric relations (i.e., $W_1^{(i)} = W_2^{(i)}$, $i \in [d_r]$), linear relation activation (i.e., $\sigma_{\mathrm{rel}}: x \mapsto x$), symbol dimension $d_s = 64$, projection dimension $d_p = 16$, feedforward hidden dimension $d_{\mathrm{ff}} = 128$, and no layer normalization or residual connection. The symbols are learned parameters.
+The Abstractor module has hyperparameters: number of layers $L = 1$, relation dimension $d_r = 4$, symmetric relations (i.e., $W_1^{(i)} = W_2^{(i)}$, $i \in [d_r]$), linear relation activation (i.e., $\sigma_{\mathrm{rel}}: x \mapsto x$), symbol dimension $d_s = 64$, projection dimension $d_p = 16$, feedforward hidden dimension $d_{\mathrm{ff}} = 128$, and no layer normalization or residual connection. Positional symbols are used  and are learned parameters of the model.
 
 \textbf{CoRelNet Architecture} Standard CoRelNet is described above. It simply computes, $R = \text{Softmax}(A), A = {\left[\langle W x_i, W x_j\rangle\right]}_{ij}$. This variant was stuck at 50\% accuracy regardless of training set size. We found that removing the Softmax helped.~\Cref{fig:exp_set_classification} compares against both variants of CoRelNet.
 
@@ -33,7 +33,7 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \subsubsection{Sample-efficiency in relational seq2seq tasks}
 
-\textbf{Abstractor architecture} The Abstractor model uses architecture (b) of~\Cref{fig:abstractor_architectures}. For each of the Encoder, Abstractor, and Decoder modules, we use 2 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding/symbol dimension of 64. The Abstractor's symbols are learned parameters of the model, and uses $\sigma_{\mathrm{rel}} = \mathrm{Softmax}$. The number of trainable parameters is $386,954$.
+\textbf{Abstractor architecture} The Abstractor model uses architecture (b) of~\Cref{fig:abstractor_architectures}. For each of the Encoder, Abstractor, and Decoder modules, we use 2 layers, 2 attention heads/relation dimensions, a feedforward network with 64 units and an embedding/symbol dimension of 64. The relation activation function is $\sigma_{\mathrm{rel}} = \mathrm{Softmax}$. Positional symbols are used  and are learned parameters of the model. The number of trainable parameters is $386,954$.
 
 \textbf{Transformer architecture} We implement the standard Transformer of~\citep{vaswani2017attention}. For both the Encoder and Decoder modules, we use 4 layers, 2 attention heads, a feedforward network with 64 units and an embedding dimension of 64. The number of trainable parameters is $469,898$. We increased the number of layers compared to the Abstractor in order to make it a comparable size in terms of parameter count. Previously, we experimented with identical hyperparameters (where the Transformer would have fewer parameters due to not having an Abstractor module).
 
@@ -43,7 +43,7 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \subsubsection{Generalization to new object-sorting tasks}
 
-\textbf{Abstractor architecture} The Abstractor model uses architecture (a) of~\Cref{fig:abstractor_architectures}. The Abstractor module has 1 layer, a symbol dimension of 64, a relation dimension of 4, a softmax relation activation, and a 64-unit feedforward network. The decoder also has 1 layer with 4-head MHA and a 64-unit feedforward network.
+\textbf{Abstractor architecture} The Abstractor model uses architecture (a) of~\Cref{fig:abstractor_architectures}. The Abstractor module uses learned positional symbols, has 1 layer, a symbol dimension of 64, a relation dimension of 4, a softmax relation activation, and a 64-unit feedforward network.  The decoder also has 1 layer with 4-head MHA and a 64-unit feedforward network.
 
 \textbf{Transformer architecture} The Transformer is identical to the previous section.
 
@@ -51,11 +51,10 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \subsection{Math Problem-Solving (\Cref{ssec:experiments_math})}
 
-\textbf{Abstractor architecture} The Abstractor model uses architecture (d) of~\Cref{fig:abstractor_architectures}. The Encoder, ABstractor, and Decoder modules share the same hyperparameters: number of layers $L = 1$, relation dimension/number of heads $d_r = n_h = 4$, symbol dimension/model dimension $d_s = d_{\mathrm{model}} = 128$, projection dimension $d_p = 32$, feedforward hidden dimension $d_{\mathrm{ff}} = 256$. In the Abstractor, the relation activation function is $\sigma_{\mathrm{rel}} = \mathrm{softmax}$, and the symbols are nonparametric sinusoidal positional embeddings.
-
+\textbf{Abstractor architectures} The Abstractor models uses architecture (d) of~\Cref{fig:abstractor_architectures}. The Encoder, Abstractor, and Decoder modules share the same hyperparameters: number of layers $L = 1$, relation dimension/number of heads $d_r = n_h = 4$, symbol dimension/model dimension $d_s = d_{\mathrm{model}} = 128$, projection dimension $d_p = 32$, feedforward hidden dimension $d_{\mathrm{ff}} = 256$. In the Abstractor, the relation activation function is $\sigma_{\mathrm{rel}} = \mathrm{softmax}$. In one model, positional symbols are used, with non-parametric sinusoidal embeddings. In the other model, symbolic attention is used with a symbol library of $n_s = 256$ learned symbols, and $4$-head cross-attention.
 
 \textbf{Transformer architecture} The Transformer Encoder and Decoder have identical hyperparameters to the Encoder and Decoder of the Abstractor architecture.
 
-\textbf{Transformer+ architecture} In `Transformer+', the model dimension is increased $d_\mathrm{model} = 200$ and the feedforward hidden dimension are increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
+\textbf{Transformer+ architecture} In `Transformer+', the model dimension is increased to $d_\mathrm{model} = 200$ and the feedforward hidden dimension is increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
 
 \textbf{Training/Evaluation} We train each model for 50 epochs with the categorical cross-entropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. We use a batch size of 128.
