@@ -26,7 +26,7 @@ where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied independently to
 % , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. 
 Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of message-passing as follows, 
 \begin{equation}\label{eq:self_attn_message_passing}
-    x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} R_{ij} \phi_v(x_j).
+    x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} \bar{R}_{ij} \phi_v(x_j).
 \end{equation}
 where $m_{j \to i} = (\phi_v(x_j), R_{ij})$ is the message from object $j$ to object $i$, encoding the sender's features and the relation between the two objects, and $\bar{R} = \mathrm{Softmax}\paren{R}$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
 % Thus, self-attention is a form of message-passing where the message from object $j$ to object $i$ is an encoding of object $j$'s features weighted by the (softmax-normalized) relation between the two objects. As a result, the processed representation obtained by self-attention involves some relational information. However, this relational information is entangled with object-level features.
@@ -82,27 +82,31 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$, and
 \end{figure}
 
 \subsection{Symbol assignment mechanisms}\label{ssec:symbol_assignment}
-We propose three mechanisms of assigning symbols to objects. The key property that symbol assignment mechanisms must satisfy is to \textit{refer to} the object, without encoding its features.
+We propose three mechanisms of assigning symbols to objects. The key property that symbol assignment mechanisms must satisfy is to produce symbols which encodes the \textit{identity} of the objects, without encoding their features.
 
-\textbf{Positional symbols.} The simplest symbol assignment mechanism which satisfies this property is to simply assign each object a symbol based on the position it appears in the sequence. That is, we maintain a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{\mathtt{max\_len}}) \in \reals^{d_s \times \mathtt{max\_len}}$, and assign the symbol $s_i$ to the $i$-th object. $S_\mathrm{lib}$ can be either learned parameters of the model or nonparametric positional embeddings (e.g., sinusoidal). While very simple, positional symbols are empirically powerful.
+\textbf{Positional symbols.} The simplest symbol assignment mechanism which satisfies this property is to simply sequentially assign each object a symbol in the order it appears in the sequence. That is, we maintain a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{\mathtt{max\_len}}) \in \reals^{d_s \times \mathtt{max\_len}}$, and assign the symbol $s_i$ to the $i$-th object. $S_\mathrm{lib}$ can be either learned parameters of the model or nonparametric positional embeddings (e.g., sinusoidal). While very simple, positional symbols often work well in practice.
 
 \textbf{Position-relative symbols.} Similar to to relative positional embeddings~\citep{shaw2018self,kazemnejadImpactPositionalEncoding2023}, we can compute relational cross-attention with position-relative symbols via $A_i \gets \sum_j R_{ij} s_{j-i}$, where the symbol library is $S_{\mathrm{lib}} = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$.
 
 % TODO: how to describe symbolic attention? which variant?
-\textbf{Symbolic attention.} We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$, where $n_s$ is the number of symbols in the library. For each object $x_i$, we retrieve a symbol by cross-attending to the symbol library, $s_i \gets \mathrm{CrossAttention}(x_i, S_{\mathrm{library}})$. Note that this weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role. %We propose adding positional embeddings after symbol retrieval to alleviate the need for encoding positional information in the symbol library.
+\textbf{Symbolic attention.} We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$ together with associated ``binding vectors'' $B_{\mathrm{lib}} = (b_1, \ldots, b_{n_s})$, where $n_s$ is the number of symbols in the library. Through an attention mechanism, symbols are bound to objects $x_i$ based on their relations to the symbol binding vectors. A multi-head variant of symbolic attention is defined naturally by concatenating the symbols retrieved for each head. Formally, 
+\begin{equation}
+    \begin{split}
+        \mathrm{SymbolicAttention}(X) &\gets \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \quad \text{where,}\\
+        S^{(i)} &\gets S_{\mathrm{lib}}^{(i)} \mathrm{Softmax} \paren{(W_q^{(i)} X)^\top B_{\mathrm{lib}}^{(i)}}.
+    \end{split}
+\end{equation}
+In terms of representational capacity, this is similar to cross-attending to the symbol parameters $S_{\mathrm{lib}}$.
+% (with the keys $W_k S_{\mathrm{lib}}$ taking the role of the binding vectors $B_{\mathrm{lib}}$)
+Note that symbolic attention weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role, rather than merely their position.
 
-% We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$, where $n_s$ is the number of symbols in the library. For each symbol $s_i$, we learn a corresponding binding vector $b_i$, forming a library of binding vectors $B_{\mathrm{lib}} = (b_1, \ldots, b_{n_s})$. Through an attention mechanism, symbols are bound to objects $x_i$ based on relations to binding vectors. A multi-head variant of symbolic attention is defined naturally by concatenating the symbols retrieved for each head. That is, 
-% \begin{equation}
-%     \begin{split}
-%         S &\gets \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \quad \text{where,}\\
-%         S^{(i)} &\gets S_{\mathrm{lib}}^{(i)} \mathrm{Softmax} \paren{(W_q^{(i)} X)^\top B_{\mathrm{lib}}^{(i)}}.
-%     \end{split}
-% \end{equation}
-% In terms of representational capacity, this is similar to cross-attending to $S_{\mathrm{lib}}$ (essentially, $B_{\mathrm{lib}}$ is replaced by $W_k S_{\mathrm{lib}}$). Note that this weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role.
+% version for pure cross-attention
+% We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$, where $n_s$ is the number of symbols in the library. For each object $x_i$, we retrieve a symbol by cross-attending to the symbol library, $s_i \gets \mathrm{CrossAttention}(x_i, S_{\mathrm{library}})$. Note that this weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role. %We propose adding positional embeddings after symbol retrieval to alleviate the need for encoding positional information in the symbol library.
 
-Ultimately, this results in the Abstractor state $A_i$ encoding the relations between object $i$ and each object $j$, identifying $j$ by its position, relative-position, or ``syntactic role,'' depending on the symbol-assignment mechanism used.
 
-%TODO: add more in-depth discussion to appendix. including role of self-attention prior, in certain architectures, the strength of the relational bottleneck etc. Examples of what we think of "roles" in symbolic attention being.
+The choice of symbol-assignment mechanism determines the ``format'' in which relational information is encoded in the abstract states. For example, with positional symbols, $A_i$ encodes the relations between object $i$ and each object $j$, identifying $j$ by its position (or relative position in the case of position-relative symbols). On the other hand, with symbolic attention, each object $j$ would be identified by its ``syntactic role,'' as determined by its relation to the binding vectors.
+
+%TODO: add more in-depth discussion to appendix. including role of self-attention prior, in certain architectures, the strength of the relational bottleneck etc. Examples of what we think of "roles" in symbolic attention being. also discuss intuition.
 \subsection{The Abstractor module}\label{ssec:abstractor_module}
 
 We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module that processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ that represents features of the input sequence. In an Encoder, the output objects represent a mix of object-level features and relational information. In an Abstractor, the output objects are abstract states that represent purely relational information, abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an Encoder, an Abstractor module can comprise several layers, each composed of relational cross-attention followed by a feedforward network. Optionally, residual connections and layer-normalization can be applied as suggested by~\citet{vaswani2017attention}\footnote{Layer-normalization can also be applied before relational cross-attention, as in the pre-LN Transformer~\citep{xiong2020layer}}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
@@ -119,7 +123,7 @@ We now describe the Abstractor module. Like the Encoder in a Transformer, this i
 	% \LearnableParams{projection matrices $W_1^{(i)}, W_2^{(i)} \in \reals^{d_p \times d_e}, \ i=1, \ldots, d_r$, parameters of feedforward networks}
 	\vspace{1em}
 
-    $A^{(0)} \gets \mathrm{CrossAttention(X, S_{\mathrm{lib}})}$ \quad \texttt{// or, $A^{0} \gets S_{1:m}$, for positional symbols}
+    $A^{(0)} \gets \mathrm{SymbolicAttention(X)}$ \quad \texttt{// or, $A^{0} \gets S_{1:m}$, for positional symbols}
 
 	\For{\(l \gets 1\) \KwTo \(L\)}{
 
