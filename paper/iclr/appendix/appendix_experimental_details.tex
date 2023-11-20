@@ -51,10 +51,10 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 
 \subsection{Math Problem-Solving (\Cref{ssec:experiments_math})}
 
-\textbf{Abstractor architectures} The Abstractor models uses architecture (d) of~\Cref{fig:abstractor_architectures}. The Encoder, Abstractor, and Decoder modules share the same hyperparameters: number of layers $L = 1$, relation dimension/number of heads $d_r = n_h = 4$, symbol dimension/model dimension $d_s = d_{\mathrm{model}} = 128$, projection dimension $d_p = 32$, feedforward hidden dimension $d_{\mathrm{ff}} = 256$. In the Abstractor, the relation activation function is $\sigma_{\mathrm{rel}} = \mathrm{softmax}$. In one model, positional symbols are used, with non-parametric sinusoidal embeddings. In the other model, symbolic attention is used with a symbol library of $n_s = 256$ learned symbols, and $4$-head cross-attention.
+\textbf{Abstractor architectures.} The Abstractor models use architecture (d) of~\Cref{fig:abstractor_architectures}. The Encoder, Abstractor, and Decoder modules share the same hyperparameters: number of layers $L = 1$, relation dimension/number of heads $d_r = n_h = 4$, symbol dimension/model dimension $d_s = d_{\mathrm{model}} = 128$, projection dimension $d_p = 32$, feedforward hidden dimension $d_{\mathrm{ff}} = 256$. In the Abstractor, the relation activation function is $\sigma_{\mathrm{rel}} = \mathrm{softmax}$. In one model, positional symbols are used, with sinusoidal embeddings. In the other model, symbolic attention is used with a symbol library of $n_s = 256$ learned symbols, and $4$-head cross-attention.
 
-\textbf{Transformer architecture} The Transformer Encoder and Decoder have identical hyperparameters to the Encoder and Decoder of the Abstractor architecture.
+\textbf{Transformer architecture.} The Transformer Encoder and Decoder have identical hyperparameters to the Encoder and Decoder of the Abstractor architecture.
 
-\textbf{Transformer+ architecture} In `Transformer+', the model dimension is increased to $d_\mathrm{model} = 200$ and the feedforward hidden dimension is increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
+\textbf{Transformer+ architecture.} In `Transformer+', the model dimension is increased to $d_\mathrm{model} = 200$ and the feedforward hidden dimension is increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
 
 \textbf{Training/Evaluation} We train each model for 50 epochs with the categorical cross-entropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. We use a batch size of 128.
