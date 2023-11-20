@@ -18,7 +18,7 @@ Please let us know whether this answers your question.
 
 > On the Math Problem experiments: It seems the dataset consists of 8 tasks, but only 5 of these are investigated in the experiments. Is there a particular reason for this omission?
 
-The math dataset contains 8 "modules", but each module contains several tasks. We did not have the computational resources to run an evaluation on all tasks. The tasks were chosen semi-arbitrarily as a representative set of the full set of tasks.
+The math dataset contains 8 "modules", but each module contains several tasks. The total number of tasks is quite large. We did not have the computational resources to run an evaluation on all tasks. The tasks were chosen (semi-arbitrarily) as a representative set of the full set of tasks.
 
 > On the SET Comparison against a symbolic-input model: When pre-training the abstractor relations, is the input from the same pre-trained CNN as when training the multi-head abstractor, or also from the symbolic inputs?
 
