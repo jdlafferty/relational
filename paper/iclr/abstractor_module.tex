@@ -82,14 +82,14 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$, and
 \end{figure}
 
 \subsection{Symbol assignment mechanisms}\label{ssec:symbol_assignment}
-We propose three mechanisms of assigning symbols to objects. The key property that symbol assignment mechanisms must satisfy is to produce symbols which encodes the \textit{identity} of the objects, without encoding their features.
+Abstraction relies on the assignment of symbols to individual objects without directly encoding their features. We propose three different mechanisms for assigning symbols to objects. 
 
-\textbf{Positional symbols.} The simplest symbol assignment mechanism which satisfies this property is to simply sequentially assign each object a symbol in the order it appears in the sequence. That is, we maintain a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{\mathtt{max\_len}}) \in \reals^{d_s \times \mathtt{max\_len}}$, and assign the symbol $s_i$ to the $i$-th object. $S_\mathrm{lib}$ can be either learned parameters of the model or nonparametric positional embeddings (e.g., sinusoidal). While very simple, positional symbols often work well in practice.
+\textbf{Positional symbols.} The simplest symbol assignment mechanism is to  associate to each object a unique symbol according to the order the object appears in the sequence. That is, we maintain a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{\mathtt{max\_len}}) \in \reals^{d_s \times \mathtt{max\_len}}$, and assign the symbol $s_i$ to the $i$-th object. The symbol library $S_\mathrm{lib}$ can be either learned parameters of the model or fixed positional embeddings (e.g., sinusoidal). While very simple, positional symbols often work well in practice.
 
-\textbf{Position-relative symbols.} Similar to to relative positional embeddings~\citep{shaw2018self,kazemnejadImpactPositionalEncoding2023}, we can compute relational cross-attention with position-relative symbols via $A_i \gets \sum_j R_{ij} s_{j-i}$, where the symbol library is $S_{\mathrm{lib}} = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$.
+\textbf{Position-relative symbols.} Similar to relative positional embeddings~\citep{shaw2018self,kazemnejadImpactPositionalEncoding2023}, we can compute relational cross-attention with position-relative symbols via $A_i \gets \sum_j R_{ij} s_{j-i}$, where the symbol library is $S_{\mathrm{lib}} = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$.
 
 % TODO: how to describe symbolic attention? which variant?
-\textbf{Symbolic attention.} We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$ together with associated ``binding vectors'' $B_{\mathrm{lib}} = (b_1, \ldots, b_{n_s})$, where $n_s$ is the number of symbols in the library. Through an attention mechanism, symbols are bound to objects $x_i$ based on their relations to the symbol binding vectors. A multi-head variant of symbolic attention is defined naturally by concatenating the symbols retrieved for each head. Formally, 
+\textbf{Symbolic attention.} In this case we learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$ together with associated ``binding vectors'' $B_{\mathrm{lib}} = (b_1, \ldots, b_{n_s})$, where $n_s$ is the number of symbols in the library. Through an attention mechanism, symbols are bound to objects $x_i$ based on their relations to the symbol binding vectors. A multi-head variant of symbolic attention is naturally  defined by concatenating the symbols retrieved for each head. Formally, 
 \begin{equation}
     \begin{split}
         \mathrm{SymbolicAttention}(X) &\gets \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \quad \text{where,}\\
@@ -98,13 +98,14 @@ We propose three mechanisms of assigning symbols to objects. The key property th
 \end{equation}
 In terms of representational capacity, this is similar to cross-attending to the symbol parameters $S_{\mathrm{lib}}$.
 % (with the keys $W_k S_{\mathrm{lib}}$ taking the role of the binding vectors $B_{\mathrm{lib}}$)
-Note that symbolic attention weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role, rather than merely their position.
+Note that symbolic attention weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, 
+the symbols are shared across objects and sequences, and the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role, rather than merely their position.
 
 % version for pure cross-attention
 % We learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$, where $n_s$ is the number of symbols in the library. For each object $x_i$, we retrieve a symbol by cross-attending to the symbol library, $s_i \gets \mathrm{CrossAttention}(x_i, S_{\mathrm{library}})$. Note that this weakens the relational bottleneck since object-level features are used to retrieve a symbol for each object. However, the dependence is only with respect to a low-dimensional projection of the object-level features, which we think of as encoding the object's ``syntactic role.'' Encoding such information in the symbols allows identifying objects by their role. %We propose adding positional embeddings after symbol retrieval to alleviate the need for encoding positional information in the symbol library.
 
 
-The choice of symbol-assignment mechanism determines the ``format'' in which relational information is encoded in the abstract states. For example, with positional symbols, $A_i$ encodes the relations between object $i$ and each object $j$, identifying $j$ by its position (or relative position in the case of position-relative symbols). On the other hand, with symbolic attention, each object $j$ would be identified by its ``syntactic role,'' as determined by its relation to the binding vectors.
+The choice of symbol assignment mechanism determines the way in which relational information is encoded in the abstract states. For example, with positional symbols, $A_i$ encodes the relations between object $i$ and each object $j$, identifying $j$ by its position (or relative position in the case of position-relative symbols). On the other hand, with symbolic attention, each object $j$ would be identified by its ``syntactic role,'' as determined by its relation to the binding vectors.
 
 %TODO: add more in-depth discussion to appendix. including role of self-attention prior, in certain architectures, the strength of the relational bottleneck etc. Examples of what we think of "roles" in symbolic attention being. also discuss intuition.
 \subsection{The Abstractor module}\label{ssec:abstractor_module}
