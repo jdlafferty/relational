@@ -6,4 +6,4 @@ Thank you for the suggestion! We agree that comparing to PrediNet is an importan
 
 > STSN (Mondal et al., 2023) has used Transformer for RAVEN and PGM problems, which involve relational reasoning, how much would the Abstractor improve over Transformer in those tasks?
 
-This is an interesting empirical question. We leave this to future work.
+This is an interesting empirical question. We leave this to future work. [Taylor may be able to comment further on this.]

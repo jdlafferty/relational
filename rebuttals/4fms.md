@@ -26,4 +26,4 @@ In the configuration $(Q \gets S, K \gets S, V \gets X)$, the inner products wou
 
 ---------------------
 
-Many thanks for your engagement with our work! We hope this has addressed some of your questions and concerns. Please let us know if you have any other questions.
+Many thanks for your thoughtful engagement with our work! We hope this has addressed some of your questions and concerns. Please let us know if you have any other questions.
