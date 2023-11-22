@@ -43,12 +43,12 @@ The precise architectural details and hyperparameters are described in~\Cref{sec
 We evaluate the three models on five subtasks: differentiating functions (calculus); predicting the next term in a sequence (algebra); solving a linear equation (algebra); expanding polynomials; and adding polynomials. For each, we train on the training split and track the teacher-forcing accuracy (excluding null characters) on the validation split. For each pair of model and task, we repeat the experiment five times and report error bars as twice the standard error of the mean.
 
 \begin{figure}[t]
-    \vskip-15pt
+    % \vskip-15pt
     \centering
     \includegraphics[width=\textwidth]{figures/experiments/math_training_curves.pdf}
     \vskip-10pt
     \caption{Training curves comparing an Abstractor-based architecture to a standard Transformer on mathematics problem-solving tasks.}\label{fig:math_training_curves}
-    \vskip -15pt
+    \vskip -10pt
 \end{figure}
 
 % \Cref{fig:math_metrics} shows the end-of-training teacher-forcing accuracy on the validation split for each task.~
