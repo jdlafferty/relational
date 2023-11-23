@@ -88,11 +88,10 @@ Abstraction relies on the assignment of symbols to individual objects without di
 
 \textbf{Position-relative symbols.} Similar to relative positional embeddings~\citep{shaw2018self,kazemnejadImpactPositionalEncoding2023}, we can compute relational cross-attention with position-relative symbols via $A_i \gets \sum_j R_{ij} s_{j-i}$, where the symbol library is $S_{\mathrm{lib}} = \paren{\ldots, s_{-1}, s_0, s_1, \ldots}$.
 
-% TODO: how to describe symbolic attention? which variant?
 \textbf{Symbolic attention.} In this case we learn a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{n_s}) \in \reals^{d_s \times n_s}$ together with associated ``binding vectors'' $B_{\mathrm{lib}} = (b_1, \ldots, b_{n_s})$, where $n_s$ is the number of symbols in the library. Through an attention mechanism, symbols are bound to objects $x_i$ based on their relations to the symbol binding vectors. A multi-head variant of symbolic attention is naturally  defined by concatenating the symbols retrieved for each head. Formally, 
 \begin{equation}
     \begin{split}
-        \mathrm{SymbolicAttention}(X) &\gets \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \quad \text{where,}\\
+        \mathrm{SymbolicAttention}(X) &\gets \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \\
         S^{(i)} &\gets S_{\mathrm{lib}}^{(i)} \mathrm{Softmax} \paren{(W_q^{(i)} X)^\top B_{\mathrm{lib}}^{(i)}}.
     \end{split}
 \end{equation}
