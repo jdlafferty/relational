@@ -24,7 +24,7 @@ The core operation in a Transformer is attention. For an input sequence $X = (x_
 % \end{equation}
 where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied independently to each object in the sequence (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$). Typically, those are linear or affine functions.
 % , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. 
-Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of message-passing as follows, 
+Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of neural message-passing as follows, 
 \begin{equation}\label{eq:self_attn_message_passing}
     x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} \bar{R}_{ij} \phi_v(x_j).
 \end{equation}
@@ -124,7 +124,7 @@ We now describe the Abstractor module. Like the Encoder in a Transformer, this i
 	% \LearnableParams{projection matrices $W_1^{(i)}, W_2^{(i)} \in \reals^{d_p \times d_e}, \ i=1, \ldots, d_r$, parameters of feedforward networks}
 	\vspace{1em}
 
-    $A^{(0)} \gets \mathrm{SymbolicAttention(X)}$ \quad \texttt{// or, $A^{0} \gets S_{1:m}$, for positional symbols}
+    $A^{(0)} \gets \mathrm{SymbolicAttention(X)}$ \quad \texttt{// or, $A^{0} \gets S_{1:\m}$, for positional symbols}
 
 	\For{\(l \gets 1\) \KwTo \(L\)}{
 
