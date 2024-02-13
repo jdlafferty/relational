@@ -1,6 +1,6 @@
 \section{Experimental details}\label{sec:experimental_details}
 
-In this section, we give further experimental details including architectures, hyperparameters, and implementation details. All model and experiments are implemented in Tensorflow. The code is publicly available on the project repo along with detailed experimental logs and instructions for reproduction. We implement all models ``from scratch'' in Tensorflow, using only built-in implementations of basic layers.
+In this section, we give further experimental details including architectures, hyperparameters, and implementation details. All model and experiments are implemented in Tensorflow. The code is publicly available on the project repo along with detailed experimental logs and instructions for reproducing our results.
 
 \subsection{Discriminative tasks (\Cref{ssec:experiments_discriminative})}
 
@@ -58,3 +58,7 @@ This finding suggests that allowing $\sigma_{\mathrm{rel}}$ to be a configurable
 \textbf{Transformer+ architecture.} In `Transformer+', the model dimension is increased to $d_\mathrm{model} = 200$ and the feedforward hidden dimension is increased to $d_{\mathrm{ff}} = 400$. The remaining hyperparameters are the same.
 
 \textbf{Training/Evaluation} We train each model for 50 epochs with the categorical cross-entropy loss and the Adam optimizer using a learning rate of $6 \times 10^{-4}$, $\beta_1 = 0.9, \beta_2 = 0.995, \varepsilon = 10^{-9}$. We use a batch size of 128.
+
+\subsection{Additional Experiment: Robustness and Out-of-Distribution generalization in the Object-Sorting Experiments}
+
+\input{appendix/appendix_object_sorting_robustness.tex}
