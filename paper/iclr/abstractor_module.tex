@@ -14,7 +14,9 @@ A ``relation function'' maps a pair of objects $x_1, x_2 \in \calX$ to a vector 
 
 % In principle, relations could be modeled by an arbitrary learnable function applied to the concatenation of the features of a pair of objects.~\citep{santoro1} takes this approach and models relations through MLPs applied to the concatenation of the features of a pair of objects. This approach is versatile in principle and can work given enough data. However, modeling relations as inner products has some important advantages. First, it induces a pressure on the resultant representations to encode relational information and constricts the leakage of information about individual objects. When relations are modeled as $g_\theta(\mathrm{concat}(x_1, x_2))$, for some parameterized function class $g_\theta$, there is no pressure or restriction that this function represents relations between the two objects---it can just as well represent information about the objects' features individually.
 
-Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that the output represents a comparison between the two objects' features. More precisely, inner product relations induce a geometry on the object space $\calX$, since the inner product $\iprod{\phi(x_1)}{\phi(x_2)}$ induces well-defined notions of distance, angles, and orthogonality between objects in $\calX$. %Modeling relations as inner products is an approach that has been explored in previous work on relational architectures (e.g.,~\citep{esbn,kerg2022neural}) and has been shown to be a useful inductive bias on several discriminative relational tasks.
+Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that the output represents a comparison between the two objects' features. More precisely, inner product relations induce a geometry on the object space $\calX$, with notions notions of distance, angles, and orthogonality.~\citep{altabaaApproximationRelationFunctions2024} analyzes the approximation properties of inner products of neural networks for relation functions.
+%Modeling relations as inner products is an approach that has been explored in previous work on relational architectures (e.g.,~\citep{esbn,kerg2022neural}) and has been shown to be a useful inductive bias on several discriminative relational tasks.
+
 Considering all pairwise relations yields a \textit{relation tensor}, $R = \left[r(x_i, x_j)\right]_{i,j} \in \mathbb{R}^{\m \times \m \times d_r}$.
 \subsection{Relational Cross-Attention}\label{ssec:relational_crossattention}
 
@@ -22,13 +24,15 @@ The core operation in a Transformer is attention. For an input sequence $X = (x_
 % \begin{equation}\label{eq:self_attn}
 %     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
 % \end{equation}
-where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied independently to each object in the sequence (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$). Typically, those are linear or affine functions.
+where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied independently to each object in the sequence.
+% (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$). 
+Typically, those are linear or affine functions.
 % , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. 
-Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of neural message-passing as follows, 
+Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of neural message-passing as follows
 \begin{equation}\label{eq:self_attn_message_passing}
-    x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} \bar{R}_{ij} \phi_v(x_j).
+    x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} \bar{R}_{ij} \phi_v(x_j),
 \end{equation}
-where $m_{j \to i} = (\phi_v(x_j), R_{ij})$ is the message from object $j$ to object $i$, encoding the sender's features and the relation between the two objects, and $\bar{R} = \mathrm{Softmax}\paren{R}$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
+where $m_{j \to i} = (\phi_v(x_j), R_{ij})$ is the message from object $j$ to object $i$, encoding the sender's features and the relation between the two objects. Here, $\bar{R} = \mathrm{Softmax}\paren{R}$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
 % Thus, self-attention is a form of message-passing where the message from object $j$ to object $i$ is an encoding of object $j$'s features weighted by the (softmax-normalized) relation between the two objects. As a result, the processed representation obtained by self-attention involves some relational information. However, this relational information is entangled with object-level features.
 
 Our goal is to learn relational representations which are abstracted away from object-level features in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by the entangled representations produced by standard self-attention. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with vectors that \textit{identify} objects, but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, the message sent from object $j$ to object $i$ is now $m_{j \to i} = (s_j, R_{ij})$, the relation between the two objects, together with with the symbol identifying the sender object,
@@ -57,12 +61,12 @@ Relational cross-attention implements a type of information bottleneck, which we
 %     the values are input-independent. \awni{I was thinking (1) explains `relational' and (2) explains `cross-attention'. But we might want to remove this since we're tight on space and it's not really necessary.}
 % \end{remark}
 
-In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{(i)}, W_2^{(i)}$, and relational cross-attention is given by
+In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{i}, W_2^{i}$, and relational cross-attention is given by
 \begin{equation}
     \begin{split}
         % \mathrm{RelationalCrossAttention}(X, S) &= \mathrm{MultiHeadAttention}\paren{Q \gets X,\, K \gets X,\, V \gets S} \\
-        \mathrm{RelationalCrossAttention}(X, S) &= W_o \, \mathrm{concat}\paren{A^{(1)}, \ldots, A^{(d_r)}}, \\
-        \text{where } A^{(i)} &= W_o^{(i)} S \, \sigma_{\mathrm{rel}}\paren{(W_1^{(i)} X)^\top (W_2^{(i)} X)}.
+        \mathrm{RelationalCrossAttention}(X, S) &= W_o \, \mathrm{concat}\paren{A^{1}, \ldots, A^{d_r}}, \\
+        \text{where } A^i &= W_o^{i} S \, \sigma_{\mathrm{rel}}\paren{(W_1^{i} X)^\top (W_2^{i} X)}.
     \end{split}
 \end{equation}
 
@@ -93,7 +97,7 @@ Abstraction relies on the assignment of symbols to individual objects without di
 \begin{equation}
     \begin{split}
         \mathrm{SymbolicAttention}(X) &= \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \\
-        S^{(i)} &= S_{\mathrm{lib}}^{(i)} \mathrm{Softmax} \paren{(W_q^{(i)} X)^\top B_{\mathrm{lib}}^{(i)}}.
+        S^{i} &= S_{\mathrm{lib}}^{i}\, \mathrm{Softmax} \paren{(W_q^{i} X)^\top B_{\mathrm{lib}}^{i}}.
     \end{split}
 \end{equation}
 In terms of representational capacity, this is similar to cross-attending to the symbol parameters $S_{\mathrm{lib}}$.
@@ -110,7 +114,7 @@ The choice of symbol assignment mechanism determines the way in which relational
 %TODO: add more in-depth discussion to appendix. including role of self-attention prior, in certain architectures, the strength of the relational bottleneck etc. Examples of what we think of "roles" in symbolic attention being. also discuss intuition.
 \subsection{The Abstractor module}\label{ssec:abstractor_module}
 
-We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module that processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ that represents features of the input sequence. In an Encoder, the output objects represent a mix of object-level features and relational information. In an Abstractor, the output objects are abstract states that represent purely relational information, abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an Encoder, an Abstractor module can comprise several layers, each composed of relational cross-attention followed by a feedforward network. Optionally, residual connections and layer-normalization can be applied as suggested by~\citet{vaswani2017attention}\footnote{Layer-normalization can also be applied before relational cross-attention, as in the pre-LN Transformer~\citep{xiong2020layer}}. The algorithmic description is presented in~\Cref{alg:abstractor_module}.
+We now describe the Abstractor module. Like the Encoder in a Transformer, this is a module that processes an input sequence of objects $X = \paren{x_1, \ldots, x_\m}$ producing a processed sequence of objects $A = \paren{A_1, \ldots, A_\m}$ that represents features of the input sequence. In an Encoder, the output objects represent a mix of object-level features and relational information. In an Abstractor, the output objects are abstract states that represent purely relational information, abstracted away from the features of individual objects. The core operation in an Abstractor module is relational cross-attention. Mirroring an Encoder, an Abstractor module can comprise several layers, each composed of relational cross-attention followed by a feedforward network. Optionally, residual connections and layer-normalization can be applied as suggested by~\citet{vaswani2017attention}\footnote{Layer-normalization can also be applied before relational cross-attention, as in the pre-LN Transformer~\citep{xiong2020layer}}. The algorithmic description is presented in~\Cref{alg:abstractor_module}. We show in~\Cref{sec:abstractor_approx_theory} that the Abstractor module is a universal approximator of relation functions.
 
 \begin{algorithm}[ht!]
 	\caption{Abstractor module}\label{alg:abstractor_module}
@@ -121,7 +125,7 @@ We now describe the Abstractor module. Like the Encoder in a Transformer, this i
 
 	\Input{object sequence: $\bm{X} = (x_1, \ldots, x_\m) \in \reals^{d \times \m}$ }
 	% \HyperParams{Dimension of relation $d_r$, Projection dimension $d_p$, dimension of embedding $d_e$}
-	% \LearnableParams{projection matrices $W_1^{(i)}, W_2^{(i)} \in \reals^{d_p \times d_e}, \ i=1, \ldots, d_r$, parameters of feedforward networks}
+	% \LearnableParams{projection matrices $W_1^{i}, W_2^{i} \in \reals^{d_p \times d_e}, \ i=1, \ldots, d_r$, parameters of feedforward networks}
 	\vspace{1em}
 
     $A^{(0)} \gets \mathrm{SymbolicAttention(X)}$ \quad \texttt{// or, $A^{0} \gets S_{1:\m}$, for positional symbols}
@@ -152,7 +156,7 @@ We now describe the Abstractor module. Like the Encoder in a Transformer, this i
 
 \end{algorithm}
 
-The hyperparameters of an Abstractor module include the number of layers $L$, the relation dimension $d_r$ (i.e., number of heads),  the projection dimension $d_p$ (i.e., key dimension), the relation activation function $\sigma_{\mathrm{rel}}$, and the dimension of the symbols $d_s$. The learnable parameters, at each layer, are the projection matrices $W_1^{(i)}, W_2^{(i)} \in \reals^{d_p \times d_s}, \ i \in [d_r]$, the symbol library $S_{\mathrm{lib}}$, and the parameters of the feedforward network. In our experiments, we use a 2-layer feedforward network with a hidden dimension $d_{\mathrm{ff}}$ and ReLU activation. The implementation in the publicly available code includes a few additional hyperparameters including whether to restrict the learned relations to be symmetric (via $W_1^{(i)} = W_2^{(i)}$), and whether to additionally apply self-attention after relational cross-attention (which enables exchange of relational information between abstract states).
+The hyperparameters of an Abstractor module include the number of layers $L$, the relation dimension $d_r$ (i.e., number of heads),  the projection dimension $d_p$ (i.e., key dimension), the relation activation function $\sigma_{\mathrm{rel}}$, and the dimension of the symbols $d_s$. The learnable parameters, at each layer, are the projection matrices $W_1^{i}, W_2^{i} \in \reals^{d_p \times d_s}, \ i \in [d_r]$, the symbol library $S_{\mathrm{lib}}$, and the parameters of the feedforward network. In our experiments, we use a 2-layer feedforward network with a hidden dimension $d_{\mathrm{ff}}$ and ReLU activation. The implementation in the publicly available code includes a few additional hyperparameters including whether to restrict the learned relations to be symmetric (via $W_1^{i} = W_2^{i}$), and whether to additionally apply self-attention after relational cross-attention (which enables exchange of relational information between abstract states).
 
 % Observe that in the first layer of the Abstractor, the values in relational cross-attention are the input-independent symbols. In the following layers, the values are the abstract states from the previous layer. %In the next subsection we characterize the function class of 1-layer Abstractor modules. Computations in deeper Abstractor modules are more difficult to interpret in terms of the original input sequence, but, empirically, we find that deeper Abstractor modules can yield improvements in performance.
 
