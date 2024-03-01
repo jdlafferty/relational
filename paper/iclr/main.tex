@@ -112,6 +112,11 @@
 \fxsetface{margin}{\scriptsize}
 % endregion
 
+% region biblatex bibliography setup
+\usepackage[backend=bibtex, style=authoryear-comp, maxbibnames=10, maxcitenames=2, url=false, uniquelist=false, isbn=false, doi=false, sortcites=false, dashed=false, natbib]{biblatex}
+\addbibresource{references.bib}
+% endregion
+
 \title{Abstractors and relational cross-attention: An inductive bias for explicit relational \\ reasoning in Transformers}
 
 % The \author macro works with any number of authors. There are two commands
@@ -159,8 +164,9 @@ Code, detailed experimental logs, and instructions for reproducing our experimen
 
 \input{acknowledge.tex}
 
-\bibliography{references}
-\bibliographystyle{iclr2024_conference}
+\printbibliography
+% \bibliography{references}
+% \bibliographystyle{iclr2024_conference}
 
 \clearpage
 \appendix
