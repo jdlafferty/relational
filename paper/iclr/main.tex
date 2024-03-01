@@ -1,5 +1,4 @@
 \documentclass{article}
-\usepackage{iclr2024_conference,times}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
@@ -9,10 +8,13 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-\usepackage{xcolor}         % colors
+% \usepackage{xcolor}         % colors
+\usepackage[dvipsnames]{xcolor}
 \usepackage{wrapfig}
 \usepackage{caption}
 \usepackage{subcaption}
+
+\usepackage{iclr2024_conference,times}
 
 \usepackage{mymathstyle} % math style with a bunch of commands defined
 
@@ -112,8 +114,22 @@
 \fxsetface{margin}{\scriptsize}
 % endregion
 
+% region hyperref and link color options
+% \newcommand\myshade{100}
+% \colorlet{mylinkcolor}{RubineRed}
+% \colorlet{mycitecolor}{RoyalBlue}
+% \colorlet{myurlcolor}{RoyalBlue}
+
+\hypersetup{
+  linkcolor  = RubineRed, %mylinkcolor!\myshade!black,
+  citecolor  = RoyalBlue, %!\myshade!black,
+  urlcolor   = RoyalBlue, %!\myshade!black,
+  colorlinks = true,
+}
+% endregion
+
 % region biblatex bibliography setup
-\usepackage[backend=bibtex, style=authoryear-comp, maxbibnames=10, maxcitenames=2, url=false, uniquelist=false, isbn=false, doi=false, sortcites=false, dashed=false, natbib]{biblatex}
+\usepackage[backend=bibtex, style=authoryear-comp, date=year, maxbibnames=10, maxcitenames=2, url=false, uniquelist=false, isbn=false, doi=false, sortcites=false, dashed=false, natbib]{biblatex}
 \addbibresource{references.bib}
 % endregion
 
