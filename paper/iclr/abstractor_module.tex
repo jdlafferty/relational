@@ -26,9 +26,9 @@ The core operation in a Transformer is attention. For an input sequence $X = (x_
 % \begin{equation}\label{eq:self_attn}
 %     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
 % \end{equation}
-where $\phi_q, \phi_k, \phi_v$ are functions on $\calX$ applied independently to each object in the sequence.
+where $\phi_q, \phi_k, \phi_v$ are functions applied independently to each object in the sequence.
 % (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$). 
-Typically, those are linear or affine functions.
+% Typically, those are linear or affine functions.
 % , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. 
 Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of ``neural message-passing''~\citep{gilmer2017neural} as follows
 \begin{equation}\label{eq:self_attn_message_passing}
@@ -85,7 +85,7 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{i}, W_2^{i}$, and rel
         \caption{$A \gets \mathrm{RelationalCrossAttention(X, S)}$}\label{fig:relational_cross_attention}
     \end{subfigure}
     \caption{Comparison of relational cross-attention with self-attention. Red represents object-level features, blue represents relational features, and purple represents mixed representations. Relational cross-attention computes relational information disentangled from the features of individual objects.}\label{fig:attn_mechanisms}
-    \vskip-10pt
+    \vskip-15pt
 \end{figure}
 
 \subsection{Symbol assignment mechanisms}\label{ssec:symbol_assignment}

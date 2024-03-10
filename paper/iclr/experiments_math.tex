@@ -28,7 +28,7 @@ In a general sequence-to-sequence task, however, there may not be a relation whi
     \vskip-15pt
 \end{figure}
 
-The dataset consists of several math problem-solving tasks, with each task having a set of question-answer pairs. The tasks include solving equations, expanding products of polynomials, differentiating functions, predicting the next term in a sequence, etc. A sample of question-answer pairs is displayed in~\Cref{fig:math_dataset}. The overall dataset contains $2 \times 10^6$ training examples and $10^4$ validation examples per task. Questions have a maximum length of 160 characters and answers have a maximum length of 30 characters. We use character-level encoding with a common alphabet of size $95$ (including upper/lower case characters, digits, and punctuation). Each question and answer is tokenized and padded with the null character.
+The dataset consists of several math problem-solving tasks, with each task having a set of question-answer pairs. The tasks include solving equations, expanding products of polynomials, differentiating functions, predicting the next term in a sequence, etc. A sample of question-answer pairs is displayed in~\Cref{fig:math_dataset}. The overall dataset contains $2 \times 10^6$ training examples and $10^4$ validation examples per task. Questions have a maximum length of 160 characters and answers have a maximum length of 30 characters. We use character-level encoding with a common alphabet of size $95$ (including upper/lower case characters, digits, punctuation, and special start/end/pad tokens). %Each question and answer is tokenized and padded with the null character.
 
 We compare an Abstractor model using architecture (d) in~\Cref{fig:abstractor_architectures} to a standard Transformer. We evaluate an Abstractor with positional symbols and an Abstractor with symbolic attention (see~\Cref{ssec:symbol_assignment}). Since the Abstractor-based models with architecture (d) have an Abstractor module in addition to an Encoder and Decoder, we compare against two versions of the Transformer in order to control for parameter count. In the first, the Encoder/Decoder have identical hyperparameters to the Abstractor model. In the second, we increase the model dimension and hidden layer size of the feedforward network such that the overall parameter count is approximately the same as for the Abstractor model. We refer to the first model as ``Transformer'' and the second as ``Transformer+'' in the figures. %We train on modestly sized models. 
 The precise architectural details and hyperparameters are described in~\Cref{sec:experimental_details}.
@@ -47,7 +47,7 @@ We evaluate the three models on five subtasks: differentiating functions (calcul
     \includegraphics[width=\textwidth]{figures/experiments/math_training_curves.pdf}
     \vskip-10pt
     \caption{Training curves comparing an Abstractor-based architecture to a standard Transformer on mathematics problem-solving tasks.}\label{fig:math_training_curves}
-    \vskip -10pt
+    \vskip -15pt
 \end{figure}
 
 % \Cref{fig:math_metrics} shows the end-of-training teacher-forcing accuracy on the validation split for each task.~
