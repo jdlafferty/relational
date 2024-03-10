@@ -130,6 +130,11 @@
 
 % region biblatex bibliography setup
 \usepackage[backend=bibtex, style=authoryear-comp, date=year, maxbibnames=10, maxcitenames=2, url=false, uniquelist=false, isbn=false, doi=false, sortcites=false, dashed=false, natbib]{biblatex}
+\AtEveryBibitem{%
+  \clearfield{volume}%
+  \clearfield{number}
+  \clearfield{pages}}
+\DeclareFieldFormat{title}{\mkbibquote{#1}}
 \addbibresource{references.bib}
 % endregion
 

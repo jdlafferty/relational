@@ -289,18 +289,11 @@ This article is part of the themed issue ‘New frontiers for statistical learni
 }
 
 @inproceedings{esbn,
-  author    = {Taylor Webb and
-               Ishan Sinha and
-               Jonathan D. Cohen},
-  title     = {Emergent Symbols through Binding in External Memory},
-  booktitle = {9th International Conference on Learning Representations, {ICLR} 2021,
-               Virtual Event, Austria, May 3-7, 2021},
-  publisher = {OpenReview.net},
-  year      = {2021},
-  url       = {https://openreview.net/forum?id=LSFCEb3GYU7},
-  timestamp = {Wed, 23 Jun 2021 17:36:39 +0200},
-  biburl    = {https://dblp.org/rec/conf/iclr/WebbS021.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  title={Emergent Symbols through Binding in External Memory},
+  author={Taylor Whittington Webb and Ishan Sinha and Jonathan Cohen},
+  booktitle={International Conference on Learning Representations},
+  year={2021},
+  url={https://openreview.net/forum?id=LSFCEb3GYU7}
 }
 
 @article{TEM,
@@ -339,10 +332,12 @@ keywords = {hippocampus, entorhinal cortex, generalization, grid cells, place ce
 }
 
 @inproceedings{barrett:2018,
-  title = {Measuring abstract reasoning in neural networks},
-  author = {David G.T. Barrett and Felix Hill and Adam Santoro  and Ari S. Morcos and Timothy Lillicrap},
-  booktitle = {Proceedings ICML},
-  year = {2018},
+  title={Measuring abstract reasoning in neural networks},
+  author={Barrett, David and Hill, Felix and Santoro, Adam and Morcos, Ari and Lillicrap, Timothy},
+  booktitle={International conference on machine learning},
+  pages={511--520},
+  year={2018},
+  organization={PMLR}
 }
 
 @book{dehaene:2020,
@@ -627,7 +622,6 @@ editors = {Stephen Monsell, Jon Driver},
   title={Neural episodic control},
   author={Pritzel, Alexander and Uria, Benigno and Srinivasan, Sriram and Badia, Adria Puigdomenech and Vinyals, Oriol and Hassabis, Demis and Wierstra, Daan and Blundell, Charles},
   booktitle={International conference on machine learning},
-  pages={2827--2836},
   year={2017},
   organization={PMLR}
 }
@@ -760,9 +754,9 @@ editors = {Stephen Monsell, Jon Driver},
   title={Attention is all you need},
   author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
   journal={Advances in neural information processing systems},
-  volume={30},
   year={2017}
 }
+  volume={30},
 
 @article{josselyn2020memory,
   title={Memory engrams: Recalling the past and imagining the future},
@@ -1780,7 +1774,6 @@ series = {ISCA '07}
 	issn = {0932-4194, 1435-568X},
 	url = {http://link.springer.com/10.1007/BF02551274},
 	doi = {10.1007/BF02551274},
-	language = {en},
 	number = {4},
 	urldate = {2023-03-31},
 	journal = {Mathematics of Control, Signals, and Systems},
@@ -1906,7 +1899,6 @@ series = {ISCA '07}
   primaryclass = {cs},
   publisher = {{arXiv}},
   urldate = {2023-08-17},
-  abstract = {Length generalization, the ability to generalize from small training context sizes to larger ones, is a critical challenge in the development of Transformer-based language models. Positional encoding (PE) has been identified as a major factor influencing length generalization, but the exact impact of different PE schemes on extrapolation in downstream tasks remains unclear. In this paper, we conduct a systematic empirical study comparing the length generalization performance of decoder-only Transformers with five different position encoding approaches including Absolute Position Embedding (APE), T5's Relative PE, ALiBi, and Rotary, in addition to Transformers without positional encoding (NoPE). Our evaluation encompasses a battery of reasoning and mathematical tasks. Our findings reveal that the most commonly used positional encoding methods, such as ALiBi, Rotary, and APE, are not well suited for length generalization in downstream tasks. More importantly, NoPE outperforms other explicit positional encoding methods while requiring no additional computation. We theoretically demonstrate that NoPE can represent both absolute and relative PEs, but when trained with SGD, it mostly resembles T5's relative PE attention patterns. Finally, we find that scratchpad is not always helpful to solve length generalization and its format highly impacts the model's performance. Overall, our work suggests that explicit position embeddings are not essential for decoder-only Transformers to generalize well to longer sequences.},
   archiveprefix = {arxiv}
 }
 
@@ -1914,16 +1906,7 @@ series = {ISCA '07}
   title = 	 {An Explicitly Relational Neural Network Architecture},
   author =       {Shanahan, Murray and Nikiforou, Kyriacos and Creswell, Antonia and Kaplanis, Christos and Barrett, David and Garnelo, Marta},
   booktitle = 	 {Proceedings of the 37th International Conference on Machine Learning},
-  pages = 	 {8593--8603},
   year = 	 {2020},
-  editor = 	 {III, Hal Daumé and Singh, Aarti},
-  volume = 	 {119},
-  series = 	 {Proceedings of Machine Learning Research},
-  month = 	 {13--18 Jul},
-  publisher =    {PMLR},
-  pdf = 	 {http://proceedings.mlr.press/v119/shanahan20a/shanahan20a.pdf},
-  url = 	 {https://proceedings.mlr.press/v119/shanahan20a.html},
-  abstract = 	 {With a view to bridging the gap between deep learning and symbolic AI, we present a novel end-to-end neural network architecture that learns to form propositional representations with an explicitly relational structure from raw pixel data. In order to evaluate and analyse the architecture, we introduce a family of simple visual relational reasoning tasks of varying complexity. We show that the proposed architecture, when pre-trained on a curriculum of such tasks, learns to generate reusable representations that better facilitate subsequent learning on previously unseen tasks when compared to a number of baseline architectures. The workings of a successfully trained model are visualised to shed some light on how the architecture functions.}
 }
 
 @misc{saxtonAnalyzingMathematicalReasoning2019,
