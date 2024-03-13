@@ -1,16 +1,16 @@
 \section{Universal approximation of relation functions}\label{sec:abstractor_approx_theory}
 
-In this section, we characterize the function class of the Abstractor and relational cross-attention. Recall that relational cross-attention takes the form
+In this section, we characterize the function class of the Abstractor and relational cross-attention. We will show that, in an appropriate sense, a single Abstractor layer can compute a sequence of abstract states $A = (A_1, \ldots, A_\m)$ such that $A_i$ approximates an arbitrary function of object $i$'s relations with the other objects in the input. Recall that relational cross-attention takes the form
 \begin{equation*}
-    A \gets S \sigma_{\mathrm{rel}}\paren{\phi(X)^\top \psi(X)},
+    A \gets \sigma_{\mathrm{rel}}\paren{\phi(X) {\psi(X)}^\top} S,
 \end{equation*}
 where $\phi, \psi: \calX \to \reals^{d_{\mathrm{proj}}}$ are multi-layer perceptrons, and $S$ is the matrix of symbols. In this analysis, we consider $\sigma_{\mathrm{rel}}: x \mapsto x$ to be the linear activation function. Further, we consider positional symbols. For simplicity, we will assume the single-head variant of relational cross-attention. The function class results derived here would of course carry over to the multi-head case, where each `head' can approximate a function in the function class.
 
 Recall that an Abstractor module comprises several layers, each composed of relational cross-attention and a feedforward layer. Hence, the overall operation in one layer of an Abstractor module is
 \begin{equation}\label{eq:abstractor_layer}
-    \mathrm{AbstractorLayer}(X) = \mathrm{FeedForward}\paren{S\, \phi(X)^\top \psi(X)}.
+    \mathrm{AbstractorLayer}(X) = \mathrm{FeedForward}\paren{\phi(X) {\psi(X)}^\top \, S}.
 \end{equation}
-We will characterize the function class $\mathrm{AbstractorLayer}: \calX^n \to \reals^{d \times n}$ induced by varying the parameters of $\phi,\, \psi,\, \mathrm{FeedForward}$ and $S$.
+We will characterize the function class $\mathrm{AbstractorLayer}: \calX^\m \to \reals^{\m \times d}$ induced by varying the parameters of $\phi,\, \psi,\, \mathrm{FeedForward}$ and $S$.
 
 \begin{remark}
     In~\Cref{eq:relational_crossattn}, we formulate relational cross-attention with the maps $\phi, \psi$ as linear projections, whereas $\phi, \psi$ are multi-layer perceptrons in~\Cref{eq:abstractor_layer}. However, recall that the input to each Abstractor layer is the output of the preceding layer which ends with a multi-layer perceptron. The function class of a multi-layer perceptron followed by two different linear projections is the same as the function class of two different multi-layer perceptrons. We focus on~\Cref{eq:abstractor_layer} for ease of presentation.
@@ -19,39 +19,39 @@ We will characterize the function class $\mathrm{AbstractorLayer}: \calX^n \to \
 The following result shows that a single-layer abstractor returns a sequence of abstract states which can approximate an arbitrary function of each object's relations with the other object in the input. The result is based on the analysis in~\citep{altabaaApproximationRelationFunctions2024} which characterizes the function class of inner products of neural networks.
 
 \begin{theorem}
-    Suppose $\calX$ is a compact Euclidean space. Let $r: \calX \times \calX \to \reals$ be any continuous relation function, and $f: \reals^n \to \reals^d$ any continuous function. Consider the function $g: \calX^n \to \reals^{d \times n}$ defined by
+    Suppose $\calX$ is a compact Euclidean space. Let $r: \calX \times \calX \to \reals$ be any continuous relation function, and $f: \reals^\m \to \reals^d$ any continuous function. Consider the function $g: \calX^n \to \reals^{\m \times d}$ defined by
     \begin{equation*}
-        (x_1, \ldots, x_n) \mapsto \paren{f(R_1), \ldots, f(R_n)},
+        (x_1, \ldots, x_\m) \mapsto \paren{f(R_1), \ldots, f(R_\m)},
     \end{equation*}
-    where $R_i = {(r(x_i, x_j))}_{j \in [n]}$ is the vector of $x_i$'s relations with the other objects in the input, according to $r$. Then, for any $\varepsilon > 0$, there exists MLPs $\phi, \psi, \mathrm{FeedForward}$ and a choice of symbols $S$ such that the Abstractor layer approximates $g$ in the sup-norm
+    where $R_i = {(r(x_i, x_j))}_{j \in [\m]}$ is the vector of $x_i$'s relations with the other objects in the input, according to $r$. Then, for any $\varepsilon > 0$, there exists MLPs $\phi, \psi, \mathrm{FeedForward}$ and a choice of symbols $S$ such that the Abstractor layer approximates $g$ in the sup-norm
     \begin{equation*}
-        \infnorm{g(x_1, \ldots, x_n) - \mathrm{AbstractorLayer}(x_1, \ldots, x_n)} \leq \varepsilon, \quad \text{Lebesgue almost-everywhere.}
+        \infnorm{g(x_1, \ldots, x_\m) - \mathrm{AbstractorLayer}(x_1, \ldots, x_\m)} \leq \varepsilon, \quad \text{Lebesgue almost-everywhere.}
     \end{equation*}
 \end{theorem}
 \begin{proof}
-    Let $(A_1, \ldots, A_n) = \mathrm{AbstractorLayer}(x_1, \ldots, x_n)$ be the abstract states returned by the abstractor layer. For each $i \in [n]$,
+    Let $(A_1, \ldots, A_\m) = \mathrm{AbstractorLayer}(x_1, \ldots, x_\m)$ be the abstract states returned by the abstractor layer. For each $i \in [\m]$,
     the abstract state $A_i$ takes the form,
     \begin{equation*}
-        A_i = \mathrm{FeedForward}\paren{\sum_{j=1}^{n} \iprod{\phi(x_i)}{\psi(x_j)} s_j}.
+        A_i = \mathrm{FeedForward}\paren{\sum_{j=1}^{\m} \iprod{\phi(x_i)}{\psi(x_j)} s_j}.
     \end{equation*}
-    where $S = (s_1, \ldots, s_n)$ are the symbols assigned to each object. Let the symbol dimension be $n$ and let $s_i = \bm{e}_i$, the canonical basis vectors. Then, $A_i = \mathrm{FeedForward}(R_i)$, where $R_i = {(\iprod{\phi(x_i)}{\psi(x_j)})}_{j \in [n]} \in \reals^n$. By~\citep[Theorem 3.1]{altabaaApproximationRelationFunctions2024}, there exists MLPs $\phi, \psi$ such that their inner product approximates any continuous relation function. In particular, for any $\varepsilon_1 > 0$, there exists $\phi, \psi$ such that
+    where $S = (s_1, \ldots, s_\m)$ are the symbols assigned to each object. Let the symbol dimension be $n$ and let $s_i = \bm{e}_i$, the canonical basis vectors. Then, $A_i = \mathrm{FeedForward}(R_i)$, where $R_i = {(\iprod{\phi(x_i)}{\psi(x_j)})}_{j \in [\m]} \in \reals^\m$. By~\citep[Theorem 3.1]{altabaaApproximationRelationFunctions2024}, there exists MLPs $\phi, \psi$ such that their inner product approximates any continuous relation function. In particular, for any $\varepsilon_1 > 0$, there exists $\phi, \psi$ such that
     \begin{equation}\label{eq:approx_proof_r_approx}
         \abs{r(x, y) - \iprod{\phi(x)}{\psi(y)}} \leq \varepsilon_1, \quad \text{Lebesgue almost-every } x,y \in \calX
     \end{equation}
-    Let $\phi, \psi$ be such MLPs where $\varepsilon_1$ is to be determined later. Note that~\citep{altabaaApproximationRelationFunctions2024} gives a bound on the number of neurons needed in terms of the continuity of $r$ and the dimension of $\calX$. Similarly, by the universal approximation property of MLPs~\citep[e.g.,]{cybenkoApproximationSuperpositions1989}, $f: \reals^{n} \to \reals^{d}$ can be approximated by $\mathrm{FeedForward}$ uniformly in the sup-norm. That is, for any $\varepsilon_2$ there exists $\mathrm{FeedForward}$ such that
+    Let $\phi, \psi$ be such MLPs where $\varepsilon_1$ is to be determined later. Note that~\citep{altabaaApproximationRelationFunctions2024} gives a bound on the number of neurons needed in terms of the continuity of $r$ and the dimension of $\calX$. Similarly, by the universal approximation property of MLPs~\citep[e.g.,][]{cybenkoApproximationSuperpositions1989}, $f: \reals^{\m} \to \reals^{d}$ can be approximated by $\mathrm{FeedForward}$ uniformly in the sup-norm. That is, for any $\varepsilon_2$ there exists $\mathrm{FeedForward}$ such that
     \begin{equation}\label{eq:approx_proof_f_approx}
-        \sup_{z \in \reals^n} \infnorm{f(z) - \mathrm{FeedForward}(z)} \leq \varepsilon_2.
+        \sup_{z \in \reals^\m} \infnorm{f(z) - \mathrm{FeedForward}(z)} \leq \varepsilon_2.
     \end{equation}
 
-    Let $[R]_{ij} = r(x_i, x_j)$ and $[\hat{R}]_{ij} = \iprod{\phi(x_i)}{\psi(x_j)}$. Then, the difference $g(x_1, \ldots, x_n) - \mathrm{AbstractorLayer}(x_1, \ldots, x_n)$ is given by
+    Let $[R]_{ij} = r(x_i, x_j)$ and $[\hat{R}]_{ij} = \iprod{\phi(x_i)}{\psi(x_j)}$. Then, the difference $g(x_1, \ldots, x_\m) - \mathrm{AbstractorLayer}(x_1, \ldots, x_\m)$ is given by
     \begin{equation}\label{eq:approx_proof_diff}
-        \Big[f(R_{1\cdot}), \ldots, f(R_{1\cdot})\Big] - \Big[\mathrm{FeedForward}(\hat{R}_{1\cdot}), \ldots, \mathrm{FeedForward}(\hat{R}_{n\cdot})\Big]
+        \Big[f(R_{1\cdot}), \ldots, f(R_{1\cdot})\Big] - \Big[\mathrm{FeedForward}(\hat{R}_{1\cdot}), \ldots, \mathrm{FeedForward}(\hat{R}_{\m\cdot})\Big]
     \end{equation}
 
     Note that $\hat{R}_{i\cdot}$ is close to $R_{i\cdot}$ by~\Cref{eq:approx_proof_r_approx}
     \begin{equation}\label{eq:approx_proof_R_approx}
         \begin{split}
-            \infnorm{\hat{R}_{i\cdot} - R_{i\cdot}} &= \max_{j \in [n]} \abs{\iprod{\phi(x_i)}{\psi(x_j)} - r(x_i, x_j)} \\
+            \infnorm{\hat{R}_{i\cdot} - R_{i\cdot}} &= \max_{j \in [\m]} \abs{\iprod{\phi(x_i)}{\psi(x_j)} - r(x_i, x_j)} \\
             &\leq \varepsilon_1 \quad \text{Lebesgue almost-everywhere}.
         \end{split}
     \end{equation}

@@ -2,10 +2,9 @@
 
 At a high level, the primary function of an Abstractor is to compute abstract relational features of its inputs.\footnote{In this paper, we will use the name `Abstractor' to refer to both the module and to model architectures which contain the Abstractor module as a main component.} That is, given a sequence of input objects $x_1, \ldots, x_\m$, the Abstractor learns to model a relation $r(\cdot, \cdot)$ and computes a function on the set of pairwise relations between objects ${\{ r(x_i, x_j) \}}_{ij}$. At the heart of the Abstractor module is an inductive bias we call the \textit{relational bottleneck}, that disentangles relational information from the features of individual objects.
 
-\aanote{should $X = (x_1, \ldots, x_n)$ be $n \times d$ or $d \times n$ (i.e., objects are column vectors or row vectors?). correspondingly, should we use $Q^\top K$ or $Q K^\top$?}
 \subsection{Modeling relations as inner products}\label{ssec:relations_as_inner_prods}
 
-A ``relation function'' maps a pair of objects $x_1, x_2 \in \calX$ to a vector representing the relation between the two objects. We model pairwise relations as inner products between appropriately encoded (or `filtered') object representations. In particular, we model the pairwise relation function $r(\cdot, \cdot) \in \mathbb{R}^{d_r}$ in terms of $d_r$ learnable `left encoders' $\phi_1, \ldots, \phi_{d_r}$, and $d_r$ `right encoders' $\psi_1, \ldots, \psi_{d_r}$,
+A ``relation function'' maps a pair of objects $x_1, x_2 \in \calX$ to a vector representing the relation between the two objects. We model pairwise relations as inner products between appropriately encoded (or `filtered') object representations. In particular, we model the pairwise relation function $r(\cdot, \cdot) \in \mathbb{R}^{d_r}$ in terms of $d_r$ learnable `left encoders' $\phi_1, \ldots, \phi_{d_r}$ and `right encoders' $\psi_1, \ldots, \psi_{d_r}$,
 \begin{equation}\label{eq:inner_prod_rel}
     r(x_1,x_2) = \left(\langle \phi_1(x_1), \psi_1(x_2) \rangle, \langle \phi_2(x_1), \psi_2(x_2) \rangle, \ldots, \langle \phi_{d_r}(x_1), \psi_{d_r}(x_2) \rangle \right) \in \mathbb{R}^{d_r}.
 \end{equation}
@@ -15,26 +14,22 @@ A ``relation function'' maps a pair of objects $x_1, x_2 \in \calX$ to a vector 
 
 % In principle, relations could be modeled by an arbitrary learnable function applied to the concatenation of the features of a pair of objects.~\citep{santoro1} takes this approach and models relations through MLPs applied to the concatenation of the features of a pair of objects. This approach is versatile in principle and can work given enough data. However, modeling relations as inner products has some important advantages. First, it induces a pressure on the resultant representations to encode relational information and constricts the leakage of information about individual objects. When relations are modeled as $g_\theta(\mathrm{concat}(x_1, x_2))$, for some parameterized function class $g_\theta$, there is no pressure or restriction that this function represents relations between the two objects---it can just as well represent information about the objects' features individually.
 
-Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that the output represents a comparison between the two objects' features. More precisely, inner product relations induce a geometry on the object space $\calX$, with notions of distance, angles, and orthogonality.~\citep{altabaaApproximationRelationFunctions2024} analyzes the approximation properties of inner products of neural networks for relation functions.
+Modeling relations as inner products $\iprod{\phi(x_1)}{\psi(x_2)}$ ensures that the result represents a comparison between the two objects' features. More precisely, inner product relations induce a geometry on the object space $\calX$, with notions of distance, angles, and orthogonality.~\citep{altabaaApproximationRelationFunctions2024} analyzes the approximation properties of inner products of neural networks for relation functions.
 %Modeling relations as inner products is an approach that has been explored in previous work on relational architectures (e.g.,~\citep{esbn,kerg2022neural}) and has been shown to be a useful inductive bias on several discriminative relational tasks.
 
 Considering all pairwise relations yields a \textit{relation tensor}, $R = \left[r(x_i, x_j)\right]_{i,j} \in \mathbb{R}^{\m \times \m \times d_r}$.
 
 \subsection{Relational Cross-Attention}\label{ssec:relational_crossattention}
 
-The core operation in a Transformer is attention. For an input sequence $X = (x_1, \ldots, x_\m) \in \reals^{d \times \m}$, self-attention transforms the sequence via, $ X' \gets \phi_v(X) \, \mathrm{Softmax}({\phi_q(X)}^\top \phi_k(X))$,
-% \begin{equation}\label{eq:self_attn}
-%     X' \gets \phi_v(X) \, \mathrm{Softmax}\paren{\phi_q(X)^\top \phi_k(X)},
-% \end{equation}
-where $\phi_q, \phi_k, \phi_v$ are functions applied independently to each object in the sequence.
-% (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$). 
+The core operation in a Transformer is attention. For an input sequence $X = (x_1, \ldots, x_\m) \in \reals^{\m \times d}$, self-attention transforms the sequence via, $ X' \gets \mathrm{Softmax}({\phi_q(X)} {\phi_k(X)}^\top) \, \phi_v(X)$, where $\phi_q, \phi_k, \phi_v$ are functions applied independently to each object in the sequence.
+% (i.e., $\phi(X) = (\phi(x_1), \ldots, \phi(x_\m))$).
 % Typically, those are linear or affine functions.
-% , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product. 
-Note that $R := \phi_q(X)^\top \phi_k(X)$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of ``neural message-passing''~\citep{gilmer2017neural} as follows
+% , with $\phi_q, \phi_k$ having the same dimensionality so we can take their inner product.
+Note that $R := {\phi_q(X)} {\phi_k(X)}^\top$ is a relation matrix in the sense defined above. Self-attention admits an interpretation as a form of ``neural message-passing''~\citep{gilmer2017neural} as follows
 \begin{equation}\label{eq:self_attn_message_passing}
     x_i' \gets \mathrm{MessagePassing}\paren{\set{(\phi_v(x_j), R_{ij})}_{j \in [\m]}} = \sum_{j} \bar{R}_{ij} \phi_v(x_j),
 \end{equation}
-where $m_{j \to i} = (\phi_v(x_j), R_{ij})$ is the message from object $j$ to object $i$, encoding the sender's features and the relation between the two objects. Here, $\bar{R} = \mathrm{Softmax}\paren{R}$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
+where $m_{j \to i} = (\phi_v(x_j), R_{ij})$ is the message from object $j$ to object $i$, encoding the sender's features $\phi_v(x_j)$ and the relation between the two objects $R_{ij} = \iprod{\phi(x_i)}{\psi(x_j)}$. Here, $\bar{R} = \mathrm{Softmax}\paren{R}$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
 % Thus, self-attention is a form of message-passing where the message from object $j$ to object $i$ is an encoding of object $j$'s features weighted by the (softmax-normalized) relation between the two objects. As a result, the processed representation obtained by self-attention involves some relational information. However, this relational information is entangled with object-level features.
 
 Our goal is to learn relational representations which are abstracted away from object-level features in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by the entangled representations produced by standard self-attention. We achieve this via a simple modification of attention---we replace the values $\phi_v(x_i)$ with vectors that \textit{identify} objects, but do not encode any information about their features. We call those vectors \textit{symbols}. Hence, the message sent from object $j$ to object $i$ is now $m_{j \to i} = (s_j, R_{ij})$, the relation between the two objects, together with the symbol identifying the sender object,
@@ -47,9 +42,9 @@ Suppose for now that each object $x_i$ is assigned a symbol $s_i$ in a manner th
 The vectors $\{s_i\}$ act as `symbols' in the same sense that we call `$x$' a symbol in an equation like $y = x^2$---they are a reference to an object with an unspecified value.
 % The difference is that the symbols here are `distributed representations' (i.e., vectors), leading to a novel perspective on the long-standing problem of neural versus symbolic computation.
 
-This modification yields a variant of attention that we call \textit{relational cross-attention}, given by
+This modification yields a variant of attention that we call \textit{relational cross-attention} (RCA), given by
 \begin{equation}\label{eq:relational_crossattn}
-    X' \gets S \, \sigma_{\mathrm{rel}}\paren{\phi(X)^\top \psi(X)},
+    X' \gets  \sigma_{\mathrm{rel}}\paren{\phi(X) \, {\psi(X)}^\top} S,
 \end{equation}
 where $S = (s_1, \ldots, s_m)$ are the symbols, $\sigma_{\mathrm{rel}}$ is the relation activation function, and $\phi, \psi$ correspond to the query and key transformations. When the relation activation function $\sigma_{\mathrm{rel}}$ is softmax, this corresponds to $\mathrm{Attention}(Q \gets X,\, K \gets X,\, V \gets S)$. In contrast, self-attention corresponds to $\mathrm{Attention}(Q \gets X,\, K \gets X,\, V \gets X)$, mixing relational information with object-level features.
 
@@ -63,12 +58,12 @@ Relational cross-attention implements a type of information bottleneck, that we 
 %     the values are input-independent. \awni{I was thinking (1) explains `relational' and (2) explains `cross-attention'. But we might want to remove this since we're tight on space and it's not really necessary.}
 % \end{remark}
 
-In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{i}, W_2^{i}$, and relational cross-attention is given by
+Multi-dimensional relations can be modeled through multi-head relational cross-attention. In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{i}, W_2^{i}$, and multi-head relational cross-attention is given by
 \begin{equation}
     \begin{split}
         % \mathrm{RelationalCrossAttention}(X, S) &= \mathrm{MultiHeadAttention}\paren{Q \gets X,\, K \gets X,\, V \gets S} \\
-        \mathrm{RelationalCrossAttention}(X, S) &= W_o \, \mathrm{concat}\paren{A^{1}, \ldots, A^{d_r}}, \\
-        \text{where } A^i &= W_o^{i} \, S \, \sigma_{\mathrm{rel}}\paren{(W_1^{i} X)^\top (W_2^{i} X)}.
+        \mathrm{RelationalCrossAttention}(X, S) &= \mathrm{concat}\paren{A^{1}, \ldots, A^{d_r}} W_o, \\
+        \text{where } A^i &= \sigma_{\mathrm{rel}}\paren{(X \, W_1^{i}) {(X \, W_2^{i})}^\top} S \, W_o^{i} .
     \end{split}
 \end{equation}
 
@@ -89,7 +84,7 @@ In our experiments, $\phi_i, \psi_i$ are linear maps $W_1^{i}, W_2^{i}$, and rel
 \end{figure}
 
 \subsection{Symbol assignment mechanisms}\label{ssec:symbol_assignment}
-Abstraction relies on the assignment of symbols to individual objects without directly encoding their features. We propose three different mechanisms for assigning symbols to objects. 
+Abstraction relies on the assignment of symbols to individual objects without directly encoding their features. We propose three different mechanisms for assigning symbols to objects.
 
 \textbf{Positional symbols.} The simplest symbol assignment mechanism is to assign symbols to objects sequentially based on the order they appear in the sequence. That is, we maintain a library of symbols $S_{\mathrm{lib}} = (s_1, \ldots, s_{\mathtt{max\_len}}) \in \reals^{d_s \times \mathtt{max\_len}}$, and assign the symbol $s_i$ to the $i$-th object. The symbol library $S_\mathrm{lib}$ can be either learned parameters of the model or fixed positional embeddings (e.g., sinusoidal). %While very simple, positional symbols often work well in practice.
 
@@ -99,7 +94,7 @@ Abstraction relies on the assignment of symbols to individual objects without di
 \begin{equation}
     \begin{split}
         \mathrm{SymbolicAttention}(X) &= \mathrm{concat}\paren{S^{(1)}, \ldots, S^{(n_h)}}, \\
-        S^{i} &= S_{\mathrm{lib}}^{i}\, \mathrm{Softmax} \paren{(W_q^{i} X)^\top B_{\mathrm{lib}}^{i}}.
+        S^{i} &= \mathrm{Softmax} \paren{(X W_q^{i}) {B_{\mathrm{lib}}^{i}}^\top} S_{\mathrm{lib}}^{i}.
     \end{split}
 \end{equation}
 In terms of representational capacity, this is similar to cross-attending to the symbol parameters $S_{\mathrm{lib}}$.
