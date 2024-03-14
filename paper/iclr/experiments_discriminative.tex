@@ -22,27 +22,25 @@ We compare five models: an Abstractor, standard (symmetric) CoRelNet, an asymmet
 	\begin{tabular}{c}
 		\includegraphics[width=.25\textwidth]{figures/set_example}\\[-5pt]
 	\end{tabular}
-	\caption{\footnotesize The SET game}\label{fig:set_example}
+	\caption{\footnotesize The \textit{SET} game}\label{fig:set_example}
 \end{wrapfigure}
-\paragraph{SET: modeling multi-dimensional relations.}
+\paragraph{\textit{SET}: modeling multi-dimensional relations.}
 % The $\prec$ relation is a one-dimensional relation. Similarly, the underlying relations in the experiments considered in~\citep{kerg2022neural} are also one-dimensional (same/different). In the next experiment, we explore a discriminative relational tasks which relies on a multi-dimensional relation. The task we consider is SET.
-``SET'' is a cognitive task in which 
-% ``SET'' is a relatively straightforward but challenging cognitive task that engages reasoning faculties in a deliberative, attentionally directed manner, requiring several levels of abstraction over sensory information. Players 
-players are presented with a sequence of cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape) and they must find triplets of cards which obey a deceptively simple rule: along each dimension, cards in a `SET' must either have the same value or three unique values (\Cref{fig:set_example}). %For example, in~\Cref{fig:set_example}, the cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs form a SET: same color, same number, different patterns, different shapes.
-In this experiment, the task is to classify triplets of card images as `SET' or not.
+\textit{SET} is a cognitive task in which players are presented with a sequence of cards, each of which contains figures that vary along four dimensions (color, number, pattern, and shape) and they must find triplets of cards which obey a deceptively simple rule: along each dimension, cards in a ``set'' must either have the same value or three unique values (\Cref{fig:set_example}). %For example, in~\Cref{fig:set_example}, the cards with two solid blue/purple diamonds, two striped blue squiggles, and two open blue oblongs form a SET: same color, same number, different patterns, different shapes.
+In this experiment, the task is to classify triplets of card images as ``set'' or not.
 
 % A CNN classifier is trained on the card images to predict the four attributes. An intermediate layer is used as an embedder for all relational models. 
-Again, we compare an Abstractor, CoRelNet, PrediNet, and an MLP. The shared architecture is $\texttt{CNN} \to \{\cdot\} \to \texttt{Flatten} \to \texttt{Dense}$, where $\{\cdot\}$ is one of the aforementioned modules. The CNN embedder is obtained through a pre-training task. We report learning curves in~\Cref{fig:exp_set_classification} (10 trials per training set size). We find that the Abstractor model significantly out-performs the other baselines. We attribute this to its relational inductive biases and its ability to model multi-dimensional relations. In this task, there exists four different relations (one for each attribute) which are needed to determine whether a triple of cards forms a set.
+Again, we compare an Abstractor, CoRelNet, PrediNet, and an MLP. The shared architecture is $\texttt{CNN} \to \{\cdot\} \to \texttt{Flatten} \to \texttt{Dense}$, where $\{\cdot\}$ is one of the aforementioned modules. The CNN embedder is obtained through a pre-training task. We report learning curves in~\Cref{fig:exp_set_classification} (10 trials per training set size). We find that the Abstractor model significantly outperforms the other baselines. We attribute this to its relational inductive biases and its ability to model multi-dimensional relations. In this task, there exist four different relations (one for each attribute) that are needed to determine whether a triple of cards forms a set.
 % CoRelNet would need to squeeze all of this information into a single-dimensional scalar whereas the Abstractor can model each relation separately.
 We hypothesize that the ability to model relations as multi-dimensional is also part of the reason that the Abstractor is more sample efficient in learning the order relation in the previous experiment---even though the underlying relation is ``one-dimensional'', having a multi-dimensional representation enables greater robustness and multiple avenues towards a good solution during optimization.
 
-\paragraph{SET (continued): comparison to ``neuro-symbolic'' model.}
-In~\Cref{fig:set_symbolic}, to evaluate the quality of the \textit{representations} produced by Abstractors, we compare an Abstractor-based model to a ``neuro-symbolic'' model which receives as input a binary representation of the four relevant relations. We train 1-head Abstractors separately for each of the four attributes to learn same/different relations, where the task is to decide if an input pair of cards is the same or different for that attribute. We then use the $W_q$ and $W_k$ parameters learned for these relations to initialize the relations in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a SET.
+\paragraph{\textit{SET} (continued): comparison to ``neuro-symbolic'' model.}
+In~\Cref{fig:set_symbolic}, to evaluate the quality of the \textit{representations} produced by Abstractors, we compare an Abstractor-based model to a ``neuro-symbolic'' model which receives as input a binary representation of the four relevant relations. We train 1-head Abstractors separately for each of the four attributes to learn ``same/different'' relations, where the task is to decide if an input pair of cards is the same or different for that attribute. We then use the $W_q$ and $W_k$ parameters learned for these relations to initialize the relations in a multi-head Abstractor. The Abstractor is then trained on a dataset of triples of cards, half of which form a ``set''.
 
 This is compared to a baseline neuro-symbolic model where, instead of images, the input is a vector with 12 bits,
 explicitly encoding the relations.
 % That is, for each of the four attributes, a binary symbol is computed for each pair of three input cards---1 if the pair is the same in that attribute, and 0 otherwise.
-A two-layer MLP is then trained to decide if the triple forms a SET. The MLP using the symbolic representation represents an upper bound on the performance achievable by any neural network model. This comparison shows that the relational representations learned by an Abstractor result in a sample efficiency that is not far from that obtained with pre-specified symbolic encodings of the relevant relations.
+A two-layer MLP is then trained to decide if the triple forms a ``set''. The MLP using the symbolic representation represents an upper bound on the performance achievable by any neural network model. This comparison shows that the relational representations learned by an Abstractor result in a sample-efficiency that is not far from that obtained with pre-specified symbolic encodings of the relevant relations.
 % This comparison shows that the Abstractor is able to solve a task using relations learned in other tasks (modularity), with a sample efficiency that is not far from that obtained with purely symbolic, noise-free encodings of the relevant relations.
 
 % old version without comparison to symbolic MLP
@@ -74,7 +72,7 @@ A two-layer MLP is then trained to decide if the triple forms a SET. The MLP usi
     % \vskip-.2in
     \centering
     \begin{subfigure}[t]{0.32\textwidth}
-        \centering
+        \centering\captionsetup{width=.9\linewidth}
         \vskip-20pt
         \includegraphics[width=\textwidth]{figures/experiments/pairwise_order_learning_curves.pdf}
         \vskip-5pt
@@ -83,14 +81,14 @@ A two-layer MLP is then trained to decide if the triple forms a SET. The MLP usi
     % \hskip10pt
     % \captionsetup[subfigure]{oneside,margin={-.3in,0in}}
     \begin{subfigure}[t]{0.32\textwidth}
-        \centering
+        \centering\captionsetup{width=.9\linewidth}
         \vskip-20pt
         \includegraphics[width=\textwidth]{figures/experiments/set_classification.pdf}
         \vskip-5pt
-        \caption{The Abstractor's ability to model multi-dimensional relations enables it to solve SET.}\label{fig:exp_set_classification}
+        \caption{The Abstractor's ability to model multi-dimensional relations enables it to solve \textit{SET}.}\label{fig:exp_set_classification}
     \end{subfigure}
     \begin{subfigure}[t]{0.32\textwidth}
-        \centering
+        \centering\captionsetup{width=.9\linewidth}
         \vskip-20pt
         \includegraphics[width=\textwidth]{figures/experiments/set_symbolic_vs_abstractor.pdf}
         \vskip-5pt
