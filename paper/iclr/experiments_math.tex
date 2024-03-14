@@ -1,8 +1,8 @@
 \subsection{Math problem-solving: partially-relational sequence-to-sequence tasks}\label{ssec:experiments_math}
 
-The object-sorting experiments in the previous section are ``purely relational'' in the sense that the set of pairwise $\prec$ relations is a sufficient statistic for solving the task.
+The object-sorting experiments in the previous section are ``purely relational'' in the sense that the set of pairwise $\prec$ order relations is a sufficient statistic for solving the task.
 %  (i.e., the target sequence is conditionally independent of the input sequence given the relations)
-In a general sequence-to-sequence task, however, there may not be a relation which is a sufficient statistic. Nonetheless, relational reasoning may still be crucial for solving the task, and the enhanced relational reasoning capabilities of the Abstractor may enable performance improvements. The ``partially-relational'' architectures described in~\Cref{sec:abstractor_architectures} enable a branch of the model to focus on relational reasoning while maintaining a connection to object-level attributes. In this section, we evaluate an Abstractor model (using architecture (d) of~\Cref{fig:abstractor_architectures}) on a set of math problem-solving tasks based on the dataset proposed by~\citet{saxtonAnalyzingMathematicalReasoning2019}.
+In a general sequence-to-sequence task, however, there may not be a relation which is a sufficient statistic. Nonetheless, relational reasoning may still be crucial for solving the task, and the enhanced relational reasoning capabilities of the Abstractor may enable performance improvements. The ``partially-relational'' architectures described in~\Cref{sec:abstractor_architectures} enable a branch of the model to focus on relational reasoning while another branch performs general processing involving object-level attributes. In this section, we evaluate such an Abstractor model (using architecture (d) of~\Cref{fig:abstractor_architectures}) on a set of math problem-solving tasks based on the dataset proposed by~\citet{saxtonAnalyzingMathematicalReasoning2019}.
 
 \begin{figure}
     \vskip-10pt
